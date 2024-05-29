@@ -27,12 +27,6 @@ Install dependencies
   npm install
 ```
 
-Install dependencies for laravel
-
-```bash
-  composer install
-```
-
 Uvicorn is needed to run the [api.](https://github.com/novelicious/novelicious-api)
 
 Set up your api on your local server change the env files based on your database configuration.
