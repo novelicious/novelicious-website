@@ -1,30 +1,65 @@
-# React + TypeScript + Vite
+# novelicious.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+novelicious is a web application Point-of-Sale (POS) system with recommender functionalities for novels and a question-answering system for their synopses.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Point-of-sale
+- Question Answering (based on the novel synopsis)
+- Novel Recommender System
+- Cross platform // Responsive 😋
 
-## Expanding the ESLint configuration
+## Requirements
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Laragon
 
-- Configure the top-level `parserOptions` property like this:
+- NPM
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+- Python >3.9
+
+## Installation
+
+To run this project:
+
+Install dependencies
+
+```bash
+  npm install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Install dependencies for laravel
+
+```bash
+  composer install
+```
+
+Uvicorn is needed to run the [api.](https://github.com/novelicious/novelicious-api)
+
+Set up your api on your local server change the env files based on your database configuration.
+
+Install the requirement for python and run this:
+
+```bash
+uvicorn main:app --reload
+```
+
+Start the server
+
+```bash
+  npm run dev
+```
+
+## Tech Stack
+
+**Client:** ReactJS, TailwindCSS
+
+**Machine Learning:** PyTorch, etc
+
+**Server:** FastAPI
+
+## Authors
+
+- [@nulitas](https://www.github.com/nulitas)
+- [@rianfrhn](https://www.github.com/rianfrhn)
+- [@zachisoni](https://www.github.com/zachisoni)
+- [@ThugPou](https://www.github.com/ThugPou)
