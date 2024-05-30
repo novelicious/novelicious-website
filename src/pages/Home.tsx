@@ -26,8 +26,7 @@ const Home: React.FC = () => {
             </div>
           </div>
           <img
-            alt=""
-            src="https://i.pinimg.com/1200x/d4/9e/4f/d49e4fbcdd2adcc305aa917df36021b7.jpg"
+            src="https://ih1.redbubble.net/image.5200578883.3558/flat,750x1000,075,f.jpg"
             className="max-h-screen object-cover sm:h-[calc(100%_-_2rem)] sm:self-end sm:rounded-ss-[30px] md:h-[calc(100%_-_4rem)] md:rounded-ss-[60px]"
           />
         </section>

@@ -28,15 +28,6 @@ const Market: React.FC = () => {
 
   return (
     <Layout>
-      <div className="bg-blue-700 px-4 py-3 text-white">
-        <p className="text-center text-sm font-medium">
-          Love reading?
-          <a href="#" className="inline-block underline">
-            Check out this new book!
-          </a>
-        </p>
-      </div>
-
       <section>
         <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <header>
