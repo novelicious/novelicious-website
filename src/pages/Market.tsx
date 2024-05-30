@@ -13,19 +13,29 @@ interface Book {
 }
 
 const Market: React.FC = () => {
-  const [books, setBooks] = useState<Book[]>([]);
-
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/books")
       .then((res) => {
         setBooks(res.data);
+        setFilterData(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [filterData, setFilterData] = useState<Book[]>([]);
 
+  const handleFilter = (value: string) => {
+    return (e: React.ChangeEvent<HTMLInputElement>) => {
+      const res = filterData.filter((f) =>
+        f.title.toLowerCase().includes(value)
+      );
+      setBooks(res);
+      console.log(e.target.value);
+    };
+  };
   return (
     <Layout>
       <section>
@@ -33,13 +43,14 @@ const Market: React.FC = () => {
           <header>
             <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
               <div className="sm:flex sm:items-center sm:justify-between">
-                <div className="text-center sm:text-left">
-                  <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-                    Welcome, Guest
-                  </h1>
-                  <p className="mt-1.5 text-sm text-gray-500">
-                    Let's find your fav! 😋
-                  </p>
+                <div className="relative w-full">
+                  <input
+                    type="text"
+                    className="w-1/2 backdrop-blur-sm bg-white/20 py-2 pl-10 pr-4 rounded-lg focus:outline-none border-2 border-gray-100 focus:border-violet-300 transition-colors duration-300"
+                    placeholder="Search..."
+                    onChange={(e) => handleFilter(e.target.value)(e)}
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"></div>
                 </div>
 
                 <div className="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
