@@ -13,6 +13,10 @@ interface Book {
 }
 
 const Market: React.FC = () => {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [filterData, setFilterData] = useState<Book[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/books")
@@ -23,9 +27,10 @@ const Market: React.FC = () => {
       .catch((err) => {
         console.log(err);
       });
+
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
   }, []);
-  const [books, setBooks] = useState<Book[]>([]);
-  const [filterData, setFilterData] = useState<Book[]>([]);
 
   const handleFilter = (value: string) => {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +41,7 @@ const Market: React.FC = () => {
       console.log(e.target.value);
     };
   };
+
   return (
     <Layout>
       <section>
@@ -53,30 +59,32 @@ const Market: React.FC = () => {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"></div>
                 </div>
 
-                <div className="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
-                  <a href="">
-                    <div className="relative py-2">
-                      <div className="t-0 absolute left-3">
-                        <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">
-                          0
-                        </p>
+                {isLoggedIn && (
+                  <div className="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                    <a href="">
+                      <div className="relative py-2">
+                        <div className="t-0 absolute left-3">
+                          <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">
+                            0
+                          </p>
+                        </div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="file: mt-4 h-6 w-6"
+                        >
+                          <path
+                            strokeLinejoin="round"
+                            d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                          />
+                        </svg>
                       </div>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        className="file: mt-4 h-6 w-6"
-                      >
-                        <path
-                          strokeLinejoin="round"
-                          d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-                        />
-                      </svg>
-                    </div>
-                  </a>
-                </div>
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </header>
@@ -108,15 +116,17 @@ const Market: React.FC = () => {
                     Rp.{book.cost}
                   </h3>
 
-                  <form
-                    action={`/carts/add/${book.id}`}
-                    className="mt-4"
-                    method="POST"
-                  >
-                    <button className="text-white block w-full rounded bg-blue-700 p-4 text-sm font-medium transition hover:scale-105">
-                      Add to Cart
-                    </button>
-                  </form>
+                  {isLoggedIn && (
+                    <form
+                      action={`/carts/add/${book.id}`}
+                      className="mt-4"
+                      method="POST"
+                    >
+                      <button className="text-white block w-full rounded bg-blue-700 p-4 text-sm font-medium transition hover:scale-105">
+                        Add to Cart
+                      </button>
+                    </form>
+                  )}
                 </div>
               </li>
             ))}
