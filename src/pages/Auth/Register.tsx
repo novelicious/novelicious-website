@@ -21,7 +21,9 @@ const Register: React.FC = () => {
                 novelicious.
               </h1>
 
-              <p className="mt-4 leading-relaxed text-gray-500">nothing.</p>
+              <p className="mt-4 leading-relaxed text-gray-500">
+                Register Page.
+              </p>
 
               <form action="#" className="mt-8 grid grid-cols-6 gap-6">
                 <div className="col-span-6 sm:col-span-3">

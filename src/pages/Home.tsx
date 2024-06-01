@@ -4,31 +4,32 @@ const Home: React.FC = () => {
   return (
     <>
       <Layout>
-        <section className="overflow-hidden bg-gray-50 sm:grid sm:grid-cols-2 sm:items-center">
-          <div className="p-8 md:p-12 lg:px-16 lg:py-24">
-            <div className="mx-auto max-w-xl text-center ltr:sm:text-left rtl:sm:text-right">
-              <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
-                Find your favorite book on this platform.
-              </h2>
-              <p className="hidden text-gray-500 md:mt-4 md:block">
-                You’re in the right place. Tell us what titles or genres you’ve
-                enjoyed in the past, and we’ll give you surprisingly insightful
-                recommendations.
+        <section className="bg-gray-50">
+          <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center">
+            <div className="mx-auto max-w-xl text-center">
+              <h1 className="text-3xl font-extrabold sm:text-5xl">
+                <strong className="font-extrabold text-blue-600 sm:block">
+                  {" "}
+                  novelicious{" "}
+                </strong>
+              </h1>
+
+              <p className="mt-4 sm:text-xl/relaxed">
+                {" "}
+                Tell us what titles or genres you’ve enjoyed in the past, and
+                we’ll give you surprisingly insightful recommendations.
               </p>
-              <div className="mt-4 md:mt-8">
+
+              <div className="mt-8 flex flex-wrap justify-center gap-4">
                 <a
+                  className="block w-full rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring active:bg-blue-500 sm:w-auto"
                   href="/market"
-                  className="inline-block rounded bg-blue-700 hover:bg-primary-700 px-12 py-3 text-sm font-medium text-white transition focus:ring-4 focus:outline-none focus:ring-primary-300"
                 >
-                  Get Started Today
+                  Get Started
                 </a>
               </div>
             </div>
           </div>
-          <img
-            src="https://ih1.redbubble.net/image.5200578883.3558/flat,750x1000,075,f.jpg"
-            className="max-h-screen object-cover sm:h-[calc(100%_-_2rem)] sm:self-end sm:rounded-ss-[30px] md:h-[calc(100%_-_4rem)] md:rounded-ss-[60px]"
-          />
         </section>
       </Layout>
     </>

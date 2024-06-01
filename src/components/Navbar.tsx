@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
             <li>
               <Link to={`/market`}>Market</Link>
             </li>
-            <li>
+            <li className="">
               <Link to={`/login`}>Sign In</Link>
             </li>
           </ul>

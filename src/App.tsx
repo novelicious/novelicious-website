@@ -5,6 +5,8 @@ import Market from "./pages/Market.tsx";
 import Login from "./pages/Auth/Login.tsx";
 import Details from "./pages/Details.tsx";
 import Register from "./pages/Auth/Register.tsx";
+import ProtectedPage from "./Protected.tsx";
+// import { RequireToken } from "./Auth.tsx";
 
 const App: React.FC = () => (
   <>
@@ -12,11 +14,12 @@ const App: React.FC = () => (
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/market" element={<Market />} />
-        <Route path="*" element={<ErrorPage />} />
         <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="/novel/:id" element={<Details />}></Route>
         <Route path="/ask/:id" element={<Details />}></Route>
+        <Route path="/protected" element={<ProtectedPage />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
   </>

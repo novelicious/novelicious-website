@@ -80,7 +80,7 @@ const Details: React.FC = () => {
           </div>
           <span className="flex items-center">
             <span className="h-px flex-1 bg-black"></span>
-            <span className="shrink-0 px-6">Question Answering</span>
+            <span className="shrink-0 px-6">🗣️</span>
             <span className="h-px flex-1 bg-black"></span>
           </span>
           <form onSubmit={handleSubmit}>
