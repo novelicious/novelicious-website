@@ -58,53 +58,63 @@ const Details: React.FC = () => {
 
   return (
     <Layout>
-      <section>
-        <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <img
-              src={book.cover}
-              alt=""
-              className="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
-            />
-            <div className="relative border border-gray-100 bg-white p-6">
-              <span className="text-white whitespace-nowrap bg-blue-700 px-3 py-1.5 text-xs font-medium">
-                {book.genres}
-              </span>
-              <h3 className="mt-4 text-lg font-medium text-gray-900">
-                {book.title} ({book.release_year})
-              </h3>
-              <p className="mt-1.5 text-sm text-gray-700">⭐{book.rating}</p>
-              <p className="mt-1.5 text-sm text-gray-700">{book.authors}</p>
-              <p className="mt-1.5 text-sm text-gray-700">{book.synopsis}</p>
+      <div className="container mx-auto">
+        <div className="flex flex-wrap">
+          <div className="w-full">
+            <div className="bg-white relative min-h-[500px] h-[70vh] min-w-[650px] w-[85vw] mx-auto my-12 p-6 rounded-md border-3 border-gray-300 md:flex">
+              <div className="w-full md:w-1/3 flex justify-center ">
+                <div className="p-4">
+                  <img src={book.cover} alt="..." className="max-h-64" />
+                </div>
+              </div>
+
+              <div className="w-full md:w-2/3 p-6">
+                <h2 className="text-xl font-bold uppercase">
+                  {book.title} ({book.release_year})
+                </h2>
+                <h3 className="text-2xl mt-2">{book.cost}</h3>
+                <p className="text-gray-600 mt-2">{book.synopsis}</p>
+                <form onSubmit={handleSubmit}>
+                  <input
+                    type="text"
+                    id="question"
+                    name="question"
+                    placeholder="Question"
+                    className="mt-1 w-full border-gray-200 shadow-sm sm:text-sm "
+                    value={inputQuestion}
+                    onChange={(e) => setInputQuestion(e.target.value)}
+                    required
+                  />
+
+                  <button
+                    className="mt-2 group relative inline-block text-sm font-medium text-slate-600 focus:outline-none focus:ring active:text-slate-500"
+                    type="submit"
+                  >
+                    <span className="absolute inset-0 border border-current"></span>
+                    <span className="block border border-current bg-white px-12 py-3 transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1">
+                      Ask
+                    </span>
+                  </button>
+                </form>
+                {question && (
+                  <div className="mt-2">
+                    {" "}
+                    <p className=" text-slate-900">Answer:</p>
+                    <a
+                      href={`https://www.google.co.uk/search?q=${book.title}+${question.answer}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      {question.answer}
+                    </a>{" "}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-          <span className="flex items-center">
-            <span className="h-px flex-1 bg-black"></span>
-            <span className="shrink-0 px-6">🗣️</span>
-            <span className="h-px flex-1 bg-black"></span>
-          </span>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              id="question"
-              name="question"
-              placeholder="fill with your idea."
-              className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
-              value={inputQuestion}
-              onChange={(e) => setInputQuestion(e.target.value)}
-              required
-            />
-            <button
-              type="submit"
-              className="mt-4 inline-block rounded bg-blue-700 px-8 py-3 text-sm font-medium text-white transition hover:-rotate-2 hover:scale-110 focus:outline-none focus:ring active:bg-blue-700"
-            >
-              Answer
-            </button>
-          </form>{" "}
-          <span className=" text-red-800">Answer: </span>
-          {question && <p>{question.answer}</p>}
         </div>
-      </section>
+      </div>
     </Layout>
   );
 };

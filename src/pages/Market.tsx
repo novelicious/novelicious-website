@@ -8,7 +8,7 @@ interface Book {
   title: string;
   release_year: number;
   authors: string;
-  genres: string;
+  genres: string[];
   cost: number;
 }
 
@@ -21,8 +21,14 @@ const Market: React.FC = () => {
     axios
       .get("http://127.0.0.1:8000/books")
       .then((res) => {
-        setBooks(res.data);
-        setFilterData(res.data);
+        const transformedBooks = res.data.map(
+          (book: Omit<Book, "genres"> & { genres: string }) => ({
+            ...book,
+            genres: book.genres.split(",").map((genre: string) => genre.trim()),
+          })
+        );
+        setBooks(transformedBooks);
+        setFilterData(transformedBooks);
       })
       .catch((err) => {
         console.log(err);
@@ -35,7 +41,7 @@ const Market: React.FC = () => {
   const handleFilter = (value: string) => {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
       const res = filterData.filter((f) =>
-        f.title.toLowerCase().includes(value)
+        f.title.toLowerCase().includes(value.toLowerCase())
       );
       setBooks(res);
       console.log(e.target.value);
@@ -91,7 +97,7 @@ const Market: React.FC = () => {
 
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {books.map((book) => (
-              <li key={book.id}>
+              <li key={book.id} className="border-blue-600 border">
                 <a
                   href={`/novel/${book.id}`}
                   className="group relative block overflow-hidden"
@@ -103,18 +109,25 @@ const Market: React.FC = () => {
                   />
                 </a>
                 <div className="relative border border-gray-100 bg-white p-6">
-                  <span className="text-white whitespace-nowrap bg-blue-700 px-3 py-1.5 text-xs font-medium">
-                    {book.genres}
-                  </span>
+                  <div className="flex flex-wrap gap-1">
+                    {book.genres.map((genre, index) => (
+                      <span
+                        key={index}
+                        className="text-white whitespace-nowrap bg-blue-700 px-3 py-1.5 text-xs font-medium"
+                      >
+                        {genre}
+                      </span>
+                    ))}
+                  </div>
 
                   <h3 className="mt-4 text-lg font-medium text-gray-900">
                     {book.title} ({book.release_year})
                   </h3>
 
                   <p className="mt-1.5 text-sm text-gray-700">{book.authors}</p>
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">
-                    Rp.{book.cost}
-                  </h3>
+                  {/* <h3 className="mt-4 text-lg font-medium text-gray-900">
+                    {book.cost}
+                  </h3> */}
 
                   {isLoggedIn && (
                     <form

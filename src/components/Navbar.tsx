@@ -1,18 +1,37 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
 const Navbar: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleSignOut = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/");
+  };
+
   return (
     <nav className="bg-white border-gray-200">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <span className="self-center text-2xl font-semibold whitespace-nowrap">
-            novelicious.
+        <a
+          href="/"
+          className="flex items-center space-x-3 rtl:space-x-reverse text-2xl font-semibold  "
+        >
+          {" "}
+          novel
+          <span className="self-center whitespace-nowrap bg-blue-600 text-white">
+            icious.
           </span>
         </a>
         <button
@@ -51,9 +70,17 @@ const Navbar: React.FC = () => {
             <li>
               <Link to={`/market`}>Market</Link>
             </li>
-            <li className="">
-              <Link to={`/login`}>Sign In</Link>
-            </li>
+            {isLoggedIn ? (
+              <li>
+                <button onClick={handleSignOut} className="text-red-500">
+                  Sign Out
+                </button>
+              </li>
+            ) : (
+              <li>
+                <Link to={`/login`}>Sign In</Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

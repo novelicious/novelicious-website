@@ -4,29 +4,37 @@ const Home: React.FC = () => {
   return (
     <>
       <Layout>
-        <section className="bg-gray-50">
-          <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center">
-            <div className="mx-auto max-w-xl text-center">
-              <h1 className="text-3xl font-extrabold sm:text-5xl">
-                <strong className="font-extrabold text-blue-600 sm:block">
-                  {" "}
-                  novelicious{" "}
-                </strong>
-              </h1>
+        <section>
+          <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+              <div className="relative h-64 overflow-hidden rounded-lg sm:h-80 lg:order-last lg:h-full">
+                <img
+                  alt=""
+                  src="https://japanpowered.com/media/images/manga-boy-reading.jpg"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </div>
 
-              <p className="mt-4 sm:text-xl/relaxed">
-                {" "}
-                Tell us what titles or genres you’ve enjoyed in the past, and
-                we’ll give you surprisingly insightful recommendations.
-              </p>
+              <div className="lg:py-24">
+                <h2 className="text-3xl font-bold sm:text-4xl">
+                  Discover Your Next Great Read
+                </h2>
 
-              <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <p className="mt-4 text-gray-600">
+                  Novelicious learns your reading preferences and provides
+                  tailored book recommendations just for you. Discover new
+                  titles that align with your interests and taste, expanding
+                  your literary horizons.
+                </p>
+
                 <a
-                  className="block w-full rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring active:bg-blue-500 sm:w-auto"
                   href="/market"
+                  className="mt-8 inline-block rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-400"
                 >
-                  Get Started
+                  Get Started.
                 </a>
+
+                <p className=" mt-44">coming soon.</p>
               </div>
             </div>
           </div>
