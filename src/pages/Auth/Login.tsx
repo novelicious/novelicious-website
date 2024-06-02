@@ -102,43 +102,42 @@ const Login: React.FC = () => {
                   Username
                 </label>
 
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={state.username}
-                  onChange={(e) =>
-                    setState({ ...state, username: e.target.value })
-                  }
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                />
-              </div>
-
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="Password"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  {" "}
-                  Password{" "}
-                </label>
-
-                <input
-                  type="password"
-                  id="Password"
-                  name="password"
-                  value={state.password}
-                  onChange={(e) =>
-                    setState({ ...state, password: e.target.value })
-                  }
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                />
+                <div className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm">
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={state.username}
+                    onChange={(e) =>
+                      setState({ ...state, username: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-md  focus:outline-none focus:ring"
+                  />
+                  <div className="items-center   border-t border-gray-200">
+                    <label
+                      htmlFor="Password"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      id="Password"
+                      name="password"
+                      value={state.password}
+                      onChange={(e) =>
+                        setState({ ...state, password: e.target.value })
+                      }
+                      className=" w-full rounded-md focus:outline-none focus:ring"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="col-span-6">
                 <p className="text-sm text-gray-500">
                   By creating an account, you agree to our terms and conditions
-                  and privacy policy .
+                  and privacy policy.
                 </p>
               </div>
 
@@ -149,6 +148,11 @@ const Login: React.FC = () => {
                 >
                   {state.loading ? "Logging in..." : "Sign In"}
                 </button>
+
+                <a
+                  className="group relative inline-block text-sm font-medium text-white focus:outline-none focus:ring"
+                  href="#"
+                ></a>
 
                 <p className="mt-4 text-sm text-gray-500 sm:mt-0">
                   You don't have an account?

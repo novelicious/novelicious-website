@@ -124,6 +124,70 @@ const Register: React.FC = () => {
 
               <div className="col-span-6 sm:col-span-3">
                 <label
+                  htmlFor="picture"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Picture
+                </label>
+
+                <input
+                  type="file"
+                  id="picture"
+                  name="picture"
+                  value={state.picture}
+                  onChange={(e) =>
+                    setState({ ...state, picture: e.target.value })
+                  }
+                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                />
+              </div>
+
+              <div className="col-span-6 sm:col-span-3">
+                <label
+                  htmlFor="birth_year"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Birth Year
+                </label>
+
+                <input
+                  type="number"
+                  id="birth_year"
+                  name="birth_year"
+                  value={state.birth_year}
+                  onChange={(e) =>
+                    setState({ ...state, birth_year: parseInt(e.target.value) })
+                  }
+                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                />
+              </div>
+
+              <div className="col-span-6 sm:col-span-3">
+                <label
+                  htmlFor="gender"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Gender
+                </label>
+
+                <select
+                  id="gender"
+                  name="gender"
+                  value={state.gender}
+                  onChange={(e) =>
+                    setState({ ...state, gender: e.target.value })
+                  }
+                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="col-span-6 sm:col-span-3">
+                <label
                   htmlFor="password"
                   className="block text-sm font-medium text-gray-700"
                 >
@@ -161,71 +225,6 @@ const Register: React.FC = () => {
                   className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                 />
               </div>
-
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="picture"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Picture
-                </label>
-
-                <input
-                  type="file"
-                  id="picture"
-                  name="picture"
-                  value={state.picture}
-                  onChange={(e) =>
-                    setState({ ...state, picture: e.target.value })
-                  }
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                />
-              </div>
-
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="gender"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Gender
-                </label>
-
-                <select
-                  id="gender"
-                  name="gender"
-                  value={state.gender}
-                  onChange={(e) =>
-                    setState({ ...state, gender: e.target.value })
-                  }
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="birth_year"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Birth Year
-                </label>
-
-                <input
-                  type="number"
-                  id="birth_year"
-                  name="birth_year"
-                  value={state.birth_year}
-                  onChange={(e) =>
-                    setState({ ...state, birth_year: parseInt(e.target.value) })
-                  }
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                />
-              </div>
-
               <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
                 <button
                   disabled={state.loading}

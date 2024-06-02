@@ -72,7 +72,7 @@ const Details: React.FC = () => {
                 <h2 className="text-xl font-bold uppercase">
                   {book.title} ({book.release_year})
                 </h2>
-                <h3 className="text-2xl mt-2">{book.cost}</h3>
+                <h3 className="text-2xl mt-2">${book.cost}</h3>
                 <p className="text-gray-600 mt-2">{book.synopsis}</p>
                 <form onSubmit={handleSubmit}>
                   <input

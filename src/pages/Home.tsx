@@ -34,7 +34,7 @@ const Home: React.FC = () => {
                   Get Started.
                 </a>
 
-                <p className=" mt-44">coming soon.</p>
+                <p className=" mt-44">:v</p>
               </div>
             </div>
           </div>

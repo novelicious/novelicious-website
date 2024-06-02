@@ -15,6 +15,8 @@ interface Book {
 const Market: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [filterData, setFilterData] = useState<Book[]>([]);
+  const [selectedGenre, setSelectedGenre] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
@@ -38,14 +40,21 @@ const Market: React.FC = () => {
     setIsLoggedIn(!!token);
   }, []);
 
-  const handleFilter = (value: string) => {
-    return (e: React.ChangeEvent<HTMLInputElement>) => {
-      const res = filterData.filter((f) =>
-        f.title.toLowerCase().includes(value.toLowerCase())
-      );
-      setBooks(res);
-      console.log(e.target.value);
-    };
+  useEffect(() => {
+    const filteredBooks = filterData.filter(
+      (book) =>
+        book.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (selectedGenre === "" || book.genres.includes(selectedGenre))
+    );
+    setBooks(filteredBooks);
+  }, [searchQuery, selectedGenre, filterData]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleGenreChange = (genre: string) => {
+    setSelectedGenre(genre);
   };
 
   return (
@@ -60,13 +69,25 @@ const Market: React.FC = () => {
                     type="text"
                     className="w-1/2 backdrop-blur-sm bg-white/20 py-2 pl-10 pr-4 rounded-lg focus:outline-none border-2 border-gray-100 focus:border-violet-300 transition-colors duration-300"
                     placeholder="Search..."
-                    onChange={(e) => handleFilter(e.target.value)(e)}
+                    value={searchQuery}
+                    onChange={handleSearchChange}
                   />
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"></div>
                 </div>
 
-                {isLoggedIn && (
-                  <div className="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                <div className="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                  <select
+                    className="border-2 border-gray-100 rounded-lg py-2 pl-3 pr-10"
+                    value={selectedGenre}
+                    onChange={(e) => handleGenreChange(e.target.value)}
+                  >
+                    <option value="">All Genres</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Sci-Fi">Sci-Fi</option>
+                    <option value="Romance">Romance</option>
+                  </select>
+
+                  {isLoggedIn && (
                     <a href="">
                       <div className="relative py-2">
                         <div className="t-0 absolute left-3">
@@ -89,8 +110,8 @@ const Market: React.FC = () => {
                         </svg>
                       </div>
                     </a>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </header>
@@ -115,7 +136,15 @@ const Market: React.FC = () => {
                         key={index}
                         className="text-white whitespace-nowrap bg-blue-700 px-3 py-1.5 text-xs font-medium"
                       >
-                        {genre}
+                        <a
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleGenreChange(genre);
+                          }}
+                        >
+                          {genre}
+                        </a>
                       </span>
                     ))}
                   </div>
@@ -135,9 +164,9 @@ const Market: React.FC = () => {
                       className="mt-4"
                       method="POST"
                     >
-                      <button className="text-white block w-full rounded bg-blue-700 p-4 text-sm font-medium transition hover:scale-105">
+                      {/* <button className="text-white block w-full rounded bg-blue-700 p-4 text-sm font-medium transition hover:scale-105">
                         Add to Cart
-                      </button>
+                      </button> */}
                     </form>
                   )}
                 </div>

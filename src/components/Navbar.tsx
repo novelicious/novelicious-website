@@ -64,20 +64,20 @@ const Navbar: React.FC = () => {
           id="navbar-default"
         >
           <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white">
-            <li>
+            <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-blue-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
               <Link to={`/`}>Home</Link>
             </li>
-            <li>
+            <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-blue-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
               <Link to={`/market`}>Market</Link>
             </li>
             {isLoggedIn ? (
-              <li>
+              <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-blue-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
                 <button onClick={handleSignOut} className="text-red-500">
                   Sign Out
                 </button>
               </li>
             ) : (
-              <li>
+              <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-blue-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
                 <Link to={`/login`}>Sign In</Link>
               </li>
             )}
