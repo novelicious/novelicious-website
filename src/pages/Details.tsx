@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import Layout from "../layouts/Layout";
+import Navbar from "../components/Navbar";
+
 interface Book {
   id: number;
   cover: string;
@@ -22,7 +23,7 @@ const Details: React.FC = () => {
   const [book, setBook] = useState<Book | null>(null);
   const [question, setQuestion] = useState<Question | null>(null);
   const [inputQuestion, setInputQuestion] = useState<string>("");
-  const { id } = useParams<{ id: string; questions: string }>();
+  const { id } = useParams<{ id: string }>();
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (id && inputQuestion) {
@@ -57,14 +58,19 @@ const Details: React.FC = () => {
   }
 
   return (
-    <Layout>
-      <div className="container mx-auto">
-        <div className="flex flex-wrap">
+    <>
+      <Navbar />
+      <div className="container mx-auto px-4">
+        <div className="flex flex-wrap justify-center">
           <div className="w-full">
-            <div className="bg-white relative min-h-[500px] h-[70vh] min-w-[650px] w-[85vw] mx-auto my-12 p-6 rounded-md border-3 border-gray-300 md:flex">
-              <div className="w-full md:w-1/3 flex justify-center ">
+            <div className="bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto my-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
+              <div className="w-full md:w-1/3 flex justify-center mb-4 md:mb-0">
                 <div className="p-4">
-                  <img src={book.cover} alt="..." className="max-h-64" />
+                  <img
+                    src={book.cover}
+                    alt={book.title}
+                    className="max-h-64 w-auto"
+                  />
                 </div>
               </div>
 
@@ -72,7 +78,7 @@ const Details: React.FC = () => {
                 <h2 className="text-xl font-bold uppercase">
                   {book.title} ({book.release_year})
                 </h2>
-                <h3 className="text-2xl mt-2">${book.cost}</h3>
+
                 <p className="text-gray-600 mt-2">{book.synopsis}</p>
                 <form onSubmit={handleSubmit}>
                   <input
@@ -98,7 +104,6 @@ const Details: React.FC = () => {
                 </form>
                 {question && (
                   <div className="mt-2">
-                    {" "}
                     <p className=" text-slate-900">Answer:</p>
                     <a
                       href={`https://www.google.co.uk/search?q=${book.title}+${question.answer}`}
@@ -107,7 +112,7 @@ const Details: React.FC = () => {
                       className="underline"
                     >
                       {question.answer}
-                    </a>{" "}
+                    </a>
                   </div>
                 )}
               </div>
@@ -115,7 +120,7 @@ const Details: React.FC = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

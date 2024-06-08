@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Layout from "../layouts/Layout";
+import Navbar from "../components/Navbar";
 
 interface Book {
   id: number;
@@ -58,7 +58,8 @@ const Market: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <>
+      <Navbar />
       <section>
         <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <header>
@@ -85,6 +86,9 @@ const Market: React.FC = () => {
                     <option value="Fantasy">Fantasy</option>
                     <option value="Sci-Fi">Sci-Fi</option>
                     <option value="Romance">Romance</option>
+                    <option value="Horror">Horror</option>
+                    <option value="Video Game">Video Game</option>
+                    <option value="Supernatural">Supernatural</option>
                   </select>
 
                   {isLoggedIn && (
@@ -154,9 +158,6 @@ const Market: React.FC = () => {
                   </h3>
 
                   <p className="mt-1.5 text-sm text-gray-700">{book.authors}</p>
-                  {/* <h3 className="mt-4 text-lg font-medium text-gray-900">
-                    {book.cost}
-                  </h3> */}
 
                   {isLoggedIn && (
                     <form
@@ -175,7 +176,7 @@ const Market: React.FC = () => {
           </ul>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 
