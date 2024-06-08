@@ -59,16 +59,16 @@ const Market: React.FC = () => {
 
   return (
     <>
-      <Navbar />
       <section>
         <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-          <header>
+          <header className="sticky top-0 bg-white z-50">
+            <Navbar />
             <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-              <div className="sm:flex sm:items-center sm:justify-between">
-                <div className="relative w-full">
+              <div className=" sm:flex sm:items-center sm:justify-between">
+                <div className="relative w-full ">
                   <input
                     type="text"
-                    className="w-1/2 backdrop-blur-sm bg-white/20 py-2 pl-10 pr-4 rounded-lg focus:outline-none border-2 border-gray-100 focus:border-violet-300 transition-colors duration-300"
+                    className="w-full md:w-80 px-3 h-10 rounded-l border-2 border-blue-500 focus:outline-none focus:border-blue-500"
                     placeholder="Search..."
                     value={searchQuery}
                     onChange={handleSearchChange}
@@ -78,7 +78,7 @@ const Market: React.FC = () => {
 
                 <div className="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
                   <select
-                    className="border-2 border-gray-100 rounded-lg py-2 pl-3 pr-10"
+                    className="w-full h-10 border-2 border-blue-500 focus:outline-none focus:border-blue-500 text-blue-500 rounded px-2 md:px-3 py-0 md:py-1 tracking-wider"
                     value={selectedGenre}
                     onChange={(e) => handleGenreChange(e.target.value)}
                   >
@@ -122,7 +122,7 @@ const Market: React.FC = () => {
 
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {books.map((book) => (
-              <li key={book.id} className="border-blue-600 border">
+              <li key={book.id} className="border-blue-600 border-2">
                 <a
                   href={`/novel/${book.id}`}
                   className="group relative block overflow-hidden"
