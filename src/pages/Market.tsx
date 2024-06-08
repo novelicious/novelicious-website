@@ -122,7 +122,10 @@ const Market: React.FC = () => {
 
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {books.map((book) => (
-              <li key={book.id} className="border-blue-600 border-2">
+              <li
+                key={book.id}
+                className="border-blue-600 border-2 flex flex-col"
+              >
                 <a
                   href={`/novel/${book.id}`}
                   className="group relative block overflow-hidden"
@@ -133,31 +136,35 @@ const Market: React.FC = () => {
                     className="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
                   />
                 </a>
-                <div className="relative border border-gray-100 bg-white p-6">
-                  <div className="flex flex-wrap gap-1">
-                    {book.genres.map((genre, index) => (
-                      <span
-                        key={index}
-                        className="text-white whitespace-nowrap bg-blue-700 px-3 py-1.5 text-xs font-medium"
-                      >
-                        <a
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleGenreChange(genre);
-                          }}
+                <div className="relative border border-gray-100 bg-white p-6 flex-grow flex flex-col justify-between">
+                  <div>
+                    <div className="flex flex-wrap gap-1">
+                      {book.genres.map((genre, index) => (
+                        <span
+                          key={index}
+                          className="text-white whitespace-nowrap bg-blue-700 px-3 py-1.5 text-xs font-medium"
                         >
-                          {genre}
-                        </a>
-                      </span>
-                    ))}
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleGenreChange(genre);
+                            }}
+                          >
+                            {genre}
+                          </a>
+                        </span>
+                      ))}
+                    </div>
+
+                    <h3 className="mt-4 text-lg font-medium text-gray-900">
+                      {book.title} ({book.release_year})
+                    </h3>
+
+                    <p className="mt-1.5 text-sm text-gray-700">
+                      {book.authors}
+                    </p>
                   </div>
-
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">
-                    {book.title} ({book.release_year})
-                  </h3>
-
-                  <p className="mt-1.5 text-sm text-gray-700">{book.authors}</p>
 
                   {isLoggedIn && (
                     <form
@@ -165,9 +172,9 @@ const Market: React.FC = () => {
                       className="mt-4"
                       method="POST"
                     >
-                      {/* <button className="text-white block w-full rounded bg-blue-700 p-4 text-sm font-medium transition hover:scale-105">
+                      <button className="text-white block w-full rounded bg-blue-700 p-4 text-sm font-medium transition hover:scale-105">
                         Add to Cart
-                      </button> */}
+                      </button>
                     </form>
                   )}
                 </div>
