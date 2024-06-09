@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
-
+import { Link } from "react-router-dom";
 interface Book {
   id: number;
   cover: string;
@@ -148,15 +148,14 @@ const Market: React.FC = () => {
                 key={book.id}
                 className="border-primary border-2 flex flex-col"
               >
-                <a
-                  href={`/novel/${book.id}`}
-                  className="group relative block overflow-hidden"
-                >
-                  <img
-                    src={book.cover}
-                    alt={book.title}
-                    className="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
-                  />
+                <a className="group relative block overflow-hidden">
+                  <Link to={`/novel/${book.id}`}>
+                    <img
+                      src={book.cover}
+                      alt={book.title}
+                      className="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
+                    />
+                  </Link>
                 </a>
                 <div className="relative border  bg-neutral p-6 flex-grow flex flex-col justify-between">
                   <div>

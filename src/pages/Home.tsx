@@ -5,7 +5,7 @@ import "aos/dist/aos.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-
+import { Link } from "react-router-dom";
 interface Book {
   id: number;
   cover: string;
@@ -53,11 +53,8 @@ const Home: React.FC = () => {
               books and foster a community where literature lovers can thrive.
             </p>
             <div className="flex justify-center">
-              <a
-                href="/market"
-                className="ml-4 inline-flex text-gray-700 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-lg"
-              >
-                Start exploring now!
+              <a className="ml-4 inline-flex text-gray-700 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-lg">
+                <Link to={`/market`}> Start exploring now!</Link>
               </a>
             </div>
           </div>
@@ -98,18 +95,8 @@ const Home: React.FC = () => {
             <div className="p-4 md:w-1/3">
               <div className="flex rounded-lg h-full bg-neutral p-8 flex-col">
                 <div className="flex items-center mb-3">
-                  <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-primary text-neutral flex-shrink-0">
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-5 h-5"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                    </svg>
+                  <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full  text-neutral flex-shrink-0">
+                    🗣️
                   </div>
                   <h2 className="text-gray-900 text-lg title-font font-medium">
                     Ask the Book Genie
@@ -142,19 +129,8 @@ const Home: React.FC = () => {
             <div className="p-4 md:w-1/3">
               <div className="flex rounded-lg h-full bg-neutral p-8 flex-col">
                 <div className="flex items-center mb-3">
-                  <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-primary text-neutral flex-shrink-0">
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-5 h-5"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
+                  <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full  text-neutral flex-shrink-0">
+                    😋
                   </div>
                   <h2 className="text-gray-900 text-lg title-font font-medium">
                     Bestsellers and New Arrivals
@@ -185,20 +161,8 @@ const Home: React.FC = () => {
             <div className="p-4 md:w-1/3">
               <div className="flex rounded-lg h-full bg-neutral p-8 flex-col">
                 <div className="flex items-center mb-3">
-                  <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-primary text-white flex-shrink-0">
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-5 h-5"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle cx="6" cy="6" r="3"></circle>
-                      <circle cx="6" cy="18" r="3"></circle>
-                      <path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"></path>
-                    </svg>
+                  <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full  text-white flex-shrink-0">
+                    🫵
                   </div>
                   <h2 className="text-gray-900 text-lg title-font font-medium">
                     Join Our Community
