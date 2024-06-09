@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
+
 interface Book {
   id: number;
   cover: string;
@@ -16,15 +17,19 @@ interface Book {
 
 const Market: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  // Filtering & Search
   const [filterData, setFilterData] = useState<Book[]>([]);
   const [selectedGenre, setSelectedGenre] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  // Pagination
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [booksPerPage] = useState<number>(5);
 
   useEffect(() => {
     AOS.init({
-      duration: 1000, // Global animation duration
-      once: false, // Only once animation
+      duration: 1000,
+      once: false,
     });
     axios
       .get("http://127.0.0.1:8000/books")
@@ -53,6 +58,7 @@ const Market: React.FC = () => {
         (selectedGenre === "" || book.genres.includes(selectedGenre))
     );
     setBooks(filteredBooks);
+    setCurrentPage(1);
   }, [searchQuery, selectedGenre, filterData]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +72,12 @@ const Market: React.FC = () => {
   const handleGenreClick = (genre: string) => {
     setSelectedGenre(genre);
   };
+
+  const indexOfLastBook = currentPage * booksPerPage;
+  const indexOfFirstBook = indexOfLastBook - booksPerPage;
+  const currentBooks = books.slice(indexOfFirstBook, indexOfLastBook);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
     <>
@@ -152,7 +164,7 @@ const Market: React.FC = () => {
             data-aos="fade-down"
             className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
           >
-            {books.map((book) => (
+            {currentBooks.map((book) => (
               <li
                 key={book.id}
                 className="border-primary border-2 flex flex-col"
@@ -168,7 +180,7 @@ const Market: React.FC = () => {
                   />
                 </Link>
 
-                <div className="relative border  bg-neutral p-6 flex-grow flex flex-col justify-between">
+                <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
                   <div>
                     <div className="flex flex-wrap gap-1">
                       {book.genres.map((genre, index) => (
@@ -214,6 +226,30 @@ const Market: React.FC = () => {
               </li>
             ))}
           </ul>
+
+          <div className="flex justify-center mt-8">
+            <nav>
+              <ul className="inline-flex items-center -space-x-px">
+                {Array.from(
+                  { length: Math.ceil(books.length / booksPerPage) },
+                  (_, index) => (
+                    <li key={index}>
+                      <button
+                        onClick={() => paginate(index + 1)}
+                        className={`px-3 py-2 ${
+                          currentPage === index + 1
+                            ? "bg-primary text-neutral"
+                            : "bg-neutral text-primary"
+                        } border-2 border-primary`}
+                      >
+                        {index + 1}
+                      </button>
+                    </li>
+                  )
+                )}
+              </ul>
+            </nav>
+          </div>
         </div>
       </section>
     </>
