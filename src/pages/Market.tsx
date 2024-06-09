@@ -148,15 +148,17 @@ const Market: React.FC = () => {
                 key={book.id}
                 className="border-primary border-2 flex flex-col"
               >
-                <a className="group relative block overflow-hidden">
-                  <Link to={`/novel/${book.id}`}>
-                    <img
-                      src={book.cover}
-                      alt={book.title}
-                      className="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
-                    />
-                  </Link>
-                </a>
+                <Link
+                  className="group relative block overflow-hidden"
+                  to={`/novel/${book.id}`}
+                >
+                  <img
+                    src={book.cover}
+                    alt={book.title}
+                    className="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
+                  />
+                </Link>
+
                 <div className="relative border  bg-neutral p-6 flex-grow flex flex-col justify-between">
                   <div>
                     <div className="flex flex-wrap gap-1">

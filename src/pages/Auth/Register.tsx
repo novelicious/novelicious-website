@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 interface RegisterState {
   username: string;
   password: string;
@@ -231,9 +231,10 @@ const Register: React.FC = () => {
 
                 <p className="mt-4 text-sm text-gray-500 sm:mt-0">
                   Already have an account?
-                  <a href="/login" className="text-gray-700 underline">
-                    Login
-                  </a>
+                  <Link className="text-gray-700 underline" to={`/login`}>
+                    {" "}
+                    Sign In
+                  </Link>
                   .
                 </p>
               </div>
