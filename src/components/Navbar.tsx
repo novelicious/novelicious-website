@@ -74,14 +74,14 @@ const Navbar: React.FC = () => {
               <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-blue-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
                 <button
                   onClick={handleSignOut}
-                  className="bg-blue-600 px-2  text-neutral"
+                  className="lg:bg-blue-600 lg:px-2 lg:text-neutral text-blue-600"
                 >
                   Sign Out
                 </button>
               </li>
             ) : (
               <li className=" relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
-                <button className="bg-primary px-2  text-neutral">
+                <button className=" lg:bg-primary lg:px-2 lg:text-neutral text-primary">
                   <Link to={`/login`}>Sign In</Link>
                 </button>
               </li>

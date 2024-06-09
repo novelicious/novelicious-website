@@ -287,7 +287,7 @@ const Home: React.FC = () => {
               <div className="px-4 pb-4">
                 <p>
                   If you encounter any issues or bugs, please report them
-                  through our support page or email us at support@bookhaven.com.
+                  through our support page or email us at ndrakita@gmail.com.
                   Our team will address the problem as soon as possible.
                 </p>
               </div>
