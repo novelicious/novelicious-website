@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
 interface Book {
   id: number;
   cover: string;
@@ -20,6 +22,10 @@ const Market: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
+    AOS.init({
+      duration: 1000, // Global animation duration
+      once: false, // Only once animation
+    });
     axios
       .get("http://127.0.0.1:8000/books")
       .then((res) => {
@@ -64,7 +70,7 @@ const Market: React.FC = () => {
   return (
     <>
       <section>
-        <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 ">
           <header className="sticky top-0 bg-neutral z-50">
             <Navbar />
             <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
@@ -142,7 +148,10 @@ const Market: React.FC = () => {
             </div>
           </header>
 
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ul
+            data-aos="fade-down"
+            className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          >
             {books.map((book) => (
               <li
                 key={book.id}

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "react-responsive-modal/styles.css";
+import { Modal } from "react-responsive-modal";
 
 const Navbar: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -17,23 +20,27 @@ const Navbar: React.FC = () => {
 
   const handleSignOut = () => {
     localStorage.removeItem("token");
+    setIsOpen(false);
     setIsLoggedIn(false);
     navigate("/");
+  };
+
+  const onCloseModal = () => {
+    setOpenModal(false);
   };
 
   return (
     <nav className="sticky top-0 bg-neutral z-50">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a
-          href="/"
-          className="flex items-center space-x-3 rtl:space-x-reverse text-2xl font-semibold  "
+        <Link
+          className="flex items-center space-x-3 rtl:space-x-reverse text-2xl font-semibold"
+          to={`/`}
         >
-          {" "}
           novel
           <span className="self-center whitespace-nowrap bg-primary text-neutral">
             icious.
           </span>
-        </a>
+        </Link>
         <button
           data-collapse-toggle="navbar-default"
           type="button"
@@ -71,17 +78,35 @@ const Navbar: React.FC = () => {
               <Link to={`/market`}>Market</Link>
             </li>
             {isLoggedIn ? (
-              <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-blue-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
+              <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-gray-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
                 <button
-                  onClick={handleSignOut}
-                  className="lg:bg-blue-600 lg:px-2 lg:text-neutral text-blue-600"
+                  className="sm:bg-gray-600 sm:px-2 sm:text-neutral "
+                  onClick={() => setOpenModal(true)}
                 >
                   Sign Out
                 </button>
+                <Modal open={openModal} onClose={onCloseModal} center>
+                  <h2 className="underline">Sign Out</h2>
+                  <p>Are you sure you want to sign out?</p>
+                  <div className="flex justify-center gap-4 mt-4">
+                    <button
+                      onClick={handleSignOut}
+                      className="bg-primary text-neutral px-4 py-2 rounded"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={onCloseModal}
+                      className="bg-gray-300 text-primary px-4 py-2 rounded"
+                    >
+                      No
+                    </button>
+                  </div>
+                </Modal>
               </li>
             ) : (
-              <li className=" relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
-                <button className=" lg:bg-primary lg:px-2 lg:text-neutral text-primary">
+              <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
+                <button className="lg:bg-primary lg:px-2 lg:text-neutral text-primary">
                   <Link to={`/login`}>Sign In</Link>
                 </button>
               </li>

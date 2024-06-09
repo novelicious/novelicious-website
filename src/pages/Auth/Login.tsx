@@ -104,7 +104,7 @@ const Login: React.FC = () => {
                     onChange={(e) =>
                       setState({ ...state, username: e.target.value })
                     }
-                    className="w-full px-3 py-2 rounded-md  border-2 focus:ring-0 focus:border-primary "
+                    className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary "
                   />
                   <div className="items-center   border-t border-gray-200">
                     <label
@@ -122,7 +122,7 @@ const Login: React.FC = () => {
                       onChange={(e) =>
                         setState({ ...state, password: e.target.value })
                       }
-                      className=" w-full rounded-md border-2 focus:ring-0 focus:border-primary "
+                      className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary "
                     />
                   </div>
                 </div>

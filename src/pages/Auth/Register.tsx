@@ -111,7 +111,7 @@ const Register: React.FC = () => {
                   onChange={(e) =>
                     setState({ ...state, username: e.target.value })
                   }
-                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary  "
+                  className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary "
                 />
               </div>
 
@@ -131,7 +131,7 @@ const Register: React.FC = () => {
                   onChange={(e) =>
                     setState({ ...state, picture: e.target.value })
                   }
-                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary "
+                  className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary "
                 />
               </div>
 
@@ -152,7 +152,7 @@ const Register: React.FC = () => {
                   onChange={(e) =>
                     setState({ ...state, birth_year: parseInt(e.target.value) })
                   }
-                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary "
+                  className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary"
                 />
               </div>
 
@@ -171,9 +171,11 @@ const Register: React.FC = () => {
                   onChange={(e) =>
                     setState({ ...state, gender: e.target.value })
                   }
-                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary "
+                  className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary "
                 >
-                  <option value="">Select Gender</option>
+                  <option value="" disabled>
+                    Select Gender
+                  </option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
@@ -197,7 +199,7 @@ const Register: React.FC = () => {
                   onChange={(e) =>
                     setState({ ...state, password: e.target.value })
                   }
-                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary "
+                  className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary"
                 />
               </div>
 
@@ -218,7 +220,7 @@ const Register: React.FC = () => {
                   onChange={(e) =>
                     setState({ ...state, confirmPassword: e.target.value })
                   }
-                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary  "
+                  className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary "
                 />
               </div>
               <div className="col-span-6 sm:flex sm:items-center sm:gap-4">

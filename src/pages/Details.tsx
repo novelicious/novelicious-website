@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
-
+import AOS from "aos";
+import "aos/dist/aos.css";
 interface Book {
   id: number;
   cover: string;
@@ -43,6 +44,10 @@ const Details: React.FC = () => {
   };
 
   useEffect(() => {
+    AOS.init({
+      duration: 1000, // Global animation duration
+      once: false, // Only once animation
+    });
     axios
       .get("http://127.0.0.1:8000/books/" + id)
       .then((res) => {
@@ -54,13 +59,13 @@ const Details: React.FC = () => {
   }, [id]);
 
   if (!book) {
-    return <p>Loading...</p>;
+    return null;
   }
 
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4 min-h-screen">
+      <div data-aos="fade-up" className="container mx-auto px-4 min-h-screen">
         <div className="flex flex-wrap justify-center">
           <div className="w-full">
             <div className="bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto my-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
@@ -85,8 +90,8 @@ const Details: React.FC = () => {
                     type="text"
                     id="question"
                     name="question"
-                    placeholder="Question"
-                    className="mt-1 w-full border-secondary shadow-sm sm:text-sm border-2 focus:ring-0 focus:border-primary"
+                    placeholder="Question..."
+                    className="w-full px-3 py-2 rounded-sm  border-2 border-gray-200 focus:ring-0 focus:border-primary "
                     value={inputQuestion}
                     onChange={(e) => setInputQuestion(e.target.value)}
                     required
