@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="sticky top-0 bg-white z-50">
+    <nav className="sticky top-0 bg-neutral z-50">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a
           href="/"
@@ -30,7 +30,7 @@ const Navbar: React.FC = () => {
         >
           {" "}
           novel
-          <span className="self-center whitespace-nowrap bg-black text-white">
+          <span className="self-center whitespace-nowrap bg-primary text-neutral">
             icious.
           </span>
         </a>
@@ -63,25 +63,25 @@ const Navbar: React.FC = () => {
           className={`${isOpen ? "block" : "hidden"} w-full md:block md:w-auto`}
           id="navbar-default"
         >
-          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white">
-            <li className="text-black relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-black after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
+          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-neutral">
+            <li className="text-primary relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
               <Link to={`/`}>Home</Link>
             </li>
-            <li className="text-black relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-black after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
+            <li className="text-primary relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
               <Link to={`/market`}>Market</Link>
             </li>
             {isLoggedIn ? (
               <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-blue-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
                 <button
                   onClick={handleSignOut}
-                  className="bg-blue-600 px-2  text-white"
+                  className="bg-blue-600 px-2  text-neutral"
                 >
                   Sign Out
                 </button>
               </li>
             ) : (
-              <li className=" relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-black after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
-                <button className="bg-black px-2  text-white">
+              <li className=" relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
+                <button className="bg-primary px-2  text-neutral">
                   <Link to={`/login`}>Sign In</Link>
                 </button>
               </li>

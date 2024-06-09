@@ -76,19 +76,11 @@ const Register: React.FC = () => {
   };
 
   return (
-    <section className="bg-white">
-      <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
-        <aside className="relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6">
-          <img
-            alt=""
-            src="https://images.unsplash.com/photo-1605106702734-205df224ecce?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        </aside>
-
-        <main className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
+    <section>
+      <div className="flex justify-center items-center min-h-screen ">
+        <main className="bg-white flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
           <div className="max-w-xl lg:max-w-3xl">
-            <a className="block text-blue-600" href="/">
+            <a className="block text-primary" href="/">
               <span className="">Home</span>
             </a>
 
@@ -114,11 +106,12 @@ const Register: React.FC = () => {
                   type="text"
                   id="username"
                   name="username"
+                  placeholder="Username"
                   value={state.username}
                   onChange={(e) =>
                     setState({ ...state, username: e.target.value })
                   }
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary  "
                 />
               </div>
 
@@ -138,7 +131,7 @@ const Register: React.FC = () => {
                   onChange={(e) =>
                     setState({ ...state, picture: e.target.value })
                   }
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary "
                 />
               </div>
 
@@ -155,10 +148,11 @@ const Register: React.FC = () => {
                   id="birth_year"
                   name="birth_year"
                   value={state.birth_year}
+                  placeholder="Birth Year"
                   onChange={(e) =>
                     setState({ ...state, birth_year: parseInt(e.target.value) })
                   }
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary "
                 />
               </div>
 
@@ -177,7 +171,7 @@ const Register: React.FC = () => {
                   onChange={(e) =>
                     setState({ ...state, gender: e.target.value })
                   }
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary "
                 >
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
@@ -199,10 +193,11 @@ const Register: React.FC = () => {
                   id="password"
                   name="password"
                   value={state.password}
+                  placeholder="********"
                   onChange={(e) =>
                     setState({ ...state, password: e.target.value })
                   }
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary "
                 />
               </div>
 
@@ -218,17 +213,18 @@ const Register: React.FC = () => {
                   type="password"
                   id="confirmPassword"
                   name="confirmPassword"
+                  placeholder="********"
                   value={state.confirmPassword}
                   onChange={(e) =>
                     setState({ ...state, confirmPassword: e.target.value })
                   }
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                  className="w-full rounded-md border-2 focus:ring-0 focus:border-primary  "
                 />
               </div>
               <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
                 <button
                   disabled={state.loading}
-                  className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
+                  className="ml-4 inline-flex text-neutral bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-900 rounded text-sm"
                 >
                   {state.loading ? "Registering..." : "Sign Up"}
                 </button>

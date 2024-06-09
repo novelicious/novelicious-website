@@ -60,7 +60,7 @@ const Details: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 min-h-screen">
         <div className="flex flex-wrap justify-center">
           <div className="w-full">
             <div className="bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto my-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
@@ -86,7 +86,7 @@ const Details: React.FC = () => {
                     id="question"
                     name="question"
                     placeholder="Question"
-                    className="mt-1 w-full border-gray-200 shadow-sm sm:text-sm "
+                    className="mt-1 w-full border-secondary shadow-sm sm:text-sm border-2 focus:ring-0 focus:border-primary"
                     value={inputQuestion}
                     onChange={(e) => setInputQuestion(e.target.value)}
                     required
@@ -103,8 +103,8 @@ const Details: React.FC = () => {
                   </button>
                 </form>
                 {question && (
-                  <div className="mt-2">
-                    <p className=" text-slate-900">Answer:</p>
+                  <div className="mt-2 mb-0">
+                    <p className=" text-primary">Answer:</p>
                     <a
                       href={`https://www.google.co.uk/search?q=${book.title}+${question.answer}`}
                       target="_blank"

@@ -6,10 +6,9 @@ import Login from "./pages/Auth/Login.tsx";
 import Details from "./pages/Details.tsx";
 import Register from "./pages/Auth/Register.tsx";
 import ProtectedPage from "./Protected.tsx";
-// import { RequireToken } from "./Auth.tsx";
 
 const App: React.FC = () => (
-  <>
+  <div className=" bg-neutral">
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -22,7 +21,7 @@ const App: React.FC = () => (
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
-  </>
+  </div>
 );
 
 export default App;
