@@ -82,7 +82,7 @@ const Market: React.FC = () => {
   return (
     <>
       <section>
-        <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 ">
+        <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
           <header className="sticky top-0 bg-neutral z-50">
             <Navbar />
             <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
@@ -228,27 +228,35 @@ const Market: React.FC = () => {
           </ul>
 
           <div className="flex justify-center mt-8">
-            <nav>
-              <ul className="inline-flex items-center -space-x-px">
-                {Array.from(
-                  { length: Math.ceil(books.length / booksPerPage) },
-                  (_, index) => (
-                    <li key={index}>
-                      <button
-                        onClick={() => paginate(index + 1)}
-                        className={`px-3 py-2 ${
-                          currentPage === index + 1
-                            ? "bg-primary text-neutral"
-                            : "bg-neutral text-primary"
-                        } border-2 border-primary`}
-                      >
-                        {index + 1}
-                      </button>
-                    </li>
-                  )
-                )}
-              </ul>
-            </nav>
+            {books.length === 0 ? (
+              <div className="text-center mt-8">
+                <p className="text-xl font-medium text-gray-700">
+                  No books found 🥸🤟
+                </p>
+              </div>
+            ) : (
+              <>
+                <ul className="inline-flex items-center -space-x-px">
+                  {Array.from(
+                    { length: Math.ceil(books.length / booksPerPage) },
+                    (_, index) => (
+                      <li key={index}>
+                        <button
+                          onClick={() => paginate(index + 1)}
+                          className={`px-3 py-2 ${
+                            currentPage === index + 1
+                              ? "bg-primary text-neutral"
+                              : "bg-neutral text-primary"
+                          } border-2 border-primary`}
+                        >
+                          {index + 1}
+                        </button>
+                      </li>
+                    )
+                  )}
+                </ul>
+              </>
+            )}
           </div>
         </div>
       </section>
