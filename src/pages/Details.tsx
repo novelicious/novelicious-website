@@ -6,7 +6,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 interface Book {
   id: number;
-  cover: string;
+  image: string;
   title: string;
   release_year: number;
   authors: string;
@@ -45,8 +45,8 @@ const Details: React.FC = () => {
 
   useEffect(() => {
     AOS.init({
-      duration: 1000, // Global animation duration
-      once: false, // Only once animation
+      duration: 1000,
+      once: false,
     });
     axios
       .get("http://127.0.0.1:8000/books/" + id)
@@ -72,7 +72,7 @@ const Details: React.FC = () => {
               <div className="w-full md:w-1/3 flex justify-center mb-4 md:mb-0">
                 <div className="p-4">
                   <img
-                    src={book.cover}
+                    src={book.image}
                     alt={book.title}
                     className="max-h-64 w-auto"
                   />

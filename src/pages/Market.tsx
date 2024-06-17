@@ -7,7 +7,7 @@ import "aos/dist/aos.css";
 
 interface Book {
   id: number;
-  cover: string;
+  image: string;
   title: string;
   release_year: number;
   authors: string;
@@ -18,13 +18,14 @@ interface Book {
 const Market: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
   // Filtering & Search
   const [filterData, setFilterData] = useState<Book[]>([]);
   const [selectedGenre, setSelectedGenre] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   // Pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [booksPerPage] = useState<number>(5);
+  const [booksPerPage] = useState<number>(8);
 
   useEffect(() => {
     AOS.init({
@@ -35,9 +36,11 @@ const Market: React.FC = () => {
       .get("http://127.0.0.1:8000/books")
       .then((res) => {
         const transformedBooks = res.data.map(
-          (book: Omit<Book, "genres"> & { genres: string }) => ({
+          (book: Omit<Book, "genres"> & { genres: string | null }) => ({
             ...book,
-            genres: book.genres.split(",").map((genre: string) => genre.trim()),
+            genres: book.genres
+              ? book.genres.split(",").map((genre: string) => genre.trim())
+              : [],
           })
         );
         setBooks(transformedBooks);
@@ -78,6 +81,23 @@ const Market: React.FC = () => {
   const currentBooks = books.slice(indexOfFirstBook, indexOfLastBook);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const totalPages = Math.ceil(books.length / booksPerPage);
+  const pageNumbers = [];
+
+  const maxPageNumbersToShow = 5;
+  let startPage = Math.max(
+    1,
+    currentPage - Math.floor(maxPageNumbersToShow / 2)
+  );
+  let endPage = Math.min(totalPages, startPage + maxPageNumbersToShow - 1);
+
+  if (endPage - startPage + 1 < maxPageNumbersToShow) {
+    startPage = Math.max(1, endPage - maxPageNumbersToShow + 1);
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <>
@@ -114,7 +134,7 @@ const Market: React.FC = () => {
 
                 <div className="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
                   <select
-                    className="w-full h-10 border-2 focus:ring-0 focus:border-primary text-primary rounded px-2 md:px-3 py-0 md:py-1 tracking-wider"
+                    className="w-full h-10 border-2 border-secondary  focus:ring-0 focus:border-primary text-primary rounded px-2 md:px-3 py-0 md:py-1 tracking-wider"
                     value={selectedGenre}
                     onChange={(e) => handleGenreChange(e.target.value)}
                   >
@@ -161,22 +181,23 @@ const Market: React.FC = () => {
           </header>
 
           <ul
-            data-aos="fade-down"
+            data-aos-anchor-placement="center-bottom"
             className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
           >
             {currentBooks.map((book) => (
               <li
                 key={book.id}
                 className="border-primary border-2 flex flex-col"
+                data-aos="zoom-in"
               >
                 <Link
-                  className="group relative block overflow-hidden"
                   to={`/novel/${book.id}`}
+                  className="h-[320px] group relative block overflow-hidden"
                 >
                   <img
-                    src={book.cover}
+                    src={book.image}
                     alt={book.title}
-                    className="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
+                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
                   />
                 </Link>
 
@@ -230,30 +251,96 @@ const Market: React.FC = () => {
           <div className="flex justify-center mt-8">
             {books.length === 0 ? (
               <div className="text-center mt-8">
-                <p className="text-xl font-medium text-gray-700">
-                  No books found 🥸🤟
-                </p>
+                <div className="flex justify-center items-center h-96">
+                  <div
+                    className="spinner-border border-primary animate-spin inline-block w-8 h-8 border-4 rounded-full"
+                    role="status"
+                  >
+                    <span className="visually-hidden">:v</span>
+                  </div>
+                </div>
               </div>
             ) : (
               <>
                 <ul className="inline-flex items-center -space-x-px">
-                  {Array.from(
-                    { length: Math.ceil(books.length / booksPerPage) },
-                    (_, index) => (
-                      <li key={index}>
+                  <li>
+                    <button
+                      onClick={() => paginate(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className={`px-3 py-2 border-2 ${
+                        currentPage === 1
+                          ? "border-gray-300 text-gray-400 cursor-not-allowed"
+                          : "border-primary text-primary hover:bg-primary hover:text-neutral"
+                      }`}
+                    >
+                      Previous
+                    </button>
+                  </li>
+
+                  {startPage > 1 && (
+                    <>
+                      <li>
                         <button
-                          onClick={() => paginate(index + 1)}
-                          className={`px-3 py-2 ${
-                            currentPage === index + 1
-                              ? "bg-primary text-neutral"
-                              : "bg-neutral text-primary"
-                          } border-2 border-primary`}
+                          onClick={() => paginate(1)}
+                          className="px-3 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-neutral"
                         >
-                          {index + 1}
+                          1
                         </button>
                       </li>
-                    )
+                      <li>
+                        <span className="px-3 py-2 border-2 border-transparent text-primary">
+                          ...
+                        </span>
+                      </li>
+                    </>
                   )}
+
+                  {pageNumbers.map((number) => (
+                    <li key={number}>
+                      <button
+                        onClick={() => paginate(number)}
+                        className={`px-3 py-2 border-2 ${
+                          currentPage === number
+                            ? "bg-primary text-neutral border-primary"
+                            : "border-primary text-primary hover:bg-primary hover:text-neutral"
+                        }`}
+                      >
+                        {number}
+                      </button>
+                    </li>
+                  ))}
+
+                  {endPage < totalPages && (
+                    <>
+                      <li>
+                        <span className="px-3 py-2 border-2 border-transparent text-primary">
+                          ...
+                        </span>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => paginate(totalPages)}
+                          className="px-3 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-neutral"
+                        >
+                          {totalPages}
+                        </button>
+                      </li>
+                    </>
+                  )}
+
+                  <li>
+                    <button
+                      onClick={() => paginate(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className={`px-3 py-2 border-2 ${
+                        currentPage === totalPages
+                          ? "border-gray-300 text-gray-400 cursor-not-allowed"
+                          : "border-primary text-primary hover:bg-primary hover:text-neutral"
+                      }`}
+                    >
+                      Next
+                    </button>
+                  </li>
                 </ul>
               </>
             )}

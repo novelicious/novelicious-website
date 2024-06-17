@@ -1,27 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import AOS from "aos";
-import axios from "axios";
+
 import "aos/dist/aos.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
-interface Book {
-  id: number;
-  cover: string;
-  title: string;
-  release_year: number;
-  authors: string;
-  genres: string[];
-  cost: number;
-}
 
 const Home: React.FC = () => {
-  const [books, setBooks] = useState<Book[]>([]);
+  const imageUrls = [
+    "https://m.media-amazon.com/images/I/81iDNjn-r3L._AC_UF1000,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/81DLO7AyKPL._AC_UF1000,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71CfDuCROZL.jpg",
+  ];
+
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/books").then((res) => {
-      setBooks(res.data);
-    });
     AOS.init({
       duration: 1000, // Global animation duration
       once: false, // Only once animation
@@ -67,12 +60,12 @@ const Home: React.FC = () => {
             data-carousel="slide"
           >
             <Slider {...settings}>
-              {books.map((book) => (
-                <div key={book.id}>
+              {imageUrls.map((url, index) => (
+                <div key={index}>
                   <img
-                    className="object-cover object-center rounded"
-                    alt={book.title}
-                    src={book.cover}
+                    className="object-cover object-center h-[80vh]"
+                    alt={`Slide ${index + 1}`}
+                    src={url}
                   />
                 </div>
               ))}
@@ -203,11 +196,11 @@ const Home: React.FC = () => {
           <div className="grid grid-cols-1 lg:h-screen lg:grid-cols-2">
             <div className="relative z-10 lg:py-16">
               <div className="relative h-64 sm:h-80 lg:h-full">
-                <img
-                  alt=""
-                  src="https://i.pinimg.com/736x/63/05/34/630534609ef529522ff22e5a152937c0.jpg"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
+                {/* <img
+                    alt=""
+                    src="https://i.pinimg.com/736x/63/05/34/630534609ef529522ff22e5a152937c0.jpg"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  /> */}
               </div>
             </div>
 
@@ -230,11 +223,11 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <section
-        data-aos="zoom-in"
-        className="bg-primary text-neutral py-32 min-h-screen"
-      >
-        <div className="container flex flex-col justify-center p-4 mx-auto md:p-8">
+      <section className="bg-primary text-neutral py-32 min-h-screen">
+        <div
+          data-aos="zoom-in"
+          className="container flex flex-col justify-center p-4 mx-auto md:p-8"
+        >
           <h2 className="mb-12 text-4xl font-bold leadi text-center sm:text-5xl">
             Frequently Asked Questions
           </h2>
