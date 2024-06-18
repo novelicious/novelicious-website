@@ -20,6 +20,7 @@ const Navbar: React.FC = () => {
 
   const handleSignOut = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user_id");
     setIsOpen(false);
     setIsLoggedIn(false);
     navigate("/");
@@ -78,32 +79,37 @@ const Navbar: React.FC = () => {
               <Link to={`/market`}>Market</Link>
             </li>
             {isLoggedIn ? (
-              <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-gray-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
-                <button
-                  className="sm:bg-gray-600 sm:px-2 sm:text-neutral "
-                  onClick={() => setOpenModal(true)}
-                >
-                  Sign Out
-                </button>
-                <Modal open={openModal} onClose={onCloseModal} center>
-                  <h2 className="underline">Sign Out</h2>
-                  <p>Are you sure you want to sign out?</p>
-                  <div className="flex justify-center gap-4 mt-4">
-                    <button
-                      onClick={handleSignOut}
-                      className="bg-primary text-neutral px-4 py-2 rounded"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={onCloseModal}
-                      className="bg-gray-300 text-primary px-4 py-2 rounded"
-                    >
-                      No
-                    </button>
-                  </div>
-                </Modal>
-              </li>
+              <>
+                <li className="text-primary relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
+                  <Link to={`/for-you`}>For You</Link>
+                </li>
+                <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-gray-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
+                  <button
+                    className="sm:bg-gray-600 sm:px-2 sm:text-neutral "
+                    onClick={() => setOpenModal(true)}
+                  >
+                    Sign Out
+                  </button>
+                  <Modal open={openModal} onClose={onCloseModal} center>
+                    <h2 className="underline">Sign Out</h2>
+                    <p>Are you sure you want to sign out?</p>
+                    <div className="flex justify-center gap-4 mt-4">
+                      <button
+                        onClick={handleSignOut}
+                        className="bg-primary text-neutral px-4 py-2 rounded"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        onClick={onCloseModal}
+                        className="bg-gray-300 text-primary px-4 py-2 rounded"
+                      >
+                        No
+                      </button>
+                    </div>
+                  </Modal>
+                </li>
+              </>
             ) : (
               <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
                 <button className="lg:bg-primary lg:px-2 lg:text-neutral text-primary">

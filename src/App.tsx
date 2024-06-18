@@ -4,6 +4,7 @@ import Home from "./pages/Home.tsx";
 import Market from "./pages/Market.tsx";
 import Login from "./pages/Auth/Login.tsx";
 import Details from "./pages/Details.tsx";
+import Recommendation from "./pages/Recommendation.tsx";
 import Register from "./pages/Auth/Register.tsx";
 import ProtectedPage from "./Protected.tsx";
 
@@ -17,6 +18,7 @@ const App: React.FC = () => (
         <Route path="/register" element={<Register />}></Route>
         <Route path="/novel/:id" element={<Details />}></Route>
         <Route path="/ask/:id" element={<Details />}></Route>
+        <Route path="/for-you" element={<Recommendation />}></Route>
         <Route path="/protected" element={<ProtectedPage />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
