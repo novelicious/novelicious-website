@@ -21,8 +21,9 @@ const Market: React.FC = () => {
 
   // Filtering & Search
   const [filterData, setFilterData] = useState<Book[]>([]);
-  const [selectedGenre, setSelectedGenre] = useState<string>("");
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+
   // Pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [booksPerPage] = useState<number>(8);
@@ -58,22 +59,35 @@ const Market: React.FC = () => {
     const filteredBooks = filterData.filter(
       (book) =>
         book.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        (selectedGenre === "" || book.genres.includes(selectedGenre))
+        (selectedGenres.length === 0 ||
+          selectedGenres.every((genre) => book.genres.includes(genre)))
     );
     setBooks(filteredBooks);
     setCurrentPage(1);
-  }, [searchQuery, selectedGenre, filterData]);
+  }, [searchQuery, selectedGenres, filterData]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
   const handleGenreChange = (genre: string) => {
-    setSelectedGenre(genre);
+    setSelectedGenres((prevGenres) =>
+      prevGenres.includes(genre)
+        ? prevGenres.filter((g) => g !== genre)
+        : [...prevGenres, genre]
+    );
   };
 
   const handleGenreClick = (genre: string) => {
-    setSelectedGenre(genre);
+    setSelectedGenres((prevGenres) =>
+      prevGenres.includes(genre)
+        ? prevGenres.filter((g) => g !== genre)
+        : [...prevGenres, genre]
+    );
+  };
+
+  const clearGenres = () => {
+    setSelectedGenres([]);
   };
 
   const indexOfLastBook = currentPage * booksPerPage;
@@ -135,10 +149,12 @@ const Market: React.FC = () => {
                 <div className="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
                   <select
                     className="w-full h-10 border-2 border-secondary  focus:ring-0 focus:border-primary text-primary rounded px-2 md:px-3 py-0 md:py-1 tracking-wider"
-                    value={selectedGenre}
                     onChange={(e) => handleGenreChange(e.target.value)}
+                    value=""
                   >
-                    <option value="">All Genres</option>
+                    <option value="" disabled>
+                      Select Genre
+                    </option>
                     <option value="Fantasy">Fantasy</option>
                     <option value="Sci-Fi">Sci-Fi</option>
                     <option value="Romance">Romance</option>
@@ -179,7 +195,32 @@ const Market: React.FC = () => {
               </div>
             </div>
           </header>
-
+          <div className="flex flex-wrap gap-2">
+            {selectedGenres.map((genre, index) => (
+              <span
+                data-aos="zoom-in"
+                key={index}
+                className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
+              >
+                {genre}
+                <button
+                  className="ml-2"
+                  onClick={() => handleGenreChange(genre)}
+                >
+                  &times;
+                </button>
+              </span>
+            ))}
+          </div>
+          {selectedGenres.length > 0 && (
+            <button
+              data-aos="fade-in"
+              className="mt-2 text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
+              onClick={clearGenres}
+            >
+              Clear Genres
+            </button>
+          )}
           <ul
             data-aos-anchor-placement="center-bottom"
             className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
