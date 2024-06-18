@@ -165,10 +165,11 @@ const Market: React.FC = () => {
                     <option value="Drama">Drama</option>
                     <option value="School">School</option>
                     <option value="Vampires">Vampire</option>
+                    {/* add lagi aja ntar */}
                   </select>
 
                   {isLoggedIn && (
-                    <a href="">
+                    <Link to={`/cart`}>
                       <div className="relative py-2">
                         <div className="t-0 absolute left-3">
                           <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-neutral">
@@ -189,7 +190,7 @@ const Market: React.FC = () => {
                           />
                         </svg>
                       </div>
-                    </a>
+                    </Link>
                   )}
                 </div>
               </div>
