@@ -51,7 +51,7 @@ const Market: React.FC = () => {
         console.log(err);
       });
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, []);
 

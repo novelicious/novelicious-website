@@ -10,7 +10,7 @@ const Navbar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, []);
 
@@ -19,8 +19,8 @@ const Navbar: React.FC = () => {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user_id");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user_id");
     setIsOpen(false);
     setIsLoggedIn(false);
     navigate("/");

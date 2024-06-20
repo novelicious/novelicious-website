@@ -20,8 +20,8 @@ const Recommendation: React.FC = () => {
 
   useEffect(() => {
     const fetchRecommendations = async () => {
-      const userId = localStorage.getItem("user_id");
-      const token = localStorage.getItem("token");
+      const userId = sessionStorage.getItem("user_id");
+      const token = sessionStorage.getItem("token");
 
       if (!userId || !token) {
         setError("User not authenticated");

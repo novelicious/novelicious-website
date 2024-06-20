@@ -49,8 +49,8 @@ const Login: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem("token", data.access_token);
-        localStorage.setItem("user_id", data.user_id);
+        sessionStorage.setItem("token", data.access_token);
+        sessionStorage.setItem("user_id", data.user_id);
         navigate("/market");
       } else {
         const errorData = await response.json();
