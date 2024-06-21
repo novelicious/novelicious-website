@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import {CartProps, CartItemProps} from "./Cart";
 
 interface Book {
   id: number;
@@ -27,6 +28,10 @@ const Market: React.FC = () => {
   // Pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [booksPerPage] = useState<number>(8);
+
+  //Isi Cart
+  const [cartAmount, setCartAmount] = useState<number>(0);
+
 
   useEffect(() => {
     AOS.init({
@@ -69,6 +74,28 @@ const Market: React.FC = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
+  useEffect(()=>{
+    const userId = sessionStorage.getItem("user_id");
+     axios.get("http://127.0.0.1:8000/users/"+userId+"/cart")
+     .then((res) => {
+      const cartData = res.data;
+      setCartAmount(getCartAmount(cartData));
+    })
+    .catch((err) => {
+      console.log(err);
+    });;
+
+  }, [])
+  function getCartAmount(cart: CartProps){
+    if(cart == null) return 0;
+    var amount = 0;
+    var books : CartItemProps[] = cart.books;
+    books.forEach(book => {
+      amount += book.amount;
+    }); 
+    return amount;
+  }
+
 
   const handleGenreChange = (genre: string) => {
     setSelectedGenres((prevGenres) =>
@@ -84,6 +111,18 @@ const Market: React.FC = () => {
         ? prevGenres.filter((g) => g !== genre)
         : [...prevGenres, genre]
     );
+  };
+  const addToCartHandler = (bookId : number, quantity : number)=>{
+    
+    const userId = sessionStorage.getItem("user_id");
+    axios.post("http://127.0.0.1:8000/carts/add", null, {params :{
+      "book_id":bookId,
+      "user_id":userId,
+      "amount":quantity
+    }});
+    setCartAmount(cartAmount + quantity);
+
+
   };
 
   const clearGenres = () => {
@@ -111,6 +150,43 @@ const Market: React.FC = () => {
 
   for (let i = startPage; i <= endPage; i++) {
     pageNumbers.push(i);
+  }
+  const Add2CartButton : React.FC<Book> = ({id})=>{
+    const [clicked, setClicked] = useState<boolean>(false);
+    const [quantity, setQuantity] = useState<number>(1);
+    if(!clicked)return (
+    <button
+      onClick={()=>{setClicked(true);}} 
+      className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition hover:scale-105">
+        Add to Cart
+    </button>
+    )
+    else return(
+      <div className="flex">
+      <button
+        onClick={()=>{setClicked(false);}} 
+        className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition hover:scale-105">
+          X
+      </button>
+      <input type="number" min= "1"
+      id={`qty-${id}`}
+      defaultValue={quantity}
+      onChange={(e)=>{setQuantity(parseInt(e.target.value));}}
+      className="h-full w-full items-center justify-center rounded block border-gray-200 bg-gray-50 p-2 text-center text-large text-gray-600 [-moz-appearance:_textfield] focus:outline-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+      />
+      <button
+        onClick={()=>{
+          addToCartHandler(id, quantity); 
+          setClicked(false);
+        }} 
+        className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition hover:scale-105">
+          OK
+      </button>
+
+      </div>
+
+    );
+      
   }
 
   return (
@@ -173,7 +249,7 @@ const Market: React.FC = () => {
                       <div className="relative py-2">
                         <div className="t-0 absolute left-3">
                           <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-neutral">
-                            0
+                            {cartAmount}
                           </p>
                         </div>
                         <svg
@@ -275,15 +351,7 @@ const Market: React.FC = () => {
                   </div>
 
                   {isLoggedIn && (
-                    <form
-                      action={`/carts/add/${book.id}`}
-                      className="mt-4"
-                      method="POST"
-                    >
-                      <button className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition hover:scale-105">
-                        Add to Cart
-                      </button>
-                    </form>
+                    <Add2CartButton id={book.id} image={book.image} title={book.title} release_year={book.release_year} authors={book.authors} genres={book.genres} cost={book.cost} ></Add2CartButton>
                   )}
                 </div>
               </li>
