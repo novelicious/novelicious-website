@@ -171,7 +171,7 @@ const Market: React.FC = () => {
         onClick={
           ()=>{setClicked(!clicked);}
         } 
-        className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105">
+        className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105 active:scale-95">
           {clicked? "X" : "Buy"}
       </button>
       <div className={size+" h-full transition-all duration:500 ease-in-out"}>
@@ -187,7 +187,7 @@ const Market: React.FC = () => {
           setClicked(false);
           addToCartHandler(id, quantity); 
         }} 
-        className={size + " text-neutral block rounded bg-primary" + (clicked? " p-4 " : " p-0 ") + "text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105"}>
+        className={size + " text-neutral block rounded bg-primary" + (clicked? " p-4 " : " p-0 ") + "text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"}>
           {clicked? "OK" : ""}
       </button>
 
