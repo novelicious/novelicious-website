@@ -120,7 +120,10 @@ const Market: React.FC = () => {
       "user_id":userId,
       "amount":quantity
     }});
-    setCartAmount(cartAmount + quantity);
+    setTimeout(()=>{
+      setCartAmount(cartAmount + quantity);
+
+    }, 300);
 
 
   };
@@ -154,33 +157,38 @@ const Market: React.FC = () => {
   const Add2CartButton : React.FC<Book> = ({id})=>{
     const [clicked, setClicked] = useState<boolean>(false);
     const [quantity, setQuantity] = useState<number>(1);
-    if(!clicked)return (
+    /*if(!clicked)return (
     <button
       onClick={()=>{setClicked(true);}} 
       className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition hover:scale-105">
         Add to Cart
     </button>
-    )
-    else return(
+    )*/
+   var size = clicked? "w-full" : "w-0"
+    return(
       <div className="flex">
-      <button
-        onClick={()=>{setClicked(false);}} 
-        className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition hover:scale-105">
-          X
+      <button 
+        onClick={
+          ()=>{setClicked(!clicked);}
+        } 
+        className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105">
+          {clicked? "X" : "Buy"}
       </button>
-      <input type="number" min= "1"
-      id={`qty-${id}`}
-      defaultValue={quantity}
-      onChange={(e)=>{setQuantity(parseInt(e.target.value));}}
-      className="h-full w-full items-center justify-center rounded block border-gray-200 bg-gray-50 p-2 text-center text-large text-gray-600 [-moz-appearance:_textfield] focus:outline-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
-      />
+      <div className={size+" h-full transition-all duration:500 ease-in-out"}>
+        <input type="number" min= "1"
+        id={`qty-${id}`}
+        defaultValue={quantity}
+        onChange={(e)=>{setQuantity(parseInt(e.target.value));}}
+        className="w-full h-full items-center justify-center rounded block border-gray-200 bg-gray-50 p-2 text-center text-large text-gray-600 [-moz-appearance:_textfield] focus:outline-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+        />
+      </div>
       <button
         onClick={()=>{
-          addToCartHandler(id, quantity); 
           setClicked(false);
+          addToCartHandler(id, quantity); 
         }} 
-        className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition hover:scale-105">
-          OK
+        className={size + " text-neutral block rounded bg-primary" + (clicked? " p-4 " : " p-0 ") + "text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105"}>
+          {clicked? "OK" : ""}
       </button>
 
       </div>
