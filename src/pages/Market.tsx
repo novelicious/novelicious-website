@@ -253,7 +253,7 @@ const Market: React.FC = () => {
                   </select>
 
                   {isLoggedIn && (
-                    <Link to={`/cart`}>
+                    <Link to={`/cart`} className={cartAmount == 0? "cursor-not-allowed": ""} onClick={ (event) => {if(cartAmount == 0){event.preventDefault();} }}>
                       <div className="relative py-2">
                         <div className="t-0 absolute left-3">
                           <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-neutral">

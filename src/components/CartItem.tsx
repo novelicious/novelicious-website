@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface CartItemProps {
     id: number;
@@ -31,12 +32,18 @@ const CartItem: React.FC<CartItemProps> = ({ id, title, authors, image, genres, 
     
 
   return (
+    
+
     <li className="flex items-center gap-4">
-      <img
-        src={image}
-        alt={title}
-        className="size-16 rounded object-cover"
-      />
+        <Link
+        to={`/novel/${id}`}
+        className='flex items-center gap-4 w-full h-full origin-left transition-all duration:500 ease-in-out hover:scale-105 active:scale-95'
+        >
+        <img
+          src={image}
+          alt={title}
+          className="size-16 rounded object-cover"
+        />
       <div>
         <h3 className="text-sm text-gray-900">{title}</h3>
         <dl className="mt-0.5 space-y-px text-[10px] text-gray-600">
@@ -50,6 +57,7 @@ const CartItem: React.FC<CartItemProps> = ({ id, title, authors, image, genres, 
           </div>
         </dl>
       </div>
+      </Link>
       <div className="flex flex-1 items-center justify-end gap-2">
         <form>
           <label htmlFor={`qty-${id}`} className="sr-only">
