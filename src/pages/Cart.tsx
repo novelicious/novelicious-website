@@ -19,6 +19,7 @@ export interface CartProps {
 
 const Cart: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const [cart, setCart] = useState<CartProps>();
   const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
   const navigate = useNavigate();
   const userId = sessionStorage.getItem("user_id");
@@ -29,6 +30,7 @@ const Cart: React.FC = () => {
         const cartData = res.data;
         console.log(res);
         console.log(res.data);
+        setCart(cartData);
         setCartItems(cartData.books);
         setLoading(false);
       })
@@ -62,7 +64,7 @@ const Cart: React.FC = () => {
       });
   };
 
-  const subtotal = 200; //cartItems.reduce((acc, item) => acc + item.amount * 200, 0); // Replace 200 with actual item cost
+  const subtotal = cart?.amount; //cartItems.reduce((acc, item) => acc + item.amount * 200, 0); // Replace 200 with actual item cost
   const total = subtotal;
 
   return (
