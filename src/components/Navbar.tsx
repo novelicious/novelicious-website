@@ -29,7 +29,6 @@ const Navbar: React.FC = () => {
   const onCloseModal = () => {
     setOpenModal(false);
   };
-
   return (
     <nav className="sticky top-0 bg-neutral z-50">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -82,6 +81,9 @@ const Navbar: React.FC = () => {
               <>
                 <li className="text-primary relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
                   <Link to={`/for-you`}>For You</Link>
+                </li>
+                <li className="text-primary relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
+                  <Link to={`/for-you`}>Account</Link>
                 </li>
                 <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-gray-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
                   <button
