@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { CartProps, CartItemProps } from "./Cart";
-
+import { AiOutlineShoppingCart } from "react-icons/ai";
 interface Book {
   id: number;
   image: string;
@@ -93,15 +93,14 @@ const Market: React.FC = () => {
       .catch((err) => {
         console.log(err);
       });
-    
+
     axios
       .get("http://127.0.0.1:8000/users/" + userId + "/favorites")
       .then((res) => {
         const response = res.data;
-        const ids : number[] = [];
-        response.forEach((element: { id: number; }) => {
+        const ids: number[] = [];
+        response.forEach((element: { id: number }) => {
           ids.push(element.id);
-          
         });
         setFavs(ids);
       })
@@ -286,22 +285,7 @@ const Market: React.FC = () => {
             <Navbar />
             <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
               <div className=" sm:flex sm:items-center sm:justify-between">
-                <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-4">
-                    <svg
-                      className="text-gray-600 h-4 w-4 fill-current"
-                      xmlns="http://www.w3.org/2000/svg"
-                      version="1.1"
-                      id="Capa_1"
-                      x="0px"
-                      y="0px"
-                      viewBox="0 0 56.966 56.966"
-                      width="512px"
-                      height="512px"
-                    >
-                      <path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
-                    </svg>
-                  </div>
+                <div className=" w-full">
                   <input
                     type="text"
                     className="w-full md:w-80 px-10 h-10 rounded-l border-2 border-secondary  focus:ring-0 focus:border-primary"
@@ -343,58 +327,49 @@ const Market: React.FC = () => {
                         }
                       }}
                     >
-                      <div className="relative py-2">
-                        <div className="t-0 absolute left-3">
+                      <div className="py-2">
+                        <div className="t-0 left-3">
                           <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-neutral">
                             {cartAmount}
                           </p>
                         </div>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="currentColor"
-                          className="file: mt-4 h-6 w-6"
-                        >
-                          <path
-                            strokeLinejoin="round"
-                            d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-                          />
-                        </svg>
+                        <AiOutlineShoppingCart />
                       </div>
                     </Link>
                   )}
                 </div>
               </div>
+              <>
+                <div className="flex flex-wrap gap-2">
+                  {selectedGenres.map((genre, index) => (
+                    <span
+                      data-aos="zoom-in"
+                      key={index}
+                      className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
+                    >
+                      {genre}
+                      <button
+                        className="ml-2"
+                        onClick={() => handleGenreChange(genre)}
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                {selectedGenres.length > 0 && (
+                  <button
+                    data-aos="fade-in"
+                    className="mt-2 text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
+                    onClick={clearGenres}
+                  >
+                    Clear Genres
+                  </button>
+                )}
+              </>
             </div>
           </header>
-          <div className="flex flex-wrap gap-2">
-            {selectedGenres.map((genre, index) => (
-              <span
-                data-aos="zoom-in"
-                key={index}
-                className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
-              >
-                {genre}
-                <button
-                  className="ml-2"
-                  onClick={() => handleGenreChange(genre)}
-                >
-                  &times;
-                </button>
-              </span>
-            ))}
-          </div>
-          {selectedGenres.length > 0 && (
-            <button
-              data-aos="fade-in"
-              className="mt-2 text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
-              onClick={clearGenres}
-            >
-              Clear Genres
-            </button>
-          )}
+
           <ul
             data-aos-anchor-placement="center-bottom"
             className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
@@ -438,18 +413,16 @@ const Market: React.FC = () => {
                           </span>
                         ))}
                       </div>
-                      {isLoggedIn?
-                        (
-                          
-                            <Star
-                            toggled={favs.includes(book.id)}
-                            bookId={book.id}
-                            onToggled={() => onStarToggledHandler(book.id)}
-                            onUntoggled={() => onUntoggledHandler(book.id)}
-                          />
-                        ):(<></>)
-
-                      }
+                      {isLoggedIn ? (
+                        <Star
+                          toggled={favs.includes(book.id)}
+                          bookId={book.id}
+                          onToggled={() => onStarToggledHandler(book.id)}
+                          onUntoggled={() => onUntoggledHandler(book.id)}
+                        />
+                      ) : (
+                        <></>
+                      )}
                     </div>
 
                     <h3 className="mt-4 text-lg font-medium text-gray-900">
@@ -485,7 +458,7 @@ const Market: React.FC = () => {
                     className="spinner-border border-primary animate-spin inline-block w-8 h-8 border-4 rounded-full"
                     role="status"
                   >
-                    <span className="visually-hidden">:v</span>
+                    <span className="visually-hidden">🥸</span>
                   </div>
                 </div>
               </div>

@@ -68,8 +68,8 @@ const Recommendation: React.FC = () => {
 
   return (
     <>
-      <Navbar />
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
+        <Navbar />
         <h1 className=" text-lg font-semibold underline">
           Our Recommendations 🫣
         </h1>
@@ -81,7 +81,7 @@ const Recommendation: React.FC = () => {
                   className="spinner-border border-primary animate-spin inline-block w-8 h-8 border-4 rounded-full"
                   role="status"
                 >
-                  <span className="visually-hidden">😋</span>
+                  <span className="visually-hidden">🥸</span>
                 </div>
               </div>
             </div>
@@ -100,7 +100,7 @@ const Recommendation: React.FC = () => {
               >
                 <Link
                   to={`/novel/${rec.id}`}
-                  className="h-[320px] group relative block overflow-hidden"
+                  className="h-[320px] group  block overflow-hidden"
                 >
                   <img
                     src={rec.image}
@@ -109,7 +109,7 @@ const Recommendation: React.FC = () => {
                   />
                 </Link>
 
-                <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
+                <div className=" border bg-neutral p-6 flex-grow flex flex-col justify-between">
                   <div>
                     <h3 className="mt-4 text-lg font-medium text-gray-900">
                       {rec.title} ({rec.release_year})

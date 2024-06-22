@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import AOS from "aos";
 import "aos/dist/aos.css";
 interface Book {
@@ -64,7 +63,7 @@ const Details: React.FC = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <div data-aos="fade-up" className="container mx-auto px-4 min-h-screen">
         <div className="flex flex-wrap justify-center">
           <div className="w-full  ">

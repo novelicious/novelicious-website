@@ -3,9 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 
+import { FiMenu } from "react-icons/fi";
+import { IoCloseOutline } from "react-icons/io5";
+import clsx from "clsx";
+
 const Navbar: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState(false);
+
+  const [isSideMenuOpen, setMenu] = useState(false);
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
 
@@ -14,14 +19,10 @@ const Navbar: React.FC = () => {
     setIsLoggedIn(!!token);
   }, []);
 
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
-
   const handleSignOut = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("user_id");
-    setIsOpen(false);
+
     setIsLoggedIn(false);
     navigate("/");
   };
@@ -29,99 +30,122 @@ const Navbar: React.FC = () => {
   const onCloseModal = () => {
     setOpenModal(false);
   };
+
+  const navlinks = [
+    {
+      label: "Home",
+      link: "/",
+    },
+    {
+      label: "Market",
+      link: "/market",
+    },
+    {
+      label: "For You",
+      link: "/for-you",
+    },
+  ];
+
   return (
-    <nav className="sticky top-0 bg-neutral z-50">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <Link
-          className="flex items-center space-x-3 rtl:space-x-reverse text-2xl font-semibold"
-          to={`/`}
-        >
-          novel
-          <span className="self-center whitespace-nowrap bg-primary text-neutral">
-            icious.
-          </span>
-        </Link>
-        <button
-          data-collapse-toggle="navbar-default"
-          type="button"
-          className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
-          aria-controls="navbar-default"
-          aria-expanded={isOpen}
-          onClick={handleToggle}
-        >
-          <span className="sr-only">Open main menu</span>
-          <svg
-            className="w-5 h-5"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 17 14"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M1 1h15M1 7h15M1 13h15"
+    <nav className="flex justify-between px-8 items-center py-6   ">
+      <div className="flex items-center gap-8">
+        <section className="flex items-center gap-4">
+          {/* menu */}
+          <FiMenu
+            onClick={() => setMenu(true)}
+            className="text-3xl cursor-pointer lg:hidden"
+          />
+          {/* logo */}
+          <Link to={"/"} className="flex gap-x-2 text-4xl font-mono">
+            <img
+              src=" ./public/novelicious.png"
+              alt="novelicious"
+              className=" object-fit h-11"
             />
-          </svg>
-        </button>
-        <div
-          className={`${isOpen ? "block" : "hidden"} w-full md:block md:w-auto`}
-          id="navbar-default"
-        >
-          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-neutral">
-            <li className="text-primary relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
-              <Link to={`/`}>Home</Link>
-            </li>
-            <li className="text-primary relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
-              <Link to={`/market`}>Market</Link>
-            </li>
-            {isLoggedIn ? (
-              <>
-                <li className="text-primary relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
-                  <Link to={`/for-you`}>For You</Link>
-                </li>
-                <li className="text-primary relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
-                  <Link to={`/for-you`}>Account</Link>
-                </li>
-                <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-gray-600 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
-                  <button
-                    className="sm:bg-gray-600 sm:px-2 sm:text-neutral "
-                    onClick={() => setOpenModal(true)}
-                  >
-                    Sign Out
-                  </button>
-                  <Modal open={openModal} onClose={onCloseModal} center>
-                    <h2 className="underline">Sign Out</h2>
-                    <p>Are you sure you want to sign out?</p>
-                    <div className="flex justify-center gap-4 mt-4">
-                      <button
-                        onClick={handleSignOut}
-                        className="bg-primary text-neutral px-4 py-2 rounded"
-                      >
-                        Yes
-                      </button>
-                      <button
-                        onClick={onCloseModal}
-                        className="bg-gray-300 text-primary px-4 py-2 rounded"
-                      >
-                        No
-                      </button>
-                    </div>
-                  </Modal>
-                </li>
-              </>
-            ) : (
-              <li className="relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left">
-                <button className="lg:bg-primary lg:px-2 lg:text-neutral text-primary">
-                  <Link to={`/login`}>Sign In</Link>
-                </button>
-              </li>
-            )}
-          </ul>
-        </div>
+            <p className="text-[1.5rem]">
+              novel<span className=" text-neutral bg-primary">icious</span>
+            </p>
+          </Link>
+        </section>
+        {navlinks.map((d, i) => (
+          <Link
+            key={i}
+            className="hidden lg:block  text-gray-400 hover:text-black"
+            to={d.link}
+          >
+            {d.label}
+          </Link>
+        ))}
       </div>
+
+      {/* sidebar mobile menu */}
+      <div
+        className={clsx(
+          " fixed h-full w-screen lg:hidden bg-black/50  backdrop-blur-sm top-0 right-0  -translate-x-full  transition-all ",
+          isSideMenuOpen && "translate-x-0"
+        )}
+      >
+        <section className="text-black bg-white flex-col absolute left-0 top-0 h-screen p-8 gap-8 z-50 w-56 flex  ">
+          <IoCloseOutline
+            onClick={() => setMenu(false)}
+            className="mt-0 mb-8 text-3xl cursor-pointer"
+          />
+
+          {navlinks.map((d, i) => (
+            <Link key={i} className="font-bold" to={d.link}>
+              {d.label}
+            </Link>
+          ))}
+        </section>
+      </div>
+
+      {/* last section */}
+      <section className="flex items-center gap-4">
+        {isLoggedIn ? (
+          <>
+            <button onClick={() => setOpenModal(true)}>
+              {" "}
+              <img
+                width={40}
+                height={40}
+                className="h-8 w-8 rounded-full "
+                src="https://m.media-amazon.com/images/I/81iDNjn-r3L._AC_UF1000,1000_QL80_.jpg"
+                alt="avatar-img"
+              />
+            </button>
+            <Modal open={openModal} onClose={onCloseModal} center>
+              <h2 className="underline">Sign Out</h2>
+              <p>Are you sure you want to sign out?</p>
+              <div className="flex justify-center gap-4 mt-4">
+                <button
+                  onClick={handleSignOut}
+                  className="bg-primary text-neutral px-4 py-2 rounded"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={onCloseModal}
+                  className="bg-gray-300 text-primary px-4 py-2 rounded"
+                >
+                  No
+                </button>
+              </div>
+            </Modal>
+          </>
+        ) : (
+          <Link to={`/login`}>
+            {" "}
+            <img
+              width={40}
+              height={40}
+              className="h-8 w-8 rounded-full "
+              src="https://m.media-amazon.com/images/I/81iDNjn-r3L._AC_UF1000,1000_QL80_.jpg"
+              alt="avatar-img"
+            />
+          </Link>
+        )}
+        {/* nanti buat pfp kalo jadi */}
+      </section>
     </nav>
   );
 };

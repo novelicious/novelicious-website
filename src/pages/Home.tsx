@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
-
+import { FaLongArrowAltRight } from "react-icons/fa";
 const Home: React.FC = () => {
   const imageUrls = [
     "https://m.media-amazon.com/images/I/81iDNjn-r3L._AC_UF1000,1000_QL80_.jpg",
@@ -47,7 +47,7 @@ const Home: React.FC = () => {
             </p>
             <div className="flex justify-center">
               <Link
-                className="ml-4 inline-flex text-gray-700 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-lg"
+                className="inline-flex text-neutral bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-900 rounded text-sm"
                 to={`/market`}
               >
                 {" "}
@@ -107,17 +107,7 @@ const Home: React.FC = () => {
                   </p>
                   <a className="mt-3 text-primary inline-flex items-center">
                     Learn More
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-4 h-4 ml-2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7"></path>
-                    </svg>
+                    <FaLongArrowAltRight />
                   </a>
                 </div>
               </div>
@@ -140,17 +130,7 @@ const Home: React.FC = () => {
                   </p>
                   <a className="mt-3 text-primary inline-flex items-center">
                     Learn More
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-4 h-4 ml-2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7"></path>
-                    </svg>
+                    <FaLongArrowAltRight />
                   </a>
                 </div>
               </div>
@@ -172,17 +152,7 @@ const Home: React.FC = () => {
                   </p>
                   <a className="mt-3 text-primary inline-flex items-center">
                     Learn More
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-4 h-4 ml-2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7"></path>
-                    </svg>
+                    <FaLongArrowAltRight />
                   </a>
                 </div>
               </div>
@@ -195,12 +165,12 @@ const Home: React.FC = () => {
         <div className="mx-auto max-w-screen-2xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:h-screen lg:grid-cols-2">
             <div className="relative z-10 lg:py-16">
-              <div className="relative h-64 sm:h-80 lg:h-full">
-                {/* <img
-                    alt=""
-                    src="https://i.pinimg.com/736x/63/05/34/630534609ef529522ff22e5a152937c0.jpg"
-                    className="absolute inset-0 h-full w-full object-cover"
-                  /> */}
+              <div className="relative bg-primary h-64 sm:h-80 lg:h-full">
+                <img
+                  alt="novelicious"
+                  src="../../public/novelicious.png"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
               </div>
             </div>
 
