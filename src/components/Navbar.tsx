@@ -7,22 +7,40 @@ import { HiUser } from "react-icons/hi";
 import { FiMenu } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
 import clsx from "clsx";
+import axios from "axios";
+
+interface User {
+  id: number;
+  username: string;
+}
 
 const Navbar: React.FC = () => {
+  // Auth
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const user_id = sessionStorage.getItem("user_id");
+  const token = sessionStorage.getItem("token");
+
+  // Menu
+  const menuRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [isSideMenuOpen, setMenu] = useState(false);
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    axios
+      .get(`http://127.0.0.1:8000/users/${user_id}`)
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
     setIsLoggedIn(!!token);
-  }, []);
 
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setOpen(false);
@@ -59,7 +77,7 @@ const Navbar: React.FC = () => {
   ];
   const profileNavlinks = [
     {
-      label: "Profile",
+      label: "Edit Profile",
       link: "/profile",
     },
     {
@@ -138,6 +156,8 @@ const Navbar: React.FC = () => {
                 ref={menuRef}
                 className="p-4 w-52 bg-white shadow-lg absolute"
               >
+                {user && <h1>Hi, {user.username}</h1>}
+
                 <ul>
                   {profileNavlinks.map((d, i) => (
                     <li

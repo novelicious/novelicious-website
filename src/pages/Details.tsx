@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { IoMdArrowRoundBack } from "react-icons/io";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { FaArrowLeft } from "react-icons/fa6";
 interface Book {
   id: number;
   image: string;
@@ -65,16 +65,18 @@ const Details: React.FC = () => {
 
   return (
     <>
-      {/* <Navbar /> */}
-
-      <div data-aos="fade-up" className="container mx-auto px-4 min-h-screen">
+      <div
+        data-aos="fade-up"
+        className="container mx-auto px-4 min-h-screen relative"
+      >
         <div className="flex flex-wrap justify-center">
-          <div className="w-full bg-white ">
-            <Link className=" " to={`/market`}>
-              {" "}
-              <FaArrowLeft />
-            </Link>
-            <div className=" relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto my-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
+          <div className="w-full">
+            <div className="bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto my-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
+              <div className="absolute top-0 left-0 p-4">
+                <Link className="inline-flex py-2 px-6" to={`/market`}>
+                  <IoMdArrowRoundBack className="text-[5vh]" />
+                </Link>
+              </div>
               <div className="w-full md:w-1/3 flex justify-center mb-4 md:mb-0">
                 <div className="p-4">
                   <img
@@ -84,12 +86,10 @@ const Details: React.FC = () => {
                   />
                 </div>
               </div>
-
               <div className="w-full md:w-2/3 p-6">
                 <h2 className="text-xl font-bold uppercase">
                   {book.title} ({book.release_year})
                 </h2>
-
                 <p className="text-gray-600 mt-2">{book.synopsis}</p>
                 <form onSubmit={handleSubmit}>
                   <input
@@ -97,12 +97,11 @@ const Details: React.FC = () => {
                     id="question"
                     name="question"
                     placeholder="Question..."
-                    className="w-full px-3 py-2 rounded-sm  border-2 border-gray-200 focus:ring-0 focus:border-primary "
+                    className="w-full px-3 py-2 rounded-sm border-2 border-gray-200 focus:ring-0 focus:border-primary"
                     value={inputQuestion}
                     onChange={(e) => setInputQuestion(e.target.value)}
                     required
                   />
-
                   <button
                     className="mt-2 group relative inline-block text-sm font-medium text-slate-600 focus:outline-none focus:ring active:text-slate-500"
                     type="submit"
@@ -115,7 +114,7 @@ const Details: React.FC = () => {
                 </form>
                 {question && (
                   <div className="mt-2 mb-0">
-                    <p className=" text-primary">Answer:</p>
+                    <p className="text-primary">Answer:</p>
                     <a
                       href={`https://www.google.co.uk/search?q=${book.title}+${question.answer}`}
                       target="_blank"
@@ -129,12 +128,12 @@ const Details: React.FC = () => {
               </div>
             </div>
           </div>
-          <section className=" py-24 relative">
+          <section className="py-24 relative">
             <h1 className="my-2 text-lg font-bold">Reviews ⭐</h1>
             <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
               <div className="grid grid-cols-1 gap-8">
                 <div className="grid grid-cols-12 max-w-sm sm:max-w-full mx-auto">
-                  <div className="col-span-12 lg:col-span-10 ">
+                  <div className="col-span-12 lg:col-span-10">
                     <div className="sm:flex gap-6">
                       <img
                         src="https://pbs.twimg.com/profile_images/1011676051636879361/Omk-mxTL_400x400.jpg"
@@ -149,7 +148,7 @@ const Details: React.FC = () => {
                           <h1>Rate 10/10</h1>
                         </div>
                         <p className="font-normal text-base leading-7 text-gray-400 mb-4 lg:pr-8">
-                          Thou art I{" "}
+                          Thou art I
                         </p>
                         <div className="flex items-center justify-between">
                           <p className="lg:hidden font-medium text-sm leading-7 text-gray-400 lg:text-center whitespace-nowrap">
@@ -159,7 +158,7 @@ const Details: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-12 lg:col-span-2 max-lg:hidden flex lg:items-center flex-row lg:flex-col justify-center max-lg:pt-6 ">
+                  <div className="col-span-12 lg:col-span-2 max-lg:hidden flex lg:items-center flex-row lg:flex-col justify-center max-lg:pt-6">
                     <div className="flex items-center gap-2 lg:justify-between w-full mb-5">
                       <h1>Rate 10/10</h1>
                     </div>
@@ -170,17 +169,15 @@ const Details: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            <form className=" mt-8">
+            <form className="mt-8">
               <input
                 type="text"
                 id="question"
                 name="question"
                 placeholder="Reviews..."
-                className="w-full px-3 py-2 rounded-sm  border-2 border-gray-200 focus:ring-0 focus:border-primary "
+                className="w-full px-3 py-2 rounded-sm border-2 border-gray-200 focus:ring-0 focus:border-primary"
                 required
               />
-
               <button
                 className="mt-2 group relative inline-block text-sm font-medium text-slate-600 focus:outline-none focus:ring active:text-slate-500"
                 type="submit"
