@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
+// import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 interface RecommendationData {
   id: number;
@@ -69,7 +69,7 @@ const Recommendation: React.FC = () => {
   return (
     <>
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
-        <Navbar />
+        {/* <Navbar /> */}
         <h1 className=" text-lg font-semibold underline">
           Our Recommendations 🫣
         </h1>

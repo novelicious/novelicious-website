@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { FaArrowLeft } from "react-icons/fa6";
 interface Book {
   id: number;
   image: string;
@@ -64,10 +66,15 @@ const Details: React.FC = () => {
   return (
     <>
       {/* <Navbar /> */}
+
       <div data-aos="fade-up" className="container mx-auto px-4 min-h-screen">
         <div className="flex flex-wrap justify-center">
-          <div className="w-full  ">
-            <div className="bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto my-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
+          <div className="w-full bg-white ">
+            <Link className=" " to={`/market`}>
+              {" "}
+              <FaArrowLeft />
+            </Link>
+            <div className=" relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto my-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
               <div className="w-full md:w-1/3 flex justify-center mb-4 md:mb-0">
                 <div className="p-4">
                   <img

@@ -278,278 +278,280 @@ const Market: React.FC = () => {
   };
 
   return (
-    <>
-      <section>
-        <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
-          <header className="sticky top-0 bg-neutral z-50">
-            <Navbar />
-            <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-              <div className=" sm:flex sm:items-center sm:justify-between">
-                <div className=" w-full">
-                  <input
-                    type="text"
-                    className="w-full md:w-80 px-10 h-10 rounded-l border-2 border-secondary  focus:ring-0 focus:border-primary"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                  />
-                </div>
-
-                <div className="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
-                  <select
-                    className="w-full h-10 border-2 border-secondary  focus:ring-0 focus:border-primary text-primary rounded px-2 md:px-3 py-0 md:py-1 tracking-wider"
-                    onChange={(e) => handleGenreChange(e.target.value)}
-                    value=""
-                  >
-                    <option value="" disabled>
-                      Select Genre
-                    </option>
-                    <option value="Fantasy">Fantasy</option>
-                    <option value="Sci-Fi">Sci-Fi</option>
-                    <option value="Romance">Romance</option>
-                    <option value="Horror">Horror</option>
-                    <option value="Video Game">Video Game</option>
-                    <option value="Supernatural">Supernatural</option>
-                    <option value="Comedy">Comedy</option>
-                    <option value="Drama">Drama</option>
-                    <option value="School">School</option>
-                    <option value="Vampires">Vampire</option>
-                    {/* add lagi aja ntar */}
-                  </select>
-
-                  {isLoggedIn && (
-                    <Link
-                      to={`/cart`}
-                      className={cartAmount == 0 ? "cursor-not-allowed" : ""}
-                      onClick={(event) => {
-                        if (cartAmount == 0) {
-                          event.preventDefault();
-                        }
-                      }}
-                    >
-                      <div className="py-2">
-                        <div className="t-0 left-3">
-                          <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-neutral">
-                            {cartAmount}
-                          </p>
-                        </div>
-                        <AiOutlineShoppingCart />
-                      </div>
-                    </Link>
-                  )}
-                </div>
+    <section>
+      <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
+        <header className="sticky top-0 bg-neutral z-50">
+          <Navbar />
+          <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+            <div className=" sm:flex sm:items-center sm:justify-between">
+              <div className=" w-full">
+                <input
+                  type="text"
+                  className="w-full md:w-80 px-10 h-10 rounded-l border-2 border-secondary  focus:ring-0 focus:border-primary"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
               </div>
-              <>
-                <div className="flex flex-wrap gap-2">
-                  {selectedGenres.map((genre, index) => (
-                    <span
-                      data-aos="zoom-in"
-                      key={index}
-                      className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
-                    >
-                      {genre}
-                      <button
-                        className="ml-2"
-                        onClick={() => handleGenreChange(genre)}
-                      >
-                        &times;
-                      </button>
-                    </span>
-                  ))}
-                </div>
-                {selectedGenres.length > 0 && (
-                  <button
-                    data-aos="fade-in"
-                    className="mt-2 text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
-                    onClick={clearGenres}
-                  >
-                    Clear Genres
-                  </button>
-                )}
-              </>
-            </div>
-          </header>
 
-          <ul
-            data-aos-anchor-placement="center-bottom"
-            className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {currentBooks.map((book) => (
-              <li
-                key={book.id}
-                className="border-primary border-2 flex flex-col"
-                data-aos="zoom-in"
-              >
-                <Link
-                  to={`/novel/${book.id}`}
-                  className="h-[320px] group relative block overflow-hidden"
+              <div className="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                <select
+                  className="w-full h-10 border-2 border-secondary  focus:ring-0 focus:border-primary text-primary rounded px-2 md:px-3 py-0 md:py-1 tracking-wider"
+                  onChange={(e) => handleGenreChange(e.target.value)}
+                  value=""
                 >
-                  <img
-                    src={book.image}
-                    alt={book.title}
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
-                  />
-                </Link>
+                  <option value="" disabled>
+                    Select Genre
+                  </option>
+                  <option value="Fantasy">Fantasy</option>
+                  <option value="Sci-Fi">Sci-Fi</option>
+                  <option value="Romance">Romance</option>
+                  <option value="Horror">Horror</option>
+                  <option value="Video Game">Video Game</option>
+                  <option value="Supernatural">Supernatural</option>
+                  <option value="Comedy">Comedy</option>
+                  <option value="Drama">Drama</option>
+                  <option value="School">School</option>
+                  <option value="Vampires">Vampire</option>
+                  {/* add lagi aja ntar */}
+                </select>
 
-                <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
-                  <div>
-                    <div className="w-full flex justify-between">
-                      <div className="flex flex-wrap gap-1">
-                        {book.genres.map((genre, index) => (
-                          <span
-                            key={index}
-                            className="text-neutral neutralspace-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
-                          >
-                            <a
-                              href="#"
-                              className="text-neutral relative text-[10px] w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-neutral after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-right"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleGenreClick(genre);
-                              }}
-                            >
-                              {genre}
-                            </a>
-                          </span>
-                        ))}
-                      </div>
-                      {isLoggedIn ? (
-                        <Star
-                          toggled={favs.includes(book.id)}
-                          bookId={book.id}
-                          onToggled={() => onStarToggledHandler(book.id)}
-                          onUntoggled={() => onUntoggledHandler(book.id)}
-                        />
-                      ) : (
-                        <></>
-                      )}
-                    </div>
-
-                    <h3 className="mt-4 text-lg font-medium text-gray-900">
-                      {book.title} ({book.release_year})
-                    </h3>
-
-                    <p className="mt-1.5 text-sm text-gray-700">
-                      {book.authors}
-                    </p>
-                  </div>
-
-                  {isLoggedIn && (
-                    <Add2CartButton
-                      id={book.id}
-                      image={book.image}
-                      title={book.title}
-                      release_year={book.release_year}
-                      authors={book.authors}
-                      genres={book.genres}
-                      cost={book.cost}
-                    ></Add2CartButton>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <div className="flex justify-center mt-8">
-            {books.length === 0 ? (
-              <div className="text-center mt-8">
-                <div className="flex justify-center items-center h-96">
-                  <div
-                    className="spinner-border border-primary animate-spin inline-block w-8 h-8 border-4 rounded-full"
-                    role="status"
+                {isLoggedIn && (
+                  <Link
+                    to={`/cart`}
+                    className={cartAmount == 0 ? "cursor-not-allowed" : ""}
+                    onClick={(event) => {
+                      if (cartAmount == 0) {
+                        event.preventDefault();
+                      }
+                    }}
                   >
-                    <span className="visually-hidden">🥸</span>
+                    <div className="py-2">
+                      <div className="t-0 left-3">
+                        <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-neutral">
+                          {cartAmount}
+                        </p>
+                      </div>
+                      <AiOutlineShoppingCart />
+                    </div>
+                  </Link>
+                )}
+              </div>
+            </div>
+            <div className="mt-4">
+              <div className="flex flex-wrap gap-2">
+                {selectedGenres.map((genre, index) => (
+                  <span
+                    key={index}
+                    className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
+                  >
+                    {genre}
+                    <button
+                      className="ml-2"
+                      onClick={() => handleGenreChange(genre)}
+                    >
+                      &times;
+                    </button>
+                  </span>
+                ))}
+              </div>
+              {selectedGenres.length > 0 && (
+                <button
+                  className="mt-2 text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium "
+                  onClick={clearGenres}
+                >
+                  Clear Genres
+                </button>
+              )}
+            </div>
+          </div>
+        </header>
+
+        <ul
+          data-aos-anchor-placement="center-bottom"
+          className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {currentBooks.map((book) => (
+            <li
+              key={book.id}
+              className="border-primary border-2 flex flex-col"
+              data-aos="zoom-in"
+            >
+              <Link
+                to={`/novel/${book.id}`}
+                className="h-[320px] group relative block overflow-hidden"
+              >
+                <img
+                  src={book.image}
+                  alt={book.title}
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
+                />
+              </Link>
+
+              <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
+                <div>
+                  <div className="w-full flex justify-between">
+                    <div className="flex flex-wrap gap-1">
+                      {book.genres.map((genre, index) => (
+                        <span
+                          key={index}
+                          className="text-neutral neutralspace-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
+                        >
+                          <a
+                            href="#"
+                            className="text-neutral relative text-[10px] w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-neutral after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-right"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleGenreClick(genre);
+                            }}
+                          >
+                            {genre}
+                          </a>
+                        </span>
+                      ))}
+                    </div>
+                    {isLoggedIn ? (
+                      <Star
+                        toggled={favs.includes(book.id)}
+                        bookId={book.id}
+                        onToggled={() => onStarToggledHandler(book.id)}
+                        onUntoggled={() => onUntoggledHandler(book.id)}
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </div>
+
+                  <h3 className="mt-4 text-lg font-medium text-gray-900">
+                    {book.title} ({book.release_year})
+                  </h3>
+
+                  <p className="mt-1.5 text-sm text-gray-700">{book.authors}</p>
+                </div>
+
+                {isLoggedIn && (
+                  <Add2CartButton
+                    id={book.id}
+                    image={book.image}
+                    title={book.title}
+                    release_year={book.release_year}
+                    authors={book.authors}
+                    genres={book.genres}
+                    cost={book.cost}
+                  ></Add2CartButton>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex justify-center mt-8">
+          {books.length === 0 ? (
+            <div className="text-center mt-8">
+              <div className="flex justify-center items-center h-96">
+                <div
+                  className="spinner-border border-primary animate-spin inline-block w-8 h-8 border-4 rounded-full"
+                  role="status"
+                >
+                  <span className="visually-hidden">🥸</span>
                 </div>
               </div>
-            ) : (
-              <>
-                <ul className="inline-flex items-center -space-x-px">
-                  <li>
-                    <button
-                      onClick={() => paginate(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className={`px-3 py-2 border-2 ${
-                        currentPage === 1
-                          ? "border-gray-300 text-gray-400 cursor-not-allowed"
-                          : "border-primary text-primary hover:bg-primary hover:text-neutral"
-                      }`}
-                    >
-                      Previous
-                    </button>
-                  </li>
+            </div>
+          ) : (
+            <>
+              <ul className="inline-flex items-center -space-x-px">
+                <li className="hidden sm:block">
+                  <button
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-2 border-2 ${
+                      currentPage === 1
+                        ? "border-gray-300 text-gray-400 cursor-not-allowed"
+                        : "border-primary text-primary hover:bg-primary hover:text-neutral"
+                    }`}
+                  >
+                    Previous
+                  </button>
+                </li>
 
-                  {startPage > 1 && (
-                    <>
-                      <li>
-                        <button
-                          onClick={() => paginate(1)}
-                          className="px-3 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-neutral"
-                        >
-                          1
-                        </button>
-                      </li>
-                      <li>
-                        <span className="px-3 py-2 border-2 border-transparent text-primary">
-                          ...
-                        </span>
-                      </li>
-                    </>
-                  )}
-
-                  {pageNumbers.map((number) => (
-                    <li key={number}>
+                {startPage > 1 && (
+                  <>
+                    <li>
                       <button
-                        onClick={() => paginate(number)}
-                        className={`px-3 py-2 border-2 ${
-                          currentPage === number
-                            ? "bg-primary text-neutral border-primary"
-                            : "border-primary text-primary hover:bg-primary hover:text-neutral"
-                        }`}
+                        onClick={() => paginate(1)}
+                        className="px-3 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-neutral"
                       >
-                        {number}
+                        1
                       </button>
                     </li>
-                  ))}
+                    <li>
+                      <span className="px-3 py-2 border-2 border-transparent text-primary">
+                        ...
+                      </span>
+                    </li>
+                  </>
+                )}
 
-                  {endPage < totalPages && (
-                    <>
-                      <li>
-                        <span className="px-3 py-2 border-2 border-transparent text-primary">
-                          ...
-                        </span>
-                      </li>
-                      <li>
-                        <button
-                          onClick={() => paginate(totalPages)}
-                          className="px-3 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-neutral"
-                        >
-                          {totalPages}
-                        </button>
-                      </li>
-                    </>
-                  )}
-
-                  <li>
+                {pageNumbers.map((number, index) => (
+                  <li
+                    key={number}
+                    className={`${
+                      // Hide some numbers on smaller screens
+                      index > 1 && index < pageNumbers.length - 2
+                        ? "hidden sm:block"
+                        : ""
+                    }`}
+                  >
                     <button
-                      onClick={() => paginate(currentPage + 1)}
-                      disabled={currentPage === totalPages}
+                      onClick={() => paginate(number)}
                       className={`px-3 py-2 border-2 ${
-                        currentPage === totalPages
-                          ? "border-gray-300 text-gray-400 cursor-not-allowed"
+                        currentPage === number
+                          ? "bg-primary text-neutral border-primary"
                           : "border-primary text-primary hover:bg-primary hover:text-neutral"
                       }`}
                     >
-                      Next
+                      {number}
                     </button>
                   </li>
-                </ul>
-              </>
-            )}
-          </div>
+                ))}
+
+                {endPage < totalPages && (
+                  <>
+                    <li>
+                      <span className="px-3 py-2 border-2 border-transparent text-primary">
+                        ...
+                      </span>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => paginate(totalPages)}
+                        className="px-3 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-neutral"
+                      >
+                        {totalPages}
+                      </button>
+                    </li>
+                  </>
+                )}
+
+                <li className="hidden sm:block">
+                  <button
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-2 border-2 ${
+                      currentPage === totalPages
+                        ? "border-gray-300 text-gray-400 cursor-not-allowed"
+                        : "border-primary text-primary hover:bg-primary hover:text-neutral"
+                    }`}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </>
+          )}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 

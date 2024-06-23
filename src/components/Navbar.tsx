@@ -1,22 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
-
+import novelicious from "/novelicious.png";
+import { HiUser } from "react-icons/hi";
 import { FiMenu } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
 import clsx from "clsx";
 
 const Navbar: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-
+  const [open, setOpen] = useState<boolean>(false);
   const [isSideMenuOpen, setMenu] = useState(false);
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     setIsLoggedIn(!!token);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleSignOut = () => {
@@ -40,6 +56,12 @@ const Navbar: React.FC = () => {
       label: "Market",
       link: "/market",
     },
+  ];
+  const profileNavlinks = [
+    {
+      label: "Profile",
+      link: "/profile",
+    },
     {
       label: "For You",
       link: "/for-you",
@@ -47,7 +69,7 @@ const Navbar: React.FC = () => {
   ];
 
   return (
-    <nav className="flex justify-between px-8 items-center py-6   ">
+    <nav className="flex justify-between px-8 items-center py-6  bg-neutral ">
       <div className="flex items-center gap-8">
         <section className="flex items-center gap-4">
           {/* menu */}
@@ -58,7 +80,7 @@ const Navbar: React.FC = () => {
           {/* logo */}
           <Link to={"/"} className="flex gap-x-2 text-4xl font-mono">
             <img
-              src=" ./public/novelicious.png"
+              src={novelicious}
               alt="novelicious"
               className=" object-fit h-11"
             />
@@ -81,7 +103,7 @@ const Navbar: React.FC = () => {
       {/* sidebar mobile menu */}
       <div
         className={clsx(
-          " fixed h-full w-screen lg:hidden bg-black/50  backdrop-blur-sm top-0 right-0  -translate-x-full  transition-all ",
+          "fixed h-full w-screen lg:hidden  top-0 right-0 -translate-x-full transition-all ",
           isSideMenuOpen && "translate-x-0"
         )}
       >
@@ -100,48 +122,66 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* last section */}
-      <section className="flex items-center gap-4">
+      <section className=" items-center gap-4">
         {isLoggedIn ? (
           <>
-            <button onClick={() => setOpenModal(true)}>
-              {" "}
-              <img
-                width={40}
-                height={40}
-                className="h-8 w-8 rounded-full "
-                src="https://m.media-amazon.com/images/I/81iDNjn-r3L._AC_UF1000,1000_QL80_.jpg"
-                alt="avatar-img"
-              />
-            </button>
-            <Modal open={openModal} onClose={onCloseModal} center>
-              <h2 className="underline">Sign Out</h2>
-              <p>Are you sure you want to sign out?</p>
-              <div className="flex justify-center gap-4 mt-4">
+            <img
+              src="https://m.media-amazon.com/images/I/81iDNjn-r3L._AC_UF1000,1000_QL80_.jpg"
+              className="h-8 w-8 rounded-full cursor-pointer"
+              width={40}
+              height={40}
+              onClick={() => setOpen(!open)}
+              ref={imgRef}
+            />
+            {open && (
+              <div
+                ref={menuRef}
+                className="p-4 w-52 bg-white shadow-lg absolute"
+              >
+                <ul>
+                  {profileNavlinks.map((d, i) => (
+                    <li
+                      onClick={() => setOpen(false)}
+                      className="p-2 text-lg cursor-pointer rounded hover:underline"
+                      key={i}
+                    >
+                      <Link key={i} to={d.link}>
+                        {d.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
                 <button
-                  onClick={handleSignOut}
-                  className="bg-primary text-neutral px-4 py-2 rounded"
+                  className="p-2 text-lg cursor-pointer rounded hover:underline"
+                  onClick={() => setOpenModal(true)}
                 >
-                  Yes
+                  Sign Out
                 </button>
-                <button
-                  onClick={onCloseModal}
-                  className="bg-gray-300 text-primary px-4 py-2 rounded"
-                >
-                  No
-                </button>
+                <Modal open={openModal} onClose={onCloseModal} center>
+                  <h2 className="underline">Sign Out</h2>
+                  <p>Are you sure you want to sign out?</p>
+                  <div className="flex justify-center gap-4 mt-4">
+                    <button
+                      onClick={handleSignOut}
+                      className="bg-primary text-neutral px-4 py-2 rounded"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={onCloseModal}
+                      className="bg-gray-300 text-primary px-4 py-2 rounded"
+                    >
+                      No
+                    </button>
+                  </div>
+                </Modal>
               </div>
-            </Modal>
+            )}
           </>
         ) : (
           <Link to={`/login`}>
             {" "}
-            <img
-              width={40}
-              height={40}
-              className="h-8 w-8 rounded-full "
-              src="https://m.media-amazon.com/images/I/81iDNjn-r3L._AC_UF1000,1000_QL80_.jpg"
-              alt="avatar-img"
-            />
+            <HiUser />
           </Link>
         )}
         {/* nanti buat pfp kalo jadi */}

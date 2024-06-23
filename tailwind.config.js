@@ -9,6 +9,16 @@ export default {
         secondary: "#71717a",
         neutral: "#f4f4f5",
       },
+      animation: {
+        fade: "fadeIn .5s ease-in-out",
+      },
+
+      keyframes: {
+        fadeIn: {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
+        },
+      },
     },
   },
   plugins: [],

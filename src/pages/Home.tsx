@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import AOS from "aos";
-
+import novelicious from "/novelicious.png";
 import "aos/dist/aos.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -168,7 +168,7 @@ const Home: React.FC = () => {
               <div className="relative bg-primary h-64 sm:h-80 lg:h-full">
                 <img
                   alt="novelicious"
-                  src="../../public/novelicious.png"
+                  src={novelicious}
                   className="absolute inset-0 h-full w-full object-cover"
                 />
               </div>
