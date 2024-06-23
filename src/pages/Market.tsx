@@ -108,6 +108,7 @@ const Market: React.FC = () => {
         console.log(err);
       });
   }, []);
+
   function getCartAmount(cart: CartProps) {
     if (cart == null) return 0;
     var amount = 0;
@@ -199,13 +200,21 @@ const Market: React.FC = () => {
     onToggled,
     onUntoggled,
   }) => {
-    const [isToggled, setToggled] = useState<boolean>(toggled);
+    const [isToggled, setToggled] = useState<boolean>(() => {
+      const savedState = localStorage.getItem(`starred-${bookId}`);
+      return savedState ? JSON.parse(savedState) : toggled;
+    });
+
+    useEffect(() => {
+      localStorage.setItem(`starred-${bookId}`, JSON.stringify(isToggled));
+    }, [isToggled, bookId]);
+
     return (
       <div className="text-xl font-medium ml-2">
         {isToggled ? (
           <button
             onClick={() => {
-              if (onUntoggled != null) onUntoggled(bookId);
+              if (onUntoggled) onUntoggled(bookId);
               setToggled(false);
             }}
           >
@@ -214,7 +223,7 @@ const Market: React.FC = () => {
         ) : (
           <button
             onClick={() => {
-              if (onToggled != null) onToggled(bookId);
+              if (onToggled) onToggled(bookId);
               setToggled(true);
             }}
           >
