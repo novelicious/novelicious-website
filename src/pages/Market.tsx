@@ -6,6 +6,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { CartProps, CartItemProps } from "./Cart";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import { FaStar } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
@@ -44,24 +45,30 @@ const Market: React.FC = () => {
   //Isi favorite
   const [favs, setFavs] = useState<number[]>([]);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     AOS.init({
       duration: 1000,
       once: false,
     });
+    let isMounted = true;
     axios
       .get("http://127.0.0.1:8000/books")
       .then((res) => {
-        const transformedBooks = res.data.map(
-          (book: Omit<Book, "genres"> & { genres: string | null }) => ({
-            ...book,
-            genres: book.genres
-              ? book.genres.split(",").map((genre: string) => genre.trim())
-              : [],
-          })
-        );
-        setBooks(transformedBooks);
-        setFilterData(transformedBooks);
+        if (isMounted) {
+          const transformedBooks = res.data.map(
+            (book: Omit<Book, "genres"> & { genres: string | null }) => ({
+              ...book,
+              genres: book.genres
+                ? book.genres.split(",").map((genre: string) => genre.trim())
+                : [],
+            })
+          );
+          console.log(transformedBooks);
+          setBooks(transformedBooks);
+          setFilterData(transformedBooks);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -69,7 +76,22 @@ const Market: React.FC = () => {
 
     const token = sessionStorage.getItem("token");
     setIsLoggedIn(!!token);
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const toastMessage = queryParams.get("toast");
+
+    if (toastMessage === "checkout_success") {
+      toast.success("Checkout successful!");
+      // Remove the toast parameter from the URL
+      queryParams.delete("toast");
+      navigate({ search: queryParams.toString() }, { replace: true });
+    }
+  }, [location, navigate]);
 
   useEffect(() => {
     const filteredBooks = filterData.filter((book) => {

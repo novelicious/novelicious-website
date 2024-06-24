@@ -125,6 +125,19 @@ const Details: React.FC = () => {
                     </a>
                   </div>
                 )}
+                <div className="mt-5">
+                  <h1 className="text-lg font-semibold">How to:</h1>
+                  <p className="my-2">
+                    The questions must exist in the context.
+                  </p>
+                  <div className="bg-primary p-5">
+                    <ul className="text-neutral font-mono">
+                      <li>What is the title? ___</li>
+                      <li>What is the story about? ___ </li>
+                      <li>Who is the main character? ___ </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

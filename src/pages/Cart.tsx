@@ -3,6 +3,9 @@ import CartItem from "../components/CartItem";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import toast, { Toaster } from "react-hot-toast";
+import { FaTrash } from "react-icons/fa";
+
 export interface CartItemProps {
   id: number;
   title: string;
@@ -11,6 +14,7 @@ export interface CartItemProps {
   genres: string;
   amount: number;
 }
+
 export interface CartProps {
   books: CartItemProps[];
   amount: number;
@@ -23,34 +27,50 @@ const Cart: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
   const navigate = useNavigate();
   const userId = sessionStorage.getItem("user_id");
+
   useEffect(() => {
+    let isMounted = true; // Variable to track component mount status
+
     axios
       .get("http://127.0.0.1:8000/users/" + userId + "/cart")
       .then((res) => {
-        const cartData = res.data;
-        console.log(res);
-        console.log(res.data);
-        setCart(cartData);
-        setCartItems(cartData.books);
-        setLoading(false);
+        if (isMounted) {
+          const cartData = res.data;
+          console.log(res);
+          console.log(res.data);
+          setCart(cartData);
+          setCartItems(cartData.books);
+          setLoading(false);
+        }
       })
       .catch((err) => {
         console.log(err);
         navigate("/market");
       });
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate, userId]);
+
   const checkoutHandler = () => {
     axios
       .post("http://127.0.0.1:8000/carts/buy", null, {
         params: { user_id: userId },
       })
+      .then(() => {
+        // Navigate to the market page with a toast message parameter
+        navigate("/market?toast=checkout_success");
+      })
       .catch((err) => {
         console.log(err);
       });
-
-    navigate("/market");
   };
+
   const deleteHandler = (id: number) => {
+    toast.error("Removed from cart!", {
+      icon: <FaTrash />,
+    });
     setCartItems(cartItems.filter((item) => item.id !== id));
     axios
       .post("http://127.0.0.1:8000/carts/remove", null, {
@@ -64,12 +84,15 @@ const Cart: React.FC = () => {
       });
   };
 
-  const subtotal = cart?.amount; //cartItems.reduce((acc, item) => acc + item.amount * 200, 0); // Replace 200 with actual item cost
+  const subtotal = cart?.amount;
   const total = subtotal;
 
   return (
     <>
       <section>
+        <div>
+          <Toaster />
+        </div>
         <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
           <header className="sticky top-0 bg-neutral z-50">
             <Navbar />
