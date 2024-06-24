@@ -6,6 +6,9 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { CartProps, CartItemProps } from "./Cart";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { FaStar } from "react-icons/fa6";
+import { FaTrash } from "react-icons/fa";
+import toast, { Toaster } from "react-hot-toast";
 interface Book {
   id: number;
   image: string;
@@ -94,6 +97,7 @@ const Market: React.FC = () => {
       console.log("User is not logged in.");
       return;
     }
+
     axios
       .get("http://127.0.0.1:8000/users/" + userId + "/cart")
       .then((res) => {
@@ -145,6 +149,9 @@ const Market: React.FC = () => {
     );
   };
   const onStarToggledHandler = (bookId: number) => {
+    toast.success("Sucessfully added to favorites!", {
+      icon: <FaStar />,
+    });
     const userId = sessionStorage.getItem("user_id");
 
     if (!userId) {
@@ -162,6 +169,9 @@ const Market: React.FC = () => {
 
   const onUntoggledHandler = (bookId: number) => {
     const userId = sessionStorage.getItem("user_id");
+    toast.error("Removed from favorites!", {
+      icon: <FaTrash />,
+    });
     if (!userId) {
       console.log("User is not logged in.");
       return;
@@ -175,6 +185,9 @@ const Market: React.FC = () => {
       .catch((err) => console.log(err));
   };
   const addToCartHandler = (bookId: number, quantity: number) => {
+    toast.success("Sucessfully added to cart!", {
+      icon: <AiOutlineShoppingCart />,
+    });
     const userId = sessionStorage.getItem("user_id");
     axios.post("http://127.0.0.1:8000/carts/add", null, {
       params: {
@@ -308,6 +321,9 @@ const Market: React.FC = () => {
 
   return (
     <section>
+      <div>
+        <Toaster />
+      </div>
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
         <header className="sticky top-0 bg-neutral z-50">
           <Navbar />
