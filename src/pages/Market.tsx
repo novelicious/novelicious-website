@@ -69,12 +69,18 @@ const Market: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const filteredBooks = filterData.filter(
-      (book) =>
-        book.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    const filteredBooks = filterData.filter((book) => {
+      const title = book.title ? book.title.toLowerCase() : "";
+      const authors = book.authors ? book.authors.toLowerCase() : "";
+      const searchQueryLower = searchQuery.toLowerCase();
+
+      return (
+        (title.includes(searchQueryLower) ||
+          authors.includes(searchQueryLower)) &&
         (selectedGenres.length === 0 ||
           selectedGenres.every((genre) => book.genres.includes(genre)))
-    );
+      );
+    });
     setBooks(filteredBooks);
     setCurrentPage(1);
   }, [searchQuery, selectedGenres, filterData]);
@@ -84,6 +90,10 @@ const Market: React.FC = () => {
   };
   useEffect(() => {
     const userId = sessionStorage.getItem("user_id");
+    if (!userId) {
+      console.log("User is not logged in.");
+      return;
+    }
     axios
       .get("http://127.0.0.1:8000/users/" + userId + "/cart")
       .then((res) => {
@@ -136,16 +146,26 @@ const Market: React.FC = () => {
   };
   const onStarToggledHandler = (bookId: number) => {
     const userId = sessionStorage.getItem("user_id");
+
+    if (!userId) {
+      console.log("User is not logged in.");
+      return;
+    }
     axios
-      .post("http://127.0.0.1:8000/users/" + userId + "/setfav", null, {
+      .post(`http://127.0.0.1:8000/users/${userId}/setfav`, null, {
         params: {
           book_id: bookId,
         },
       })
       .catch((err) => console.log(err));
   };
+
   const onUntoggledHandler = (bookId: number) => {
     const userId = sessionStorage.getItem("user_id");
+    if (!userId) {
+      console.log("User is not logged in.");
+      return;
+    }
     axios
       .post("http://127.0.0.1:8000/users/" + userId + "/removefav", null, {
         params: {
@@ -297,7 +317,7 @@ const Market: React.FC = () => {
                 <input
                   type="text"
                   className="w-full md:w-80 px-10 h-10 rounded-l border-2 border-secondary  focus:ring-0 focus:border-primary"
-                  placeholder="Search..."
+                  placeholder="Search by title, authors..."
                   value={searchQuery}
                   onChange={handleSearchChange}
                 />
@@ -310,7 +330,7 @@ const Market: React.FC = () => {
                   value=""
                 >
                   <option value="" disabled>
-                    Select Genre
+                    Genres
                   </option>
                   <option value="Fantasy">Fantasy</option>
                   <option value="Sci-Fi">Sci-Fi</option>
@@ -404,7 +424,7 @@ const Market: React.FC = () => {
                       {book.genres.map((genre, index) => (
                         <span
                           key={index}
-                          className="text-neutral neutralspace-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
+                          className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
                         >
                           <a
                             href="#"
