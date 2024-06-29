@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { FaPaperPlane, FaComments } from "react-icons/fa";
+
 interface Book {
   id: number;
   image: string;
@@ -24,9 +26,11 @@ interface Question {
 
 const Details: React.FC = () => {
   const [book, setBook] = useState<Book | null>(null);
-  const [question, setQuestion] = useState<Question | null>(null);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [inputQuestion, setInputQuestion] = useState<string>("");
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (id && inputQuestion) {
@@ -37,7 +41,11 @@ const Details: React.FC = () => {
           )}`
         )
         .then((res) => {
-          setQuestion(res.data);
+          setQuestions([
+            ...questions,
+            { question: inputQuestion, answer: res.data.answer },
+          ]);
+          setInputQuestion("");
         })
         .catch((err) => {
           console.log(err);
@@ -89,43 +97,76 @@ const Details: React.FC = () => {
                   {book.title} ({book.release_year})
                 </h2>
                 <p className="text-gray-600 mt-2">{book.synopsis}</p>
-                <form onSubmit={handleSubmit}>
-                  <input
-                    type="text"
-                    id="question"
-                    name="question"
-                    placeholder="Question..."
-                    className="w-full px-3 py-2 rounded-sm border-2 border-gray-200 focus:ring-0 focus:border-primary"
-                    value={inputQuestion}
-                    onChange={(e) => setInputQuestion(e.target.value)}
-                    required
-                  />
-                  <button
-                    className="mt-2 group relative inline-block text-sm font-medium text-slate-600 focus:outline-none focus:ring active:text-slate-500"
-                    type="submit"
-                  >
-                    <span className="absolute inset-0 border border-current"></span>
-                    <span className="block border border-current bg-white px-12 py-3 transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1">
-                      Ask
-                    </span>
-                  </button>
-                </form>
-                {question && (
-                  <div className="mt-2 mb-0">
-                    <p className="text-primary">Answer:</p>
-                    <a
-                      href={`https://www.google.co.uk/search?q=${book.title}+${question.answer}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline"
-                    >
-                      {question.answer}
-                    </a>
-                  </div>
-                )}
               </div>
             </div>
           </div>
+        </div>
+        <div
+          className={`fixed bottom-4 right-4 ${
+            isChatOpen ? "w-80 h-96" : "w-12 h-12"
+          } transition-all duration-300 bg-white shadow-lg rounded-lg overflow-hidden z-50`}
+        >
+          <button
+            className="flex items-center justify-center bg-primary text-white"
+            onClick={() => setIsChatOpen(!isChatOpen)}
+          >
+            {isChatOpen ? (
+              // <FaChevronDown className="px-5 text-xl" />
+              <p className="px-5 text-xl">-</p>
+            ) : (
+              <FaComments />
+            )}
+          </button>
+          {isChatOpen && (
+            <div className="flex flex-col h-full">
+              <div className="flex-grow overflow-y-scroll p-4">
+                <div className="mb-2">
+                  <div className="bg-gray-200 p-2 rounded mt-1">
+                    <p className="font-semibold">Novelicious:</p>
+                    <p>How to use it?</p>
+                    <ul>
+                      <li>- You must ask questions related to this book.</li>
+                      <li>- Remember, it is not a chatbot.</li>
+                      <li>
+                        - So, the answer that is not in the context will
+                        probably be wrong.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                {questions.map((q, index) => (
+                  <div key={index} className="mb-2">
+                    <div className="bg-primary text-neutral p-2 rounded">
+                      <p className="font-semibold">You:</p>
+                      <p>{q.question}</p>
+                    </div>
+                    <div className="bg-gray-200 p-2 rounded mt-1">
+                      <p className="font-semibold">Novelicious:</p>
+                      <p>{q.answer}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <form onSubmit={handleSubmit} className="flex w-full">
+                <input
+                  type="text"
+                  id="question"
+                  name="question"
+                  placeholder="Ask a question..."
+                  className="w-full p-2 mb-8 border-2 rounded border-primary"
+                  value={inputQuestion}
+                  onChange={(e) => setInputQuestion(e.target.value)}
+                  required
+                />
+                <button
+                  className="bg-primary p-2 mb-8 rounded-r text-white"
+                  type="submit"
+                >
+                  <FaPaperPlane />
+                </button>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     </>
