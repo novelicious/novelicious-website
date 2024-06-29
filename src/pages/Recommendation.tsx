@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import Navbar from "../components/Navbar";
+import axios from "axios";
 import { Link } from "react-router-dom";
 interface RecommendationData {
   id: number;
@@ -33,7 +33,7 @@ const Recommendation: React.FC = () => {
       setError(null);
 
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `http://127.0.0.1:8000/recommend/${userId}?topK=8`,
           {
             headers: {
@@ -42,8 +42,8 @@ const Recommendation: React.FC = () => {
           }
         );
 
-        if (response.ok) {
-          const data = await response.json();
+        if (response.status === 200) {
+          const data = response.data;
           if (data.recommendations && Array.isArray(data.recommendations)) {
             setRecommendations(data.recommendations);
             console.log(data.recommendations);
@@ -51,8 +51,7 @@ const Recommendation: React.FC = () => {
             setError("Unexpected response format");
           }
         } else {
-          const errorData = await response.json();
-          setError(errorData.detail || "Failed to fetch recommendations.");
+          setError(response.data.detail || "Failed to fetch recommendations.");
         }
       } catch (error) {
         setError("An error occurred. Please try again later.");

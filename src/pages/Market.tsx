@@ -305,9 +305,9 @@ const Market: React.FC = () => {
           onClick={() => {
             setClicked(!clicked);
           }}
-          className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"
+          className="text-primary block w-full rounded underline p-4 text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"
         >
-          {clicked ? "X" : "Buy"}
+          {clicked ? "X" : "+"}
         </button>
         <div
           className={size + " h-full transition-all duration:500 ease-in-out"}

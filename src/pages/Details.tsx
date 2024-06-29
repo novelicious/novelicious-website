@@ -18,6 +18,7 @@ interface Book {
 }
 
 interface Question {
+  question: string;
   answer: string;
 }
 
@@ -65,10 +66,7 @@ const Details: React.FC = () => {
 
   return (
     <>
-      <div
-        data-aos="fade-up"
-        className="container mx-auto px-4 min-h-screen relative"
-      >
+      <div data-aos="fade-up" className="mx-auto px-4 min-h-screen relative">
         <div className="flex flex-wrap justify-center">
           <div className="w-full">
             <div className="bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto my-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
@@ -125,83 +123,9 @@ const Details: React.FC = () => {
                     </a>
                   </div>
                 )}
-                <div className="mt-5">
-                  <h1 className="text-lg font-semibold">How to:</h1>
-                  <p className="my-2">
-                    The questions must exist in the context.
-                  </p>
-                  <div className="bg-primary p-5">
-                    <ul className="text-neutral font-mono">
-                      <li>What is the title? ___</li>
-                      <li>What is the story about? ___ </li>
-                      <li>Who is the main character? ___ </li>
-                    </ul>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
-          <section className="py-24 relative">
-            <h1 className="my-2 text-lg font-bold">Reviews ⭐</h1>
-            <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
-              <div className="grid grid-cols-1 gap-8">
-                <div className="grid grid-cols-12 max-w-sm sm:max-w-full mx-auto">
-                  <div className="col-span-12 lg:col-span-10">
-                    <div className="sm:flex gap-6">
-                      <img
-                        src="https://pbs.twimg.com/profile_images/1011676051636879361/Omk-mxTL_400x400.jpg"
-                        alt="arsene"
-                        className="w-32 h-32"
-                      />
-                      <div className="text">
-                        <p className="font-medium text-lg leading-8 text-gray-900 mb-2">
-                          Arsene
-                        </p>
-                        <div className="flex lg:hidden items-center gap-2 lg:justify-between w-full mb-5">
-                          <h1>Rate 10/10</h1>
-                        </div>
-                        <p className="font-normal text-base leading-7 text-gray-400 mb-4 lg:pr-8">
-                          Thou art I
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <p className="lg:hidden font-medium text-sm leading-7 text-gray-400 lg:text-center whitespace-nowrap">
-                            Nov 01, 2023
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-span-12 lg:col-span-2 max-lg:hidden flex lg:items-center flex-row lg:flex-col justify-center max-lg:pt-6">
-                    <div className="flex items-center gap-2 lg:justify-between w-full mb-5">
-                      <h1>Rate 10/10</h1>
-                    </div>
-                    <p className="font-medium text-lg leading-8 text-gray-400 lg:text-center whitespace-nowrap">
-                      Jun 18, 2024
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <form className="mt-8">
-              <input
-                type="text"
-                id="question"
-                name="question"
-                placeholder="Reviews..."
-                className="w-full px-3 py-2 rounded-sm border-2 border-gray-200 focus:ring-0 focus:border-primary"
-                required
-              />
-              <button
-                className="mt-2 group relative inline-block text-sm font-medium text-slate-600 focus:outline-none focus:ring active:text-slate-500"
-                type="submit"
-              >
-                <span className="absolute inset-0 border border-current"></span>
-                <span className="block border border-current bg-white px-12 py-3 transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1">
-                  Post yours
-                </span>
-              </button>
-            </form>
-          </section>
         </div>
       </div>
     </>
