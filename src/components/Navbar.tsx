@@ -3,12 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import novelicious from "/novelicious.png";
-import { HiUser } from "react-icons/hi";
 import { FiMenu } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
 import clsx from "clsx";
 import axios from "axios";
-
+import { FaUserEdit } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
+import { IoLogOutSharp } from "react-icons/io5";
 interface User {
   id: number;
   username: string;
@@ -18,7 +19,7 @@ const Navbar: React.FC = () => {
   // Auth
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  const user_id = sessionStorage.getItem("user_id");
+  const userId = sessionStorage.getItem("user_id");
   const token = sessionStorage.getItem("token");
 
   // Menu
@@ -30,8 +31,12 @@ const Navbar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
+    if (!userId) {
+      console.log("User is not logged in.");
+      return;
+    }
     axios
-      .get(`http://127.0.0.1:8000/users/${user_id}`)
+      .get(`http://127.0.0.1:8000/users/${userId}`)
       .then((res) => {
         setUser(res.data);
       })
@@ -40,17 +45,6 @@ const Navbar: React.FC = () => {
       });
 
     setIsLoggedIn(!!token);
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
   }, []);
 
   const handleSignOut = () => {
@@ -77,12 +71,26 @@ const Navbar: React.FC = () => {
   ];
   const profileNavlinks = [
     {
-      label: "Edit Profile",
+      label: (
+        <div className="flex">
+          <span className="my-1 mr-2">
+            <FaUserEdit />
+          </span>
+          Edit Profile
+        </div>
+      ),
       link: "/profile",
     },
     {
-      label: "For You",
-      link: "/for-you",
+      label: (
+        <div className="flex">
+          <span className="my-1 mr-2">
+            <FaStar />
+          </span>
+          Favorites
+        </div>
+      ),
+      link: "/favorites",
     },
   ];
 
@@ -92,7 +100,10 @@ const Navbar: React.FC = () => {
         <section className="flex items-center gap-4">
           {/* menu */}
           <FiMenu
-            onClick={() => setMenu(true)}
+            onClick={() => {
+              setMenu(true);
+              setOpen(false);
+            }}
             className="text-3xl cursor-pointer lg:hidden"
           />
           {/* logo */}
@@ -100,17 +111,18 @@ const Navbar: React.FC = () => {
             <img
               src={novelicious}
               alt="novelicious"
-              className=" object-fit h-11"
+              className="object-fit h-11"
             />
             <p className="text-[1.5rem]">
-              novel<span className=" text-neutral bg-primary">icious</span>
+              novel<span className="text-neutral bg-primary">icious</span>
             </p>
           </Link>
         </section>
+
         {navlinks.map((d, i) => (
           <Link
             key={i}
-            className="hidden lg:block  text-gray-400 hover:text-black"
+            className="hidden lg:block text-primary relative text-md w-fit after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left"
             to={d.link}
           >
             {d.label}
@@ -121,7 +133,7 @@ const Navbar: React.FC = () => {
       {/* sidebar mobile menu */}
       <div
         className={clsx(
-          "fixed h-full w-screen lg:hidden  top-0 right-0 -translate-x-full transition-all ",
+          "fixed h-full w-screen lg:hidden top-0 right-0 -translate-x-full transition-all ",
           isSideMenuOpen && "translate-x-0"
         )}
       >
@@ -154,7 +166,7 @@ const Navbar: React.FC = () => {
             {open && (
               <div
                 ref={menuRef}
-                className="p-4 w-52 bg-white shadow-lg absolute"
+                className="p-4 w-52 bg-white shadow-lg absolute right-5 z-50 overflow-auto max-h-96"
               >
                 {user && <h1>Hi, {user.username}</h1>}
 
@@ -172,9 +184,13 @@ const Navbar: React.FC = () => {
                   ))}
                 </ul>
                 <button
-                  className="p-2 text-lg cursor-pointer rounded hover:underline"
+                  className=" flex p-2 text-lg cursor-pointer rounded hover:underline "
                   onClick={() => setOpenModal(true)}
                 >
+                  <span className="my-1 mr-2">
+                    {" "}
+                    <IoLogOutSharp />
+                  </span>
                   Sign Out
                 </button>
                 <Modal open={openModal} onClose={onCloseModal} center>
@@ -201,7 +217,9 @@ const Navbar: React.FC = () => {
         ) : (
           <Link to={`/login`}>
             {" "}
-            <HiUser />
+            <button className="bg-primary text-neutral px-4 py-2 rounded">
+              Sign In
+            </button>
           </Link>
         )}
         {/* nanti buat pfp kalo jadi */}

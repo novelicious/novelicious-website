@@ -6,6 +6,10 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { CartProps, CartItemProps } from "./Cart";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+import { FaStar } from "react-icons/fa6";
+import { FaTrash } from "react-icons/fa";
+import toast, { Toaster } from "react-hot-toast";
 interface Book {
   id: number;
   image: string;
@@ -41,24 +45,30 @@ const Market: React.FC = () => {
   //Isi favorite
   const [favs, setFavs] = useState<number[]>([]);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     AOS.init({
       duration: 1000,
       once: false,
     });
+    let isMounted = true;
     axios
       .get("http://127.0.0.1:8000/books")
       .then((res) => {
-        const transformedBooks = res.data.map(
-          (book: Omit<Book, "genres"> & { genres: string | null }) => ({
-            ...book,
-            genres: book.genres
-              ? book.genres.split(",").map((genre: string) => genre.trim())
-              : [],
-          })
-        );
-        setBooks(transformedBooks);
-        setFilterData(transformedBooks);
+        if (isMounted) {
+          const transformedBooks = res.data.map(
+            (book: Omit<Book, "genres"> & { genres: string | null }) => ({
+              ...book,
+              genres: book.genres
+                ? book.genres.split(",").map((genre: string) => genre.trim())
+                : [],
+            })
+          );
+          console.log(transformedBooks);
+          setBooks(transformedBooks);
+          setFilterData(transformedBooks);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -66,15 +76,36 @@ const Market: React.FC = () => {
 
     const token = sessionStorage.getItem("token");
     setIsLoggedIn(!!token);
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
-    const filteredBooks = filterData.filter(
-      (book) =>
-        book.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    const queryParams = new URLSearchParams(location.search);
+    const toastMessage = queryParams.get("toast");
+
+    if (toastMessage === "checkout_success") {
+      toast.success("Checkout successful!");
+      // Remove the toast parameter from the URL
+      queryParams.delete("toast");
+      navigate({ search: queryParams.toString() }, { replace: true });
+    }
+  }, [location, navigate]);
+
+  useEffect(() => {
+    const filteredBooks = filterData.filter((book) => {
+      const title = book.title ? book.title.toLowerCase() : "";
+      const authors = book.authors ? book.authors.toLowerCase() : "";
+      const searchQueryLower = searchQuery.toLowerCase();
+
+      return (
+        (title.includes(searchQueryLower) ||
+          authors.includes(searchQueryLower)) &&
         (selectedGenres.length === 0 ||
           selectedGenres.every((genre) => book.genres.includes(genre)))
-    );
+      );
+    });
     setBooks(filteredBooks);
     setCurrentPage(1);
   }, [searchQuery, selectedGenres, filterData]);
@@ -84,6 +115,11 @@ const Market: React.FC = () => {
   };
   useEffect(() => {
     const userId = sessionStorage.getItem("user_id");
+    if (!userId) {
+      console.log("User is not logged in.");
+      return;
+    }
+
     axios
       .get("http://127.0.0.1:8000/users/" + userId + "/cart")
       .then((res) => {
@@ -135,17 +171,33 @@ const Market: React.FC = () => {
     );
   };
   const onStarToggledHandler = (bookId: number) => {
+    toast.success("Sucessfully added to favorites!", {
+      icon: <FaStar />,
+    });
     const userId = sessionStorage.getItem("user_id");
+
+    if (!userId) {
+      console.log("User is not logged in.");
+      return;
+    }
     axios
-      .post("http://127.0.0.1:8000/users/" + userId + "/setfav", null, {
+      .post(`http://127.0.0.1:8000/users/${userId}/setfav`, null, {
         params: {
           book_id: bookId,
         },
       })
       .catch((err) => console.log(err));
   };
+
   const onUntoggledHandler = (bookId: number) => {
     const userId = sessionStorage.getItem("user_id");
+    toast.error("Removed from favorites!", {
+      icon: <FaTrash />,
+    });
+    if (!userId) {
+      console.log("User is not logged in.");
+      return;
+    }
     axios
       .post("http://127.0.0.1:8000/users/" + userId + "/removefav", null, {
         params: {
@@ -155,6 +207,9 @@ const Market: React.FC = () => {
       .catch((err) => console.log(err));
   };
   const addToCartHandler = (bookId: number, quantity: number) => {
+    toast.success("Sucessfully added to cart!", {
+      icon: <AiOutlineShoppingCart />,
+    });
     const userId = sessionStorage.getItem("user_id");
     axios.post("http://127.0.0.1:8000/carts/add", null, {
       params: {
@@ -200,14 +255,11 @@ const Market: React.FC = () => {
     onToggled,
     onUntoggled,
   }) => {
-    const [isToggled, setToggled] = useState<boolean>(() => {
-      const savedState = localStorage.getItem(`starred-${bookId}`);
-      return savedState ? JSON.parse(savedState) : toggled;
-    });
+    const [isToggled, setToggled] = useState<boolean>(toggled);
 
     useEffect(() => {
-      localStorage.setItem(`starred-${bookId}`, JSON.stringify(isToggled));
-    }, [isToggled, bookId]);
+      setToggled(toggled);
+    }, [toggled]);
 
     return (
       <div className="text-xl font-medium ml-2">
@@ -250,9 +302,9 @@ const Market: React.FC = () => {
           onClick={() => {
             setClicked(!clicked);
           }}
-          className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"
+          className="text-primary block w-full rounded underline p-4 text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"
         >
-          {clicked ? "X" : "Buy"}
+          {clicked ? "X" : "+"}
         </button>
         <div
           className={size + " h-full transition-all duration:500 ease-in-out"}
@@ -288,6 +340,9 @@ const Market: React.FC = () => {
 
   return (
     <section>
+      <div>
+        <Toaster />
+      </div>
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
         <header className="sticky top-0 bg-neutral z-50">
           <Navbar />
@@ -297,7 +352,7 @@ const Market: React.FC = () => {
                 <input
                   type="text"
                   className="w-full md:w-80 px-10 h-10 rounded-l border-2 border-secondary  focus:ring-0 focus:border-primary"
-                  placeholder="Search..."
+                  placeholder="Search by title, authors..."
                   value={searchQuery}
                   onChange={handleSearchChange}
                 />
@@ -310,7 +365,7 @@ const Market: React.FC = () => {
                   value=""
                 >
                   <option value="" disabled>
-                    Select Genre
+                    Genres
                   </option>
                   <option value="Fantasy">Fantasy</option>
                   <option value="Sci-Fi">Sci-Fi</option>
@@ -404,7 +459,7 @@ const Market: React.FC = () => {
                       {book.genres.map((genre, index) => (
                         <span
                           key={index}
-                          className="text-neutral neutralspace-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
+                          className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
                         >
                           <a
                             href="#"
