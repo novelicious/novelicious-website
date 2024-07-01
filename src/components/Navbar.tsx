@@ -100,7 +100,10 @@ const Navbar: React.FC = () => {
         <section className="flex items-center gap-4">
           {/* menu */}
           <FiMenu
-            onClick={() => setMenu(true)}
+            onClick={() => {
+              setMenu(true);
+              setOpen(false);
+            }}
             className="text-3xl cursor-pointer lg:hidden"
           />
           {/* logo */}
@@ -108,13 +111,14 @@ const Navbar: React.FC = () => {
             <img
               src={novelicious}
               alt="novelicious"
-              className=" object-fit h-11"
+              className="object-fit h-11"
             />
             <p className="text-[1.5rem]">
-              novel<span className=" text-neutral bg-primary">icious</span>
+              novel<span className="text-neutral bg-primary">icious</span>
             </p>
           </Link>
         </section>
+
         {navlinks.map((d, i) => (
           <Link
             key={i}
@@ -129,7 +133,7 @@ const Navbar: React.FC = () => {
       {/* sidebar mobile menu */}
       <div
         className={clsx(
-          "fixed h-full w-screen lg:hidden  top-0 right-0 -translate-x-full transition-all ",
+          "fixed h-full w-screen lg:hidden top-0 right-0 -translate-x-full transition-all ",
           isSideMenuOpen && "translate-x-0"
         )}
       >
@@ -162,7 +166,7 @@ const Navbar: React.FC = () => {
             {open && (
               <div
                 ref={menuRef}
-                className="p-4 w-52 bg-white shadow-lg absolute"
+                className="p-4 w-52 bg-white shadow-lg absolute right-5 z-50 overflow-auto max-h-96"
               >
                 {user && <h1>Hi, {user.username}</h1>}
 
