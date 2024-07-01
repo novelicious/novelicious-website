@@ -20,6 +20,7 @@ const App: React.FC = () => (
         <Route path="/novel/:id" element={<Details />}></Route>
         <Route path="/ask/:id" element={<Details />}></Route>
         <Route path="/for-you" element={<Recommendation />}></Route>
+
         <Route path="/cart" element={<Cart />}></Route>
         <Route path="/protected" element={<ProtectedPage />} />
         <Route path="*" element={<ErrorPage />} />
