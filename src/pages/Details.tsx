@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { IconsManifest } from "react-icons";
+import { FaStar } from "react-icons/fa";
 interface Book {
   id: number;
   image: string;
@@ -21,11 +23,25 @@ interface Question {
   answer: string;
 }
 
+interface Review {
+  id: number;
+  comment: string;
+  ratings: number;
+  user: {
+    username: string;
+  };
+  created_at: string;
+}
+
 const Details: React.FC = () => {
   const [book, setBook] = useState<Book | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [question, setQuestion] = useState<Question | null>(null);
   const [inputQuestion, setInputQuestion] = useState<string>("");
   const { id } = useParams<{ id: string }>();
+  const [reviewText, setReviewText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const userId = sessionStorage.getItem("user_id");
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (id && inputQuestion) {
@@ -59,6 +75,53 @@ const Details: React.FC = () => {
       });
   }, [id]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/books/${id}/reviews`
+        );
+        setReviews(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchData();
+  }, [id]);
+  
+  const handleSubmitReview = async () => {
+    if (reviewText.trim() === "") {
+      alert("Review cannot be empty.");
+      return;
+    }
+    setLoading(true);
+    axios
+      .post(
+        `http://127.0.0.1:8000/books/${id}/review?user_id=${userId}&review_text=${encodeURIComponent(
+          reviewText
+        )}`
+      )
+      .then(() => {
+        setReviewText("");
+        setLoading(false);
+
+        axios
+          .get(`http://127.0.0.1:8000/books/${id}/reviews`)
+          .then((res) => {
+            setReviews(res.data);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  };
+
+
+  
   if (!book) {
     return null;
   }
@@ -126,69 +189,45 @@ const Details: React.FC = () => {
                   </div>
                 )}
               </div>
+              
             </div>
-          </div>
-          <section className="py-24 relative">
-            <h1 className="my-2 text-lg font-bold">Reviews ⭐</h1>
-            <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
-              <div className="grid grid-cols-1 gap-8">
-                <div className="grid grid-cols-12 max-w-sm sm:max-w-full mx-auto">
-                  <div className="col-span-12 lg:col-span-10">
-                    <div className="sm:flex gap-6">
-                      <img
-                        src="https://pbs.twimg.com/profile_images/1011676051636879361/Omk-mxTL_400x400.jpg"
-                        alt="arsene"
-                        className="w-32 h-32"
-                      />
-                      <div className="text">
-                        <p className="font-medium text-lg leading-8 text-gray-900 mb-2">
-                          Arsene
-                        </p>
-                        <div className="flex lg:hidden items-center gap-2 lg:justify-between w-full mb-5">
-                          <h1>Rate 10/10</h1>
-                        </div>
-                        <p className="font-normal text-base leading-7 text-gray-400 mb-4 lg:pr-8">
-                          Thou art I
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <p className="lg:hidden font-medium text-sm leading-7 text-gray-400 lg:text-center whitespace-nowrap">
-                            Nov 01, 2023
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-span-12 lg:col-span-2 max-lg:hidden flex lg:items-center flex-row lg:flex-col justify-center max-lg:pt-6">
-                    <div className="flex items-center gap-2 lg:justify-between w-full mb-5">
-                      <h1>Rate 10/10</h1>
-                    </div>
-                    <p className="font-medium text-lg leading-8 text-gray-400 lg:text-center whitespace-nowrap">
-                      Jun 18, 2024
-                    </p>
-                  </div>
-                </div>
+            <section className="w-full md:w-[85vw] mx-auto my-12 p-6 bg-white rounded-md border-3 shadow-lg border-gray-300">
+            <h1 className="text-lg font-bold">Reviews:</h1>
+              <div className="my-4">
+                <textarea
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  className="w-full p-2 border rounded"
+                  placeholder="Write your review here..."
+                  required
+                />
+                <button
+                  onClick={handleSubmitReview}
+                  className="mt-2 px-4 py-2 bg-primary text-white rounded"
+                  disabled={loading}
+                >
+                  {loading ? "Submitting..." : "Send"}
+                </button>
               </div>
-            </div>
-            <form className="mt-8">
-              <input
-                type="text"
-                id="question"
-                name="question"
-                placeholder="Reviews..."
-                className="w-full px-3 py-2 rounded-sm border-2 border-gray-200 focus:ring-0 focus:border-primary"
-                required
-              />
-              <button
-                className="mt-2 group relative inline-block text-sm font-medium text-slate-600 focus:outline-none focus:ring active:text-slate-500"
-                type="submit"
-              >
-                <span className="absolute inset-0 border border-current"></span>
-                <span className="block border border-current bg-white px-12 py-3 transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1">
-                  Post yours
-                </span>
-              </button>
-            </form>
+            {reviews.length > 0 ? (
+              reviews.map((review) => (
+                <div
+                  key={review.id}
+                  className="p-4 mb-4 border-b border-gray-300"
+                >
+                  <p className="text-gray-600">
+                    <strong>{review.user.username}</strong> -{" "}
+                    {new Date(review.created_at).toLocaleDateString()}
+                  </p>
+                  <p className="text-gray-800 mt-2">{review.comment}</p>
+                  <p className="text-gray-800 mt-2">{review.ratings} <FaStar className="text-[5vh]" /></p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-600">No reviews available.</p>
+            )}
           </section>
+          </div>
         </div>
       </div>
     </>
