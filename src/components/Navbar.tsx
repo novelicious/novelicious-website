@@ -7,7 +7,9 @@ import { FiMenu } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
 import clsx from "clsx";
 import axios from "axios";
-
+import { FaUserEdit } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
+import { IoLogOutSharp } from "react-icons/io5";
 interface User {
   id: number;
   username: string;
@@ -69,12 +71,26 @@ const Navbar: React.FC = () => {
   ];
   const profileNavlinks = [
     {
-      label: "Edit Profile",
+      label: (
+        <div className="flex">
+          <span className="my-1 mr-2">
+            <FaUserEdit />
+          </span>
+          Edit Profile
+        </div>
+      ),
       link: "/profile",
     },
     {
-      label: "For You",
-      link: "/for-you",
+      label: (
+        <div className="flex">
+          <span className="my-1 mr-2">
+            <FaStar />
+          </span>
+          Favorites
+        </div>
+      ),
+      link: "/favorites",
     },
   ];
 
@@ -164,9 +180,13 @@ const Navbar: React.FC = () => {
                   ))}
                 </ul>
                 <button
-                  className="p-2 text-lg cursor-pointer rounded hover:underline"
+                  className=" flex p-2 text-lg cursor-pointer rounded hover:underline "
                   onClick={() => setOpenModal(true)}
                 >
+                  <span className="my-1 mr-2">
+                    {" "}
+                    <IoLogOutSharp />
+                  </span>
                   Sign Out
                 </button>
                 <Modal open={openModal} onClose={onCloseModal} center>

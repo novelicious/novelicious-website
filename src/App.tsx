@@ -5,10 +5,9 @@ import Market from "./pages/Market.tsx";
 import Login from "./pages/Auth/Login.tsx";
 import Details from "./pages/Details.tsx";
 import Cart from "./pages/Cart.tsx";
-import Recommendation from "./pages/Recommendation.tsx";
 import Register from "./pages/Auth/Register.tsx";
 import ProtectedPage from "./Protected.tsx";
-
+import Favorites from "./pages/Favorites.tsx";
 const App: React.FC = () => (
   <div className=" bg-neutral">
     <Router>
@@ -19,7 +18,7 @@ const App: React.FC = () => (
         <Route path="/register" element={<Register />}></Route>
         <Route path="/novel/:id" element={<Details />}></Route>
         <Route path="/ask/:id" element={<Details />}></Route>
-        <Route path="/for-you" element={<Recommendation />}></Route>
+        <Route path="/favorites" element={<Favorites />}></Route>
 
         <Route path="/cart" element={<Cart />}></Route>
         <Route path="/protected" element={<ProtectedPage />} />

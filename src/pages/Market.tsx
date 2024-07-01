@@ -255,14 +255,11 @@ const Market: React.FC = () => {
     onToggled,
     onUntoggled,
   }) => {
-    const [isToggled, setToggled] = useState<boolean>(() => {
-      const savedState = localStorage.getItem(`starred-${bookId}`);
-      return savedState ? JSON.parse(savedState) : toggled;
-    });
+    const [isToggled, setToggled] = useState<boolean>(toggled);
 
     useEffect(() => {
-      localStorage.setItem(`starred-${bookId}`, JSON.stringify(isToggled));
-    }, [isToggled, bookId]);
+      setToggled(toggled);
+    }, [toggled]);
 
     return (
       <div className="text-xl font-medium ml-2">
