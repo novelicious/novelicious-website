@@ -45,6 +45,7 @@ const Details: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
   const [reviewCount, setReviewCount] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -84,6 +85,8 @@ const Details: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    setIsLoggedIn(!!token);
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -165,22 +168,28 @@ const Details: React.FC = () => {
 
         <section className="w-full md:w-[85vw] mx-auto p-6 bg-white rounded-md border-3 shadow-lg border-gray-300">
           <h1 className="text-lg font-bold">{reviewCount} Reviews</h1>
-          <div className="my-4">
-            <textarea
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-              className="w-full p-2 border rounded resize-none"
-              placeholder="Write your review here..."
-              required
-            />
-            <button
-              onClick={handleSubmitReview}
-              className="mt-2 px-4 py-2 bg-primary text-white rounded"
-              disabled={loading}
-            >
-              {loading ? "Submitting..." : "Send"}
-            </button>
-          </div>
+
+          {isLoggedIn ? (
+            <div className="my-4">
+              <textarea
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+                className="w-full p-2 border rounded resize-none"
+                placeholder="Write your review here..."
+                required
+              />
+              <button
+                onClick={handleSubmitReview}
+                className="mt-2 px-4 py-2 bg-primary text-white rounded"
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Send"}
+              </button>
+            </div>
+          ) : (
+            <>{""}</>
+          )}
+
           {reviews.length > 0 ? (
             reviews.map((review) => (
               <div

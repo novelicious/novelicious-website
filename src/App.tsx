@@ -8,6 +8,7 @@ import Cart from "./pages/Cart.tsx";
 import Register from "./pages/Auth/Register.tsx";
 import ProtectedPage from "./Protected.tsx";
 import Favorites from "./pages/Favorites.tsx";
+import Checkout from "./pages/Checkout.tsx";
 const App: React.FC = () => (
   <div className=" bg-neutral">
     <Router>
@@ -19,7 +20,7 @@ const App: React.FC = () => (
         <Route path="/novel/:id" element={<Details />}></Route>
         <Route path="/ask/:id" element={<Details />}></Route>
         <Route path="/favorites" element={<Favorites />}></Route>
-
+        <Route path="/checkout" element={<Checkout />}></Route>
         <Route path="/cart" element={<Cart />}></Route>
         <Route path="/protected" element={<ProtectedPage />} />
         <Route path="*" element={<ErrorPage />} />

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import CartItem from "../components/CartItem";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
-
+import { IoMdArrowRoundBack } from "react-icons/io";
 export interface CartItemProps {
   id: number;
   title: string;
@@ -95,14 +95,14 @@ const Cart: React.FC = () => {
         </div>
         <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
           <header className="sticky top-0 bg-neutral z-50">
-            <Navbar />
+            <div className="flex items-center">
+              <Link to="/">
+                <IoMdArrowRoundBack />
+              </Link>
+              <h1 className="ml-5 text-md font-semibold">Cart</h1>
+            </div>
             <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
               <div className="mx-auto max-w-3xl">
-                <header className="text-center">
-                  <h1 className="text-xl font-bold text-gray-900 sm:text-3xl">
-                    Your Cart
-                  </h1>
-                </header>
                 {loading ? (
                   <div className="text-center mt-8">
                     <div className="flex justify-center items-center h-96">
