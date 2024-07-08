@@ -1,34 +1,38 @@
 import React, { useEffect, useState } from "react";
 
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { CiUser } from "react-icons/ci";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { PiHouseLine } from "react-icons/pi";
 import { CiPhone } from "react-icons/ci";
-interface ProductProps{
-  id: number,
-  name: string,
-  image: string,
-  authors : string,
-  cost: number,
-}
 const Checkout: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [products, setProducts] = useState<ProductProps[]>([]);
-  const id = useLocation().state.id;
   // const [cart, setCart] = useState<CartProps>();
   // const [products, setproducts] = useState<CartItemProps[]>([]);
-  useEffect(()=>{
 
-
-  }, [])
+  const products = [
+    {
+      id: 1,
+      name: "Novel 1",
+      description: "Description ",
+      image: "https://via.placeholder.com/150",
+      price: 10000,
+    },
+    {
+      id: 2,
+      name: "Novel 2",
+      description: "Description",
+      image: "https://via.placeholder.com/150",
+      price: 20000,
+    },
+  ];
 
   useEffect(() => setLoading(false));
 
   const shippingCost = 9000;
   const totalCost =
-    products.reduce((acc, product) => acc + product.cost, 0) + shippingCost;
+    products.reduce((acc, product) => acc + product.price, 0) + shippingCost;
 
   return (
     <section>
@@ -43,7 +47,6 @@ const Checkout: React.FC = () => {
             </Link>
             <h1 className="ml-5 text-md font-semibold">Checkout</h1>
           </div>
-          {id}
           <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
             <div className="mx-auto max-w-3xl">
               {loading ? (
@@ -90,9 +93,9 @@ const Checkout: React.FC = () => {
                           <h3 className="text-lg font-semibold">
                             {product.name}
                           </h3>
-                          <p className="text-gray-600">{product.authors}</p>
+                          <p className="text-gray-600">{product.description}</p>
                           <p className="text-gray-800 font-semibold">
-                            Rp.{product.cost}
+                            Rp.{product.price}
                           </p>
                         </div>
                       </div>

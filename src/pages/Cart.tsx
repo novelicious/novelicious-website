@@ -13,7 +13,6 @@ export interface CartItemProps {
   image: string;
   genres: string;
   amount: number;
-  cost:number;
 }
 
 export interface CartProps {
@@ -26,40 +25,31 @@ const Cart: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<CartProps>();
   const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
-  const [cost, setCost] = useState<number>(0);
   const navigate = useNavigate();
   const userId = sessionStorage.getItem("user_id");
-  const updateCost = ()=>{
-    var c = 0;
-    console.log("Updating Cost");
-    cartItems.forEach(item => {
-      c += item.cost * item.amount;
-      
-    });
-    setCost(c);
-  }
-  const getCartItems = ()=>{
-    axios
-    .get("http://127.0.0.1:8000/users/" + userId + "/cart")
-    .then((res) => {
-        const cartData = res.data;
-        console.log(res);
-        console.log(res.data);
-        setCart(cartData);
-        setCartItems(cartData.books);
-        setLoading(false);
-        updateCost();
-    })
-    .catch((err) => {
-      console.log(err);
-      navigate("/market");
-    });
-  }
+
   useEffect(() => {
-    getCartItems();
-    
+    let isMounted = true; // Variable to track component mount status
+
+    axios
+      .get("http://127.0.0.1:8000/users/" + userId + "/cart")
+      .then((res) => {
+        if (isMounted) {
+          const cartData = res.data;
+          console.log(res);
+          console.log(res.data);
+          setCart(cartData);
+          setCartItems(cartData.books);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        navigate("/market");
+      });
 
     return () => {
+      isMounted = false;
     };
   }, [navigate, userId]);
 
@@ -68,11 +58,9 @@ const Cart: React.FC = () => {
       .post("http://127.0.0.1:8000/carts/buy", null, {
         params: { user_id: userId },
       })
-      .then((res) => {
+      .then(() => {
         // Navigate to the market page with a toast message parameter
-        //navigate("/market?toast=checkout_success");
-        const checkout_id = res.data.id
-        navigate("/checkout", {state :{ id : checkout_id}, replace:true});
+        navigate("/market?toast=checkout_success");
       })
       .catch((err) => {
         console.log(err);
@@ -95,10 +83,9 @@ const Cart: React.FC = () => {
         console.log(err);
       });
   };
-  const updateHandler = ()=>{
-    getCartItems();
-    updateCost();
-  }
+
+  const subtotal = cart?.amount;
+  const total = subtotal;
 
   return (
     <>
@@ -141,7 +128,6 @@ const Cart: React.FC = () => {
                           amount={item.amount}
                           userId={userId ?? ""}
                           onRemoveItem={() => deleteHandler(item.id)}
-                          onUpdateItem={()=>updateHandler()}
                         />
                       ))}
                     </ul>
@@ -149,9 +135,13 @@ const Cart: React.FC = () => {
                     <div className="mt-8 flex justify-end border-t border-gray-100 pt-8">
                       <div className="w-screen max-w-lg space-y-4">
                         <dl className="space-y-0.5 text-sm text-gray-700">
+                          <div className="flex justify-between">
+                            <dt>Subtotal</dt>
+                            <dd>IDR{subtotal}</dd>
+                          </div>
                           <div className="flex justify-between !text-base font-medium">
                             <dt>Total</dt>
-                            <dd>IDR{cost}</dd>
+                            <dd>IDR{total}</dd>
                           </div>
                         </dl>
                         <div className="flex justify-end">
