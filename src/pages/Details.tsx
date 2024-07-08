@@ -125,6 +125,7 @@ const Details: React.FC = () => {
       })
       .catch((err) => {
         console.error(err);
+        alert("You must log in to review.");
         setLoading(false);
       });
   };
