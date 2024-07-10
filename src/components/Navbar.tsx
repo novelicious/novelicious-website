@@ -59,16 +59,6 @@ const Navbar: React.FC = () => {
     setOpenModal(false);
   };
 
-  // const navlinks = [
-  //   {
-  //     label: "Home",
-  //     link: "/",
-  //   },
-  //   {
-  //     label: "Market",
-  //     link: "/market",
-  //   },
-  // ];
   const profileNavlinks = [
     {
       label: (

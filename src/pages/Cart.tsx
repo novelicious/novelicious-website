@@ -67,6 +67,8 @@ const Cart: React.FC = () => {
         params: { user_id: userId },
       })
       .then((res) => {
+        // Navigate to the market page with a toast message parameter
+        //navigate("/market?toast=checkout_success");
         const checkout_id = res.data.id;
         navigate("/checkout", { state: { id: checkout_id }, replace: true });
       })

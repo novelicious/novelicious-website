@@ -8,12 +8,14 @@ import Register from "./pages/Auth/Register.tsx";
 import ProtectedPage from "./Protected.tsx";
 import Favorites from "./pages/Favorites.tsx";
 import Checkout from "./pages/Checkout.tsx";
+import UserProfile from "./pages/UserProfile.tsx";
 const App: React.FC = () => (
   <div className=" bg-neutral">
     <Router>
       <Routes>
         <Route path="/" element={<Market />} />
         <Route path="/market" element={<Market />} />
+        <Route path="/profile" element={<UserProfile />} />
         <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="/novel/:id" element={<Details />}></Route>
