@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ErrorPage from "./error-page.tsx";
-import Home from "./pages/Home.tsx";
 import Market from "./pages/Market.tsx";
 import Login from "./pages/Auth/Login.tsx";
 import Details from "./pages/Details.tsx";
@@ -13,7 +12,7 @@ const App: React.FC = () => (
   <div className=" bg-neutral">
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Market />} />
         <Route path="/market" element={<Market />} />
         <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>

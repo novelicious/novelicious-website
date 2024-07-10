@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { FaStar } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
+import { FaCartShopping } from "react-icons/fa6";
+
 interface Book {
   id: number;
   image: string;
@@ -302,9 +304,9 @@ const Market: React.FC = () => {
           onClick={() => {
             setClicked(!clicked);
           }}
-          className="text-primary block w-full rounded underline p-4 text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"
+          className="text-primary w-full p-4 text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"
         >
-          {clicked ? "X" : "+"}
+          {clicked ? "X" : <FaCartShopping />}
         </button>
         <div
           className={size + " h-full transition-all duration:500 ease-in-out"}
@@ -392,7 +394,7 @@ const Market: React.FC = () => {
                   >
                     <div className="py-2">
                       <div className="t-0 left-3">
-                        <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-neutral">
+                        <p className="flex h-2 w-2 items-center justify-center rounded-full bg-primary p-3 text-xs text-neutral">
                           {cartAmount}
                         </p>
                       </div>
@@ -448,6 +450,7 @@ const Market: React.FC = () => {
                 <img
                   src={book.image}
                   alt={book.title}
+                  loading="lazy"
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
                 />
               </Link>
@@ -491,6 +494,9 @@ const Market: React.FC = () => {
                   </h3>
 
                   <p className="mt-1.5 text-sm text-gray-700">{book.authors}</p>
+                  <p className="mt-1.5 text-sm text-gray-700 font-semibold">
+                    IDR{book.cost}
+                  </p>
                 </div>
 
                 {isLoggedIn && (

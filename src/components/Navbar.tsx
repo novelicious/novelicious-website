@@ -59,16 +59,16 @@ const Navbar: React.FC = () => {
     setOpenModal(false);
   };
 
-  const navlinks = [
-    {
-      label: "Home",
-      link: "/",
-    },
-    {
-      label: "Market",
-      link: "/market",
-    },
-  ];
+  // const navlinks = [
+  //   {
+  //     label: "Home",
+  //     link: "/",
+  //   },
+  //   {
+  //     label: "Market",
+  //     link: "/market",
+  //   },
+  // ];
   const profileNavlinks = [
     {
       label: (
@@ -118,16 +118,6 @@ const Navbar: React.FC = () => {
             </p>
           </Link>
         </section>
-
-        {navlinks.map((d, i) => (
-          <Link
-            key={i}
-            className="hidden lg:block text-primary relative text-md w-fit after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left"
-            to={d.link}
-          >
-            {d.label}
-          </Link>
-        ))}
       </div>
 
       {/* sidebar mobile menu */}
@@ -142,12 +132,6 @@ const Navbar: React.FC = () => {
             onClick={() => setMenu(false)}
             className="mt-0 mb-8 text-3xl cursor-pointer"
           />
-
-          {navlinks.map((d, i) => (
-            <Link key={i} className="font-bold" to={d.link}>
-              {d.label}
-            </Link>
-          ))}
         </section>
       </div>
 

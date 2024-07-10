@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import AOS from "aos";
-import novelicious from "/novelicious.png";
+
 import "aos/dist/aos.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
-import { FaLongArrowAltRight } from "react-icons/fa";
+
 const Home: React.FC = () => {
   const imageUrls = [
     "https://m.media-amazon.com/images/I/81iDNjn-r3L._AC_UF1000,1000_QL80_.jpg",
@@ -78,118 +78,118 @@ const Home: React.FC = () => {
         data-aos="zoom-in"
         className="text-gray-700 body-font border-t border-primary mt-20"
       >
-        <div className="container px-5 py-24 mx-auto">
-          <div className="flex flex-col text-center w-full mb-20">
-            <h2 className="text-xs text-primary tracking-widest font-medium title-font mb-1">
-              FEATURES
+        <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+          <header className="flex">
+            <h2 className="text-xl font-bold text-gray-900 sm:text-3xl">
+              Our Novel
             </h2>
 
-            <h1 className="sm:text-3xl text-2xl font-medium title-font text-gray-900">
-              novelicious.
-            </h1>
-          </div>
-          <div className="flex flex-wrap -m-4">
-            <div className="p-4 md:w-1/3">
-              <div className="flex rounded-lg h-full bg-neutral p-8 flex-col">
-                <div className="flex items-center mb-3">
-                  <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full  text-neutral flex-shrink-0">
-                    🗣️
-                  </div>
-                  <h2 className="text-gray-900 text-lg title-font font-medium">
-                    Ask the Book Genie
-                  </h2>
-                </div>
-                <div className="flex-grow">
-                  <p className="leading-relaxed text-base">
-                    Got a question about a book? Want to know more about an
-                    author or a genre? Our AI-powered question-answering system
-                    is here to help.
-                  </p>
-                  <a className="mt-3 text-primary inline-flex items-center">
-                    Learn More
-                    <FaLongArrowAltRight />
-                  </a>
-                </div>
-              </div>
-            </div>
+            <Link to={""} className="underline">
+              Check all
+            </Link>
+          </header>
 
-            <div className="p-4 md:w-1/3">
-              <div className="flex rounded-lg h-full bg-neutral p-8 flex-col">
-                <div className="flex items-center mb-3">
-                  <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full  text-neutral flex-shrink-0">
-                    😋
-                  </div>
-                  <h2 className="text-gray-900 text-lg title-font font-medium">
-                    Bestsellers and New Arrivals
-                  </h2>
-                </div>
-                <div className="flex-grow">
-                  <p className="leading-relaxed text-base">
-                    Stay updated with the latest bestsellers and new releases.
-                    Don't miss out on the hottest books of the season.
-                  </p>
-                  <a className="mt-3 text-primary inline-flex items-center">
-                    Learn More
-                    <FaLongArrowAltRight />
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="p-4 md:w-1/3">
-              <div className="flex rounded-lg h-full bg-neutral p-8 flex-col">
-                <div className="flex items-center mb-3">
-                  <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full  text-white flex-shrink-0">
-                    🫵
-                  </div>
-                  <h2 className="text-gray-900 text-lg title-font font-medium">
-                    Join Our Community
-                  </h2>
-                </div>
-                <div className="flex-grow">
-                  <p className="leading-relaxed text-base">
-                    Connect with fellow book lovers, share your reviews, and
-                    participate in exciting book discussions.
-                  </p>
-                  <a className="mt-3 text-primary inline-flex items-center">
-                    Learn More
-                    <FaLongArrowAltRight />
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section data-aos="zoom-in" className="border-t border-primary mt-20">
-        <div className="mx-auto max-w-screen-2xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:h-screen lg:grid-cols-2">
-            <div className="relative z-10 lg:py-16">
-              <div className="relative bg-primary h-64 sm:h-80 lg:h-full">
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <li>
+              <a href="#" className="group block overflow-hidden">
                 <img
-                  alt="novelicious"
-                  src={novelicious}
-                  className="absolute inset-0 h-full w-full object-cover"
+                  src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+                  alt=""
+                  className="h-[350px] w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[450px]"
                 />
-              </div>
-            </div>
 
-            <div className="relative flex items-center bg-white">
-              <span className="hidden lg:absolute lg:inset-y-0 lg:-start-16 lg:block lg:w-16 lg:bg-white"></span>
+                <div className="relative bg-white pt-3">
+                  <h3 className="text-xs text-gray-700 group-hover:underline group-hover:underline-offset-4">
+                    Basic Tee
+                  </h3>
 
-              <div className="p-8 sm:p-16 lg:p-24">
-                <h2 className="text-2xl font-bold sm:text-3xl">Our Vision</h2>
+                  <p className="mt-2">
+                    <span className="sr-only"> Regular Price </span>
 
-                <p className="mt-4 text-gray-600">
-                  We envision a world where everyone has access to the books
-                  they love and the information they need to make informed
-                  reading choices. By combining technology with a deep love for
-                  literature, we strive to enhance your reading experience and
-                  help you discover the joy of finding that next great read.
-                </p>
-              </div>
-            </div>
-          </div>
+                    <span className="tracking-wider text-gray-900">
+                      {" "}
+                      £24.00 GBP{" "}
+                    </span>
+                  </p>
+                </div>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" className="group block overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+                  alt=""
+                  className="h-[350px] w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[450px]"
+                />
+
+                <div className="relative bg-white pt-3">
+                  <h3 className="text-xs text-gray-700 group-hover:underline group-hover:underline-offset-4">
+                    Basic Tee
+                  </h3>
+
+                  <p className="mt-2">
+                    <span className="sr-only"> Regular Price </span>
+
+                    <span className="tracking-wider text-gray-900">
+                      {" "}
+                      £24.00 GBP{" "}
+                    </span>
+                  </p>
+                </div>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" className="group block overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+                  alt=""
+                  className="h-[350px] w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[450px]"
+                />
+
+                <div className="relative bg-white pt-3">
+                  <h3 className="text-xs text-gray-700 group-hover:underline group-hover:underline-offset-4">
+                    Basic Tee
+                  </h3>
+
+                  <p className="mt-2">
+                    <span className="sr-only"> Regular Price </span>
+
+                    <span className="tracking-wider text-gray-900">
+                      {" "}
+                      £24.00 GBP{" "}
+                    </span>
+                  </p>
+                </div>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" className="group block overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+                  alt=""
+                  className="h-[350px] w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[450px]"
+                />
+
+                <div className="relative bg-white pt-3">
+                  <h3 className="text-xs text-gray-700 group-hover:underline group-hover:underline-offset-4">
+                    Basic Tee
+                  </h3>
+
+                  <p className="mt-2">
+                    <span className="sr-only"> Regular Price </span>
+
+                    <span className="tracking-wider text-gray-900">
+                      {" "}
+                      £24.00 GBP{" "}
+                    </span>
+                  </p>
+                </div>
+              </a>
+            </li>
+          </ul>
         </div>
       </section>
 
