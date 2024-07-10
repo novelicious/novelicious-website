@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { CiUser } from "react-icons/ci";
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -36,6 +36,7 @@ interface CheckoutData {
   status: string;
   total_amount: number;
   total_cost: number;
+  shipping_fee : number;
   updated_at: string;
   user_id: number;
 }
@@ -59,20 +60,8 @@ const Checkout: React.FC = () => {
   const location = useLocation();
   const id = location.state?.id;
   const userId = sessionStorage.getItem("user_id");
-
+  const navigate = useNavigate();
   useEffect(() => {
-    if (id) {
-      axios
-        .get<Cart>(`http://127.0.0.1:8000/carts/16`)
-        .then((res) => {
-          console.log("Cart data:", res.data);
-          setCart(res.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching cart data:", error);
-        });
-    }
-
     if (userId) {
       axios
         .get<User>(`http://127.0.0.1:8000/users/${userId}`)
@@ -91,11 +80,22 @@ const Checkout: React.FC = () => {
         .then((res) => {
           console.log("Checkout data:", res.data);
           setCheckout(res.data);
+          
+          axios
+          .get<Cart>(`http://127.0.0.1:8000/carts/${res.data.cart_id}`)
+          .then((res) => {
+            console.log("Cart data:", res.data);
+            setCart(res.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching cart data:", error);
+          });
         })
         .catch((error) => {
           console.error("Error fetching checkout data:", error);
         });
     }
+
   }, [id, userId]);
 
   useEffect(() => {
@@ -103,7 +103,17 @@ const Checkout: React.FC = () => {
       setLoading(false);
     }
   }, [cart, user, checkout]);
+  const onSubmitHandler = ()=>{
+    axios.post(
+      "http://127.0.0.1:8000/checkouts/"+checkout?.id+"/checkout", null,
+      {params:{
+        "shipping_fee":9000
+      }}
+    ).then((res)=>{
+      navigate("/transactions");
 
+    })
+  }
   return (
     <section>
       <div>
@@ -169,6 +179,9 @@ const Checkout: React.FC = () => {
                               <p className="text-gray-800 font-semibold">
                                 Rp. {book.cost}
                               </p>
+                              <p className="text-gray-500 font-semibold">
+                                x{book.amount}
+                              </p>
                             </div>
                           </div>
                         ))}
@@ -204,12 +217,14 @@ const Checkout: React.FC = () => {
                         </div>
                         <div className="flex justify-between !text-base font-medium">
                           <dt>Total</dt>
-                          <dd>IDR {checkout?.total_cost}</dd>
+                          <dd>IDR {checkout ? checkout?.total_cost + checkout?.shipping_fee: ""}</dd>
                         </div>
                       </dl>
                       <div className="flex justify-end">
-                        <button className="ml-4 inline-flex text-neutral bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-900 rounded text-sm">
-                          Next (Transactions)
+                        <button className="ml-4 inline-flex text-neutral bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-900 rounded text-sm"
+                          onClick={()=>onSubmitHandler()}
+                        >
+                          Next
                         </button>
                       </div>
                     </div>
