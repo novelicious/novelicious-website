@@ -11,7 +11,7 @@ interface CartItemProps {
   amount: number;
   userId?: string;
   onRemoveItem?: (id: number) => void;
-  onUpdateItem? : ()=>void;
+  onUpdateItem?: () => void;
 }
 const CartItem: React.FC<CartItemProps> = ({
   id,
@@ -22,7 +22,7 @@ const CartItem: React.FC<CartItemProps> = ({
   amount,
   userId,
   onRemoveItem,
-  onUpdateItem
+  onUpdateItem,
 }) => {
   const changeItemHandler = (amount: number) => {
     if (userId == null || userId == "") return;
@@ -33,8 +33,8 @@ const CartItem: React.FC<CartItemProps> = ({
           book_id: id,
           amount: amount,
         },
-      }).then(()=>{
-        
+      })
+      .then(() => {
         if (onUpdateItem != null) onUpdateItem();
       })
       .catch((err) => {

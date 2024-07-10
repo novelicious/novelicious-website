@@ -13,7 +13,7 @@ export interface CartItemProps {
   image: string;
   genres: string;
   amount: number;
-  cost:number;
+  cost: number;
 }
 
 export interface CartProps {
@@ -29,19 +29,19 @@ const Cart: React.FC = () => {
   const [cost, setCost] = useState<number>(0);
   const navigate = useNavigate();
   const userId = sessionStorage.getItem("user_id");
-  const updateCost = ()=>{
+  const updateCost = () => {
     var c = 0;
     console.log("Updating Cost");
-    cartItems.forEach(item => {
+    cartItems.forEach((item) => {
       c += item.cost * item.amount;
-      
     });
+    console.log(c);
     setCost(c);
-  }
-  const getCartItems = ()=>{
+  };
+  const getCartItems = () => {
     axios
-    .get("http://127.0.0.1:8000/users/" + userId + "/cart")
-    .then((res) => {
+      .get("http://127.0.0.1:8000/users/" + userId + "/cart")
+      .then((res) => {
         const cartData = res.data;
         console.log(res);
         console.log(res.data);
@@ -49,18 +49,16 @@ const Cart: React.FC = () => {
         setCartItems(cartData.books);
         setLoading(false);
         updateCost();
-    })
-    .catch((err) => {
-      console.log(err);
-      navigate("/market");
-    });
-  }
+      })
+      .catch((err) => {
+        console.log(err);
+        navigate("/market");
+      });
+  };
   useEffect(() => {
     getCartItems();
-    
 
-    return () => {
-    };
+    return () => {};
   }, [navigate, userId]);
 
   const checkoutHandler = () => {
@@ -69,10 +67,8 @@ const Cart: React.FC = () => {
         params: { user_id: userId },
       })
       .then((res) => {
-        // Navigate to the market page with a toast message parameter
-        //navigate("/market?toast=checkout_success");
-        const checkout_id = res.data.id
-        navigate("/checkout", {state :{ id : checkout_id}, replace:true});
+        const checkout_id = res.data.id;
+        navigate("/checkout", { state: { id: checkout_id }, replace: true });
       })
       .catch((err) => {
         console.log(err);
@@ -95,10 +91,10 @@ const Cart: React.FC = () => {
         console.log(err);
       });
   };
-  const updateHandler = ()=>{
+  const updateHandler = () => {
     getCartItems();
     updateCost();
-  }
+  };
 
   return (
     <>
@@ -141,7 +137,7 @@ const Cart: React.FC = () => {
                           amount={item.amount}
                           userId={userId ?? ""}
                           onRemoveItem={() => deleteHandler(item.id)}
-                          onUpdateItem={()=>updateHandler()}
+                          onUpdateItem={() => updateHandler()}
                         />
                       ))}
                     </ul>
