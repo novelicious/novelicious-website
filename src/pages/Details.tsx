@@ -6,6 +6,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { FaPaperPlane, FaComments } from "react-icons/fa";
+import { TailSpin } from "react-loader-spinner";
 
 interface Book {
   id: number;
@@ -76,6 +77,8 @@ const Details: React.FC = () => {
       duration: 1000,
       once: false,
     });
+
+    setLoading(true);
     axios
       .get("http://127.0.0.1:8000/books/" + id)
       .then((res) => {
@@ -83,18 +86,19 @@ const Details: React.FC = () => {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [id]);
 
   useEffect(() => {
     if (userId) {
       setLoading(true);
-      // setError(null);
 
       axios
         .get(`http://127.0.0.1:8000/recommend/${userId}?num_book=4`)
         .then((res) => {
-          console.log(res.data);
           setRecommendedBooks(res.data.recommendations);
         })
         .catch(() => {
@@ -128,6 +132,7 @@ const Details: React.FC = () => {
       alert("Review cannot be empty.");
       return;
     }
+    window.location.reload();
     setLoading(true);
     axios
       .post(
@@ -154,20 +159,27 @@ const Details: React.FC = () => {
       });
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <TailSpin height={80} width={80} color="gray" />
+      </div>
+    );
+  }
+
   if (!book) {
     return null;
   }
 
   return (
     <>
-      <div data-aos="fade-up">
+      <div>
         <div className="flex flex-wrap justify-center ">
           <div className="w-full  ">
             <section className="bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto mt-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
               <div className="absolute top-0 left-0 p-4">
                 <Link className="inline-flex py-2 px-6" to={`/market`}>
                   <IoMdArrowRoundBack />
-                  {/* <h1 className="ml-5 text-md font-semibold">Detail</h1> */}
                 </Link>
               </div>
               <div className="w-full md:w-1/3 flex justify-center mb-4 md:mb-0">

@@ -11,6 +11,7 @@ import { FaStar } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import { FaCartShopping } from "react-icons/fa6";
+import { TailSpin } from "react-loader-spinner";
 
 interface Book {
   id: number;
@@ -38,6 +39,8 @@ const Market: React.FC = () => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const [loading, setLoading] = useState(false);
+
   // Pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [booksPerPage] = useState<number>(8);
@@ -56,9 +59,11 @@ const Market: React.FC = () => {
       once: false,
     });
     let isMounted = true;
+    setLoading(true);
     axios
       .get("http://127.0.0.1:8000/books")
       .then((res) => {
+        setLoading(false);
         if (isMounted) {
           const transformedBooks = res.data.map(
             (book: Omit<Book, "genres"> & { genres: string | null }) => ({
@@ -336,13 +341,22 @@ const Market: React.FC = () => {
     );
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <TailSpin height={80} width={80} color="gray" />
+      </div>
+    );
+  }
+
   return (
     <section>
       <div>
         <Toaster />
       </div>
+
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
-        <header className="sticky top-0 bg-neutral z-50">
+        <header className="animate-fade sticky top-0 bg-neutral z-50">
           <Navbar />
           <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
             <div className=" sm:flex sm:items-center sm:justify-between">
@@ -511,111 +525,95 @@ const Market: React.FC = () => {
           ))}
         </ul>
 
-        <div className="flex justify-center mt-8">
-          {books.length === 0 ? (
-            <div className="text-center mt-8">
-              <div className="flex justify-center items-center h-96">
-                <div
-                  className="spinner-border border-primary animate-spin inline-block w-8 h-8 border-4 rounded-full"
-                  role="status"
+        {totalPages > 1 && (
+          <ul className="flex justify-center mt-4">
+            <li className="hidden sm:block">
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-2 border-2 ${
+                  currentPage === 1
+                    ? "border-gray-300 text-gray-400 cursor-not-allowed"
+                    : "border-primary text-primary hover:bg-primary hover:text-neutral"
+                }`}
+              >
+                Previous
+              </button>
+            </li>
+
+            {startPage > 1 && (
+              <>
+                <li>
+                  <button
+                    onClick={() => paginate(1)}
+                    className="px-3 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-neutral"
+                  >
+                    1
+                  </button>
+                </li>
+                <li>
+                  <span className="px-3 py-2 border-2 border-transparent text-primary">
+                    ...
+                  </span>
+                </li>
+              </>
+            )}
+
+            {pageNumbers.map((number, index) => (
+              <li
+                key={number}
+                className={`${
+                  // Hide some numbers on smaller screens
+                  index > 1 && index < pageNumbers.length - 2
+                    ? "hidden sm:block"
+                    : ""
+                }`}
+              >
+                <button
+                  onClick={() => paginate(number)}
+                  className={`px-3 py-2 border-2 ${
+                    currentPage === number
+                      ? "bg-primary text-neutral border-primary"
+                      : "border-primary text-primary hover:bg-primary hover:text-neutral"
+                  }`}
                 >
-                  <span className="visually-hidden">🥸</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <>
-              <ul className="inline-flex items-center -space-x-px">
-                <li className="hidden sm:block">
+                  {number}
+                </button>
+              </li>
+            ))}
+            {endPage < totalPages && (
+              <>
+                <li>
+                  <span className="px-3 py-2 border-2 border-transparent text-primary">
+                    ...
+                  </span>
+                </li>
+                <li>
                   <button
-                    onClick={() => paginate(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className={`px-3 py-2 border-2 ${
-                      currentPage === 1
-                        ? "border-gray-300 text-gray-400 cursor-not-allowed"
-                        : "border-primary text-primary hover:bg-primary hover:text-neutral"
-                    }`}
+                    onClick={() => paginate(totalPages)}
+                    className="px-3 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-neutral"
                   >
-                    Previous
+                    {totalPages}
                   </button>
                 </li>
+              </>
+            )}
 
-                {startPage > 1 && (
-                  <>
-                    <li>
-                      <button
-                        onClick={() => paginate(1)}
-                        className="px-3 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-neutral"
-                      >
-                        1
-                      </button>
-                    </li>
-                    <li>
-                      <span className="px-3 py-2 border-2 border-transparent text-primary">
-                        ...
-                      </span>
-                    </li>
-                  </>
-                )}
-
-                {pageNumbers.map((number, index) => (
-                  <li
-                    key={number}
-                    className={`${
-                      // Hide some numbers on smaller screens
-                      index > 1 && index < pageNumbers.length - 2
-                        ? "hidden sm:block"
-                        : ""
-                    }`}
-                  >
-                    <button
-                      onClick={() => paginate(number)}
-                      className={`px-3 py-2 border-2 ${
-                        currentPage === number
-                          ? "bg-primary text-neutral border-primary"
-                          : "border-primary text-primary hover:bg-primary hover:text-neutral"
-                      }`}
-                    >
-                      {number}
-                    </button>
-                  </li>
-                ))}
-
-                {endPage < totalPages && (
-                  <>
-                    <li>
-                      <span className="px-3 py-2 border-2 border-transparent text-primary">
-                        ...
-                      </span>
-                    </li>
-                    <li>
-                      <button
-                        onClick={() => paginate(totalPages)}
-                        className="px-3 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-neutral"
-                      >
-                        {totalPages}
-                      </button>
-                    </li>
-                  </>
-                )}
-
-                <li className="hidden sm:block">
-                  <button
-                    onClick={() => paginate(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className={`px-3 py-2 border-2 ${
-                      currentPage === totalPages
-                        ? "border-gray-300 text-gray-400 cursor-not-allowed"
-                        : "border-primary text-primary hover:bg-primary hover:text-neutral"
-                    }`}
-                  >
-                    Next
-                  </button>
-                </li>
-              </ul>
-            </>
-          )}
-        </div>
+            <li className="hidden sm:block">
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-2 border-2 ${
+                  currentPage === totalPages
+                    ? "border-gray-300 text-gray-400 cursor-not-allowed"
+                    : "border-primary text-primary hover:bg-primary hover:text-neutral"
+                }`}
+              >
+                Next
+              </button>
+            </li>
+          </ul>
+        )}
       </div>
     </section>
   );

@@ -7,6 +7,7 @@ import "aos/dist/aos.css";
 import toast, { Toaster } from "react-hot-toast";
 import { FaStar } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
+import { TailSpin } from "react-loader-spinner";
 interface Book {
   id: number;
   image: string;
@@ -62,13 +63,11 @@ const Star: React.FC<StarProps> = ({
 
 const Favorites: React.FC = () => {
   const [favoriteBooks, setFavoriteBooks] = useState<Book[]>([]);
-  const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([]);
-
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  //Isi favorite
+  // Isi favorite
   const [favs, setFavs] = useState<number[]>([]);
 
   useEffect(() => {
@@ -77,10 +76,11 @@ const Favorites: React.FC = () => {
       console.log("User is not logged in.");
       return;
     }
-
+    setLoading(true);
     axios
       .get("http://127.0.0.1:8000/users/" + userId + "/favorites")
       .then((res) => {
+        setLoading(false);
         const response = res.data;
         const ids: number[] = [];
         response.forEach((element: { id: number }) => {
@@ -138,6 +138,7 @@ const Favorites: React.FC = () => {
       })
       .catch((err) => console.log(err));
   };
+
   const onUntoggledHandler = (bookId: number) => {
     const userId = sessionStorage.getItem("user_id");
     toast.error("Removed from favorites!", {
@@ -153,29 +154,19 @@ const Favorites: React.FC = () => {
           book_id: bookId,
         },
       })
+      .then(() => {
+        window.location.reload();
+      })
       .catch((err) => console.log(err));
   };
-  useEffect(() => {
-    if (userId) {
-      setLoading(true);
-      setError(null);
 
-      axios
-        .get(`http://127.0.0.1:8000/recommend/${userId}?num_book=4`)
-        .then((res) => {
-          console.log(res.data);
-          setRecommendedBooks(res.data.recommendations);
-        })
-        .catch(() => {
-          setError("Failed to fetch books data from recommend");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [userId]);
-
-  const currentBooks = favoriteBooks;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <TailSpin height={80} width={80} color="gray" />
+      </div>
+    );
+  }
 
   return (
     <section>
@@ -190,103 +181,64 @@ const Favorites: React.FC = () => {
           </div>
         </header>
 
-        {loading ? (
-          <>
-            <div className="text-center mt-8">
-              <div className="flex justify-center items-center h-96">
-                <div
-                  className="spinner-border border-primary animate-spin inline-block w-8 h-8 border-4 rounded-full"
-                  role="status"
-                >
-                  <span className="visually-hidden">🥸</span>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : error ? (
+        {error ? (
           <>
             <p>{error}</p>
           </>
         ) : (
           <>
-            <h1 className="text-lg font-semibold">Your Favorites</h1>
-            <ul
-              data-aos-anchor-placement="center-bottom"
-              className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-            >
-              {currentBooks.map((book) => (
-                <li
-                  key={book.id}
-                  className="border-primary border-2 flex flex-col"
-                  data-aos="zoom-in"
+            {favoriteBooks.length == 0 ? (
+              <>
+                <p>No favs.</p>
+              </>
+            ) : (
+              <>
+                {" "}
+                <h1 className="text-lg font-semibold">Your Favorites</h1>
+                <ul
+                  data-aos-anchor-placement="center-bottom"
+                  className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
                 >
-                  <Link
-                    to={`/novel/${book.id}`}
-                    className="h-[320px] group relative block overflow-hidden"
-                  >
-                    <img
-                      src={book.image}
-                      alt={book.title}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
-                    />
-                  </Link>
-                  <div className="w-full flex justify-between">
-                    <div className="flex flex-wrap gap-1"></div>
-                    <Star
-                      toggled={favs.includes(book.id)}
-                      bookId={book.id}
-                      onToggled={() => onStarToggledHandler(book.id)}
-                      onUntoggled={() => onUntoggledHandler(book.id)}
-                    />
-                  </div>
-                  <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
-                    <div>
-                      <h3 className="mt-4 text-lg font-medium text-gray-900">
-                        {book.title} ({book.release_year})
-                      </h3>
-                      <p className="mt-1.5 text-sm text-gray-700">
-                        by {book.authors}
-                      </p>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-
-            <h1 className="text-lg font-semibold mt-8">Recommended for You</h1>
-            <ul
-              data-aos-anchor-placement="center-bottom"
-              className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-            >
-              {recommendedBooks.map((book) => (
-                <li
-                  key={book.id}
-                  className="border-primary border-2 flex flex-col"
-                  data-aos="zoom-in"
-                >
-                  <Link
-                    to={`/novel/${book.id}`}
-                    className="h-[320px] group relative block overflow-hidden"
-                  >
-                    <img
-                      src={book.image}
-                      alt={book.title}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
-                    />
-                  </Link>
-                  <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
-                    <div>
-                      <h3 className="mt-4 text-lg font-medium text-gray-900">
-                        {book.title} ({book.release_year})
-                      </h3>
-                      <p className="mt-1.5 text-sm text-gray-700">
-                        by {book.authors}
-                      </p>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  {favoriteBooks.map((book) => (
+                    <li
+                      key={book.id}
+                      className="border-primary border-2 flex flex-col"
+                      data-aos="zoom-in"
+                    >
+                      <Link
+                        to={`/novel/${book.id}`}
+                        className="h-[320px] group relative block overflow-hidden"
+                      >
+                        <img
+                          src={book.image}
+                          alt={book.title}
+                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
+                        />
+                      </Link>
+                      <div className="w-full flex justify-between">
+                        <div className="flex flex-wrap gap-1"></div>
+                        <Star
+                          toggled={favs.includes(book.id)}
+                          bookId={book.id}
+                          onToggled={() => onStarToggledHandler(book.id)}
+                          onUntoggled={() => onUntoggledHandler(book.id)}
+                        />
+                      </div>
+                      <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
+                        <div>
+                          <h3 className="mt-4 text-lg font-medium text-gray-900">
+                            {book.title} ({book.release_year})
+                          </h3>
+                          <p className="mt-1.5 text-sm text-gray-700">
+                            by {book.authors}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </>
         )}
       </div>
