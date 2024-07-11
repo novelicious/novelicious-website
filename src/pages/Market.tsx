@@ -32,6 +32,7 @@ const Market: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
+  // const [loading, setLoading] = useState(true);
   // Filtering & Search
   const [filterData, setFilterData] = useState<Book[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -115,6 +116,7 @@ const Market: React.FC = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
+
   useEffect(() => {
     const userId = sessionStorage.getItem("user_id");
     if (!userId) {
@@ -290,13 +292,7 @@ const Market: React.FC = () => {
   const Add2CartButton: React.FC<Book> = ({ id }) => {
     const [clicked, setClicked] = useState<boolean>(false);
     const [quantity, setQuantity] = useState<number>(1);
-    /*if(!clicked)return (
-    <button
-      onClick={()=>{setClicked(true);}} 
-      className="text-neutral block w-full rounded bg-primary p-4 text-sm font-medium transition hover:scale-105">
-        Add to Cart
-    </button>
-    )*/
+
     var size = clicked ? "w-full" : "w-0";
     return (
       <div className="flex">

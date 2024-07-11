@@ -144,7 +144,8 @@ const Details: React.FC = () => {
             <section className="shadow-lg bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto my-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
               <div className="absolute top-0 left-0 p-4">
                 <Link className="inline-flex py-2 px-6" to={`/market`}>
-                  <IoMdArrowRoundBack className="text-[5vh]" />
+                  <IoMdArrowRoundBack />
+                  {/* <h1 className="ml-5 text-md font-semibold">Detail</h1> */}
                 </Link>
               </div>
               <div className="w-full md:w-1/3 flex justify-center mb-4 md:mb-0">
@@ -251,17 +252,7 @@ const Details: React.FC = () => {
                     <p className="font-semibold">Novelicious:</p>
                     <p>How to use it?</p>
                     <ul>
-                      <li>
-                        - You must ask questions related to this book. For
-                        example:
-                      </li>
-                      <li>- "What is the title?"</li>
-                      <li>- "What are the genre?"</li>
-                      <li>- Remember, it is not a chatbot.</li>
-                      <li>
-                        - So, the answer that is not in the context will
-                        probably be wrong.
-                      </li>
+                      <li>- You must ask questions related to this book.</li>
                     </ul>
                   </div>
                 </div>
