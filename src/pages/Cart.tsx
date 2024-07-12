@@ -24,7 +24,7 @@ export interface CartProps {
 
 const Cart: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [cart, setCart] = useState<CartProps>();
+  // const [cart, setCart] = useState<CartProps>();
   const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
   const [cost, setCost] = useState<number>(0);
   const navigate = useNavigate();
@@ -45,7 +45,8 @@ const Cart: React.FC = () => {
         const cartData = res.data;
         console.log(res);
         console.log(res.data);
-        setCart(cartData);
+        // console.log(cartData);
+        // setCart(cartData);
         setCartItems(cartData.books);
         setLoading(false);
         updateCost();

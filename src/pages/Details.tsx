@@ -276,6 +276,7 @@ const Details: React.FC = () => {
                   >
                     <Link
                       to={`/novel/${book.id}`}
+                      onClick={() => window.location.reload()}
                       className="h-[320px] group relative block overflow-hidden"
                     >
                       <img
