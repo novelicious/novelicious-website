@@ -35,6 +35,24 @@ interface Review {
   created_at: string;
 }
 
+const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
+  return (
+    <div className="flex gap-x-0.5">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <svg
+          key={index}
+          className={`h-8 w-8 shrink-0 ${
+            index < Math.round(rating) ? "fill-primary" : "fill-gray-300"
+          }`}
+          viewBox="0 0 256 256"
+        >
+          <path d="M239.2 97.4A16.4 16.4 0 00224.6 86l-59.4-4.1-22-55.5A16.4 16.4 0 00128 16h0a16.4 16.4 0 00-15.2 10.4L90.4 82.2 31.4 86A16.5 16.5 0 0016.8 97.4 16.8 16.8 0 0022 115.5l45.4 38.4L53.9 207a18.5 18.5 0 007 19.6 18 18 0 0020.1.6l46.9-29.7h.2l50.5 31.9a16.1 16.1 0 008.7 2.6 16.5 16.5 0 0015.8-20.8l-14.3-58.1L234 115.5A16.8 16.8 0 00239.2 97.4z"></path>
+        </svg>
+      ))}
+    </div>
+  );
+};
+
 const Details: React.FC = () => {
   const [book, setBook] = useState<Book | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -49,6 +67,7 @@ const Details: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [reviewCount, setReviewCount] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [averageRating, setAverageRating] = useState<number>(0);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -120,6 +139,12 @@ const Details: React.FC = () => {
         );
         setReviews(response.data);
         setReviewCount(response.data.length);
+        const totalRating = response.data.reduce(
+          (sum: number, review: Review) => sum + review.ratings,
+          0
+        );
+        const avgRating = totalRating / response.data.length;
+        setAverageRating(avgRating);
       } catch (err) {
         console.error(err);
       }
@@ -148,6 +173,12 @@ const Details: React.FC = () => {
           .get(`http://127.0.0.1:8000/books/${id}/reviews`)
           .then((res) => {
             setReviews(res.data);
+            const totalRating = res.data.reduce(
+              (sum: number, review: Review) => sum + review.ratings,
+              0
+            );
+            const avgRating = totalRating / res.data.length;
+            setAverageRating(avgRating);
           })
           .catch((err) => {
             console.error(err);
@@ -162,7 +193,7 @@ const Details: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <TailSpin height={80} width={80} color="gray" />
+        <TailSpin height={80} width={80} color="black" />
       </div>
     );
   }
@@ -176,7 +207,7 @@ const Details: React.FC = () => {
       <div>
         <div className="flex flex-wrap justify-center ">
           <div className="w-full  ">
-            <section className="bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto mt-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
+            <section className="animate-fade bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto mt-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
               <div className="absolute top-0 left-0 p-4">
                 <Link className="inline-flex py-2 px-6" to={`/market`}>
                   <IoMdArrowRoundBack />
@@ -195,66 +226,50 @@ const Details: React.FC = () => {
                 <h2 className="text-xl font-bold uppercase">
                   {book.title} ({book.release_year})
                 </h2>
+                <div className="flex flex-col">
+                  <StarRating rating={averageRating} />
+                  {averageRating} out of 5 ({reviewCount} Reviews)
+                </div>
+
                 <p className="text-gray-600 mt-2">{book.synopsis}</p>
               </div>
             </section>
 
-            <section className="w-full md:w-[85vw] mx-auto p-6 bg-white rounded-md border-3  border-gray-300">
-              <h1 className="text-lg font-bold">{reviewCount} Reviews</h1>
-
-              {isLoggedIn ? (
-                <div className="my-4">
-                  <textarea
-                    value={reviewText}
-                    onChange={(e) => setReviewText(e.target.value)}
-                    className="w-full p-2 border rounded resize-none"
-                    placeholder="Write your review here..."
-                    required
-                  />
-                  <button
-                    onClick={handleSubmitReview}
-                    className="mt-2 px-4 py-2 bg-primary text-white rounded"
-                    disabled={loading}
-                  >
-                    {loading ? "Submitting..." : "Send"}
-                  </button>
-                </div>
-              ) : (
-                <>{""}</>
-              )}
-
-              {reviews.length > 0 ? (
-                reviews.map((review) => (
-                  <div
+            <section className="w-full md:w-[85vw] mx-auto p-6 mt-6 bg-white rounded-md border-3 border-gray-300">
+              <h3 className="text-lg font-semibold mb-4">
+                {reviewCount} Reviews
+              </h3>
+              <ul className="space-y-4">
+                {reviews.map((review) => (
+                  <li
                     key={review.id}
-                    className="p-4 mb-4 border-b border-gray-300"
+                    className="p-4 border-2 border-gray-300 rounded-md"
                   >
-                    <p className="text-gray-600">
-                      <strong>{review.user.username}</strong> -{" "}
+                    <p className="font-semibold">{review.user.username}</p>
+                    <p className="text-sm text-gray-500">
                       {new Date(review.created_at).toLocaleDateString()}
                     </p>
-
-                    <div className="flex gap-x-0.5 ">
-                      {Array.from({ length: 5 }).map((_, index) => (
-                        <svg
-                          key={index}
-                          className={`h-8 w-8 shrink-0 ${
-                            index < (review.ratings > 0 ? review.ratings : 1)
-                              ? "fill-primary"
-                              : "fill-gray-300"
-                          }`}
-                          viewBox="0 0 256 256"
-                        >
-                          <path d="M239.2 97.4A16.4 16.4 0 00224.6 86l-59.4-4.1-22-55.5A16.4 16.4 0 00128 16h0a16.4 16.4 0 00-15.2 10.4L90.4 82.2 31.4 86A16.5 16.5 0 0016.8 97.4 16.8 16.8 0 0022 115.5l45.4 38.4L53.9 207a18.5 18.5 0 007 19.6 18 18 0 0020.1.6l46.9-29.7h.2l50.5 31.9a16.1 16.1 0 008.7 2.6 16.5 16.5 0 0015.8-20.8l-14.3-58.1L234 115.5A16.8 16.8 0 00239.2 97.4z"></path>
-                        </svg>
-                      ))}
-                    </div>
-
-                    <p className="text-gray-800 mt-2 ">{review.comment}</p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-600">No reviews available.</p>
+                    <StarRating rating={review.ratings} />
+                    <p>{review.comment}</p>
+                  </li>
+                ))}
+              </ul>
+              {isLoggedIn && (
+                <div className="mt-4">
+                  <textarea
+                    className="w-full p-2 border-2 border-gray-300 rounded-md"
+                    rows={4}
+                    placeholder="Write your review here..."
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                  ></textarea>
+                  <button
+                    className="mt-2 px-4 py-2 bg-primary text-white rounded-md"
+                    onClick={handleSubmitReview}
+                  >
+                    Submit Review
+                  </button>
+                </div>
               )}
             </section>
           </div>
@@ -276,7 +291,6 @@ const Details: React.FC = () => {
                   >
                     <Link
                       to={`/novel/${book.id}`}
-                      onClick={() => window.location.reload()}
                       className="h-[320px] group relative block overflow-hidden"
                     >
                       <img
