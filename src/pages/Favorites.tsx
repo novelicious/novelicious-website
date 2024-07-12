@@ -66,6 +66,7 @@ const Favorites: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([]);
 
   // Isi favorite
   const [favs, setFavs] = useState<number[]>([]);
@@ -113,6 +114,24 @@ const Favorites: React.FC = () => {
         })
         .catch(() => {
           setError("Failed to fetch books data from favorites");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      setLoading(true);
+
+      axios
+        .get(`http://127.0.0.1:8000/recommend/${userId}?num_book=4`)
+        .then((res) => {
+          setRecommendedBooks(res.data.recommendations);
+        })
+        .catch(() => {
+          console.log("error bro");
         })
         .finally(() => {
           setLoading(false);
@@ -239,6 +258,41 @@ const Favorites: React.FC = () => {
                 </ul>
               </>
             )}
+
+            <h1 className="text-lg font-semibold mt-8">Recommended for You</h1>
+            <ul
+              data-aos-anchor-placement="center-bottom"
+              className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+            >
+              {recommendedBooks.map((book) => (
+                <li
+                  key={book.id}
+                  className="border-primary border-2 flex flex-col"
+                  data-aos="zoom-in"
+                >
+                  <Link
+                    to={`/novel/${book.id}`}
+                    className="h-[320px] group relative block overflow-hidden"
+                  >
+                    <img
+                      src={book.image}
+                      alt={book.title}
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
+                    />
+                  </Link>
+                  <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
+                    <div>
+                      <h3 className="mt-4 text-lg font-medium text-gray-900">
+                        {book.title} ({book.release_year})
+                      </h3>
+                      <p className="mt-1.5 text-sm text-gray-700">
+                        by {book.authors}
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </>
         )}
       </div>

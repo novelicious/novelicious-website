@@ -97,7 +97,7 @@ const Details: React.FC = () => {
       setLoading(true);
 
       axios
-        .get(`http://127.0.0.1:8000/recommend/${userId}?num_book=4`)
+        .get(`http://127.0.0.1:8000/books/${id}/simmilar?num_book=4`)
         .then((res) => {
           setRecommendedBooks(res.data.recommendations);
         })
@@ -261,40 +261,46 @@ const Details: React.FC = () => {
         </div>
 
         <section className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
-          <h1 className="text-lg font-semibold">More like this</h1>
-          <ul
-            data-aos-anchor-placement="center-bottom"
-            className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {recommendedBooks.map((book) => (
-              <li
-                key={book.id}
-                className="border-primary border-2 flex flex-col"
-                data-aos="zoom-in"
+          {isLoggedIn ? (
+            <>
+              <h1 className="text-lg font-semibold">More like this</h1>
+              <ul
+                data-aos-anchor-placement="center-bottom"
+                className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
               >
-                <Link
-                  to={`/novel/${book.id}`}
-                  className="h-[320px] group relative block overflow-hidden"
-                >
-                  <img
-                    src={book.image}
-                    alt={book.title}
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
-                  />
-                </Link>
-                <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
-                  <div>
-                    <h3 className="mt-4 text-lg font-medium text-gray-900">
-                      {book.title} ({book.release_year})
-                    </h3>
-                    <p className="mt-1.5 text-sm text-gray-700">
-                      by {book.authors}
-                    </p>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+                {recommendedBooks.map((book) => (
+                  <li
+                    key={book.id}
+                    className="border-primary border-2 flex flex-col"
+                    data-aos="zoom-in"
+                  >
+                    <Link
+                      to={`/novel/${book.id}`}
+                      className="h-[320px] group relative block overflow-hidden"
+                    >
+                      <img
+                        src={book.image}
+                        alt={book.title}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
+                      />
+                    </Link>
+                    <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
+                      <div>
+                        <h3 className="mt-4 text-lg font-medium text-gray-900">
+                          {book.title} ({book.release_year})
+                        </h3>
+                        <p className="mt-1.5 text-sm text-gray-700">
+                          by {book.authors}
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <></>
+          )}
         </section>
       </div>
       <div
