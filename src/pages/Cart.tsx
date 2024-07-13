@@ -28,7 +28,7 @@ const Cart: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
   const [cost, setCost] = useState<number>(0);
   const navigate = useNavigate();
-  const userId = sessionStorage.getItem("user_id");
+  const userId = localStorage.getItem("user_id");
   const updateCost = () => {
     var c = 0;
     console.log("Updating Cost");

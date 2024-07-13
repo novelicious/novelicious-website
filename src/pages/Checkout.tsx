@@ -58,7 +58,7 @@ const Checkout: React.FC = () => {
   const [checkout, setCheckout] = useState<CheckoutData | null>(null);
   const location = useLocation();
   const id = location.state?.id;
-  const userId = sessionStorage.getItem("user_id");
+  const userId = localStorage.getItem("user_id");
 
   useEffect(() => {
     if (id) {

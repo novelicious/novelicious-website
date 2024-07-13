@@ -72,7 +72,7 @@ const Favorites: React.FC = () => {
   const [favs, setFavs] = useState<number[]>([]);
 
   useEffect(() => {
-    const userId = sessionStorage.getItem("user_id");
+    const userId = localStorage.getItem("user_id");
     if (!userId) {
       console.log("User is not logged in.");
       return;
@@ -95,7 +95,7 @@ const Favorites: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const storedUserId = sessionStorage.getItem("user_id");
+    const storedUserId = localStorage.getItem("user_id");
     setUserId(storedUserId);
   }, []);
 
@@ -110,7 +110,18 @@ const Favorites: React.FC = () => {
       axios
         .get(`http://127.0.0.1:8000/users/${userId}/favorites`)
         .then((res) => {
-          setFavoriteBooks(res.data);
+          setLoading(false);
+
+          const transformedBooks = res.data.map(
+            (book: Omit<Book, "genres"> & { genres: string | null }) => ({
+              ...book,
+              genres: book.genres
+                ? book.genres.split(",").map((genre: string) => genre.trim())
+                : [],
+            })
+          );
+          console.log(transformedBooks);
+          setFavoriteBooks(transformedBooks);
         })
         .catch(() => {
           setError("Failed to fetch books data from favorites");
@@ -127,8 +138,24 @@ const Favorites: React.FC = () => {
 
       axios
         .get(`http://127.0.0.1:8000/recommend/${userId}?num_book=4`)
+        // .then((res) => {
+        //   setRecommendedBooks(res.data.recommendations);
+
+        // })
+
         .then((res) => {
-          setRecommendedBooks(res.data.recommendations);
+          setLoading(false);
+
+          const transformedBooks = res.data.recommendations.map(
+            (book: Omit<Book, "genres"> & { genres: string | null }) => ({
+              ...book,
+              genres: book.genres
+                ? book.genres.split(",").map((genre: string) => genre.trim())
+                : [],
+            })
+          );
+          console.log(transformedBooks);
+          setRecommendedBooks(transformedBooks);
         })
         .catch(() => {
           console.log("error bro");
@@ -143,7 +170,7 @@ const Favorites: React.FC = () => {
     toast.success("Sucessfully added to favorites!", {
       icon: <FaStar />,
     });
-    const userId = sessionStorage.getItem("user_id");
+    const userId = localStorage.getItem("user_id");
 
     if (!userId) {
       console.log("User is not logged in.");
@@ -159,7 +186,7 @@ const Favorites: React.FC = () => {
   };
 
   const onUntoggledHandler = (bookId: number) => {
-    const userId = sessionStorage.getItem("user_id");
+    const userId = localStorage.getItem("user_id");
     toast.error("Removed from favorites!", {
       icon: <FaTrash />,
     });
@@ -231,25 +258,47 @@ const Favorites: React.FC = () => {
                         <img
                           src={book.image}
                           alt={book.title}
+                          loading="lazy"
                           className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
                         />
                       </Link>
-                      <div className="w-full flex justify-between">
-                        <div className="flex flex-wrap gap-1"></div>
-                        <Star
-                          toggled={favs.includes(book.id)}
-                          bookId={book.id}
-                          onToggled={() => onStarToggledHandler(book.id)}
-                          onUntoggled={() => onUntoggledHandler(book.id)}
-                        />
-                      </div>
+
                       <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
                         <div>
+                          <div className="w-full flex justify-between">
+                            <div className="flex flex-wrap gap-1">
+                              {book.genres.map((genre, index) => (
+                                <span
+                                  key={index}
+                                  className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
+                                >
+                                  <a
+                                    href="#"
+                                    className="text-neutral relative text-[10px] w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-neutral after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-right"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                    }}
+                                  >
+                                    {genre}
+                                  </a>
+                                </span>
+                              ))}
+                            </div>
+
+                            <Star
+                              toggled={favs.includes(book.id)}
+                              bookId={book.id}
+                              onToggled={() => onStarToggledHandler(book.id)}
+                              onUntoggled={() => onUntoggledHandler(book.id)}
+                            />
+                          </div>
+
                           <h3 className="mt-4 text-lg font-medium text-gray-900">
                             {book.title} ({book.release_year})
                           </h3>
+
                           <p className="mt-1.5 text-sm text-gray-700">
-                            by {book.authors}
+                            {book.authors}
                           </p>
                         </div>
                       </div>
@@ -277,16 +326,47 @@ const Favorites: React.FC = () => {
                     <img
                       src={book.image}
                       alt={book.title}
+                      loading="lazy"
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
                     />
                   </Link>
+
                   <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
                     <div>
+                      <div className="w-full flex justify-between">
+                        <div className="flex flex-wrap gap-1">
+                          {book.genres.map((genre, index) => (
+                            <span
+                              key={index}
+                              className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
+                            >
+                              <a
+                                href="#"
+                                className="text-neutral relative text-[10px] w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-neutral after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-right"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                }}
+                              >
+                                {genre}
+                              </a>
+                            </span>
+                          ))}
+                        </div>
+
+                        <Star
+                          toggled={favs.includes(book.id)}
+                          bookId={book.id}
+                          onToggled={() => onStarToggledHandler(book.id)}
+                          onUntoggled={() => onUntoggledHandler(book.id)}
+                        />
+                      </div>
+
                       <h3 className="mt-4 text-lg font-medium text-gray-900">
                         {book.title} ({book.release_year})
                       </h3>
+
                       <p className="mt-1.5 text-sm text-gray-700">
-                        by {book.authors}
+                        {book.authors}
                       </p>
                     </div>
                   </div>

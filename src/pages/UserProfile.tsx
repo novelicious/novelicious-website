@@ -31,8 +31,8 @@ const UserProfile: React.FC = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const userId = sessionStorage.getItem("user_id");
-      const token = sessionStorage.getItem("token");
+      const userId = localStorage.getItem("user_id");
+      const token = localStorage.getItem("token");
 
       if (!userId || !token) {
         navigate("/login");
@@ -88,7 +88,7 @@ const UserProfile: React.FC = () => {
 
     if (!profile) return;
     const { id, username, gender, birth_year, address } = profile;
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     try {
       const response = await axios.put(

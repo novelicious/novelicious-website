@@ -54,6 +54,18 @@ const Market: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const toastMessage = queryParams.get("toast");
+
+    if (toastMessage === "checkout_success") {
+      toast.success("Checkout successful!");
+
+      queryParams.delete("toast");
+      navigate({ search: queryParams.toString() }, { replace: true });
+    }
+  }, [location, navigate]);
+
+  useEffect(() => {
     AOS.init({
       duration: 1000,
       once: false,
@@ -82,24 +94,12 @@ const Market: React.FC = () => {
         console.log(err);
       });
 
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
     return () => {
       isMounted = false;
     };
   }, []);
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const toastMessage = queryParams.get("toast");
-
-    if (toastMessage === "checkout_success") {
-      toast.success("Checkout successful!");
-      // Remove the toast parameter from the URL
-      queryParams.delete("toast");
-      navigate({ search: queryParams.toString() }, { replace: true });
-    }
-  }, [location, navigate]);
 
   useEffect(() => {
     const filteredBooks = filterData.filter((book) => {
@@ -122,8 +122,20 @@ const Market: React.FC = () => {
     setSearchQuery(e.target.value);
   };
 
+  const handleGenreChange = (genre: string) => {
+    setSelectedGenres((prevGenres) =>
+      prevGenres.includes(genre)
+        ? prevGenres.filter((g) => g !== genre)
+        : [...prevGenres, genre]
+    );
+  };
+
+  const clearGenres = () => {
+    setSelectedGenres([]);
+  };
+
   useEffect(() => {
-    const userId = sessionStorage.getItem("user_id");
+    const userId = localStorage.getItem("user_id");
     if (!userId) {
       console.log("User is not logged in.");
       return;
@@ -164,26 +176,11 @@ const Market: React.FC = () => {
     return amount;
   }
 
-  const handleGenreChange = (genre: string) => {
-    setSelectedGenres((prevGenres) =>
-      prevGenres.includes(genre)
-        ? prevGenres.filter((g) => g !== genre)
-        : [...prevGenres, genre]
-    );
-  };
-
-  const handleGenreClick = (genre: string) => {
-    setSelectedGenres((prevGenres) =>
-      prevGenres.includes(genre)
-        ? prevGenres.filter((g) => g !== genre)
-        : [...prevGenres, genre]
-    );
-  };
   const onStarToggledHandler = (bookId: number) => {
     toast.success("Sucessfully added to favorites!", {
       icon: <FaStar />,
     });
-    const userId = sessionStorage.getItem("user_id");
+    const userId = localStorage.getItem("user_id");
 
     if (!userId) {
       console.log("User is not logged in.");
@@ -199,7 +196,7 @@ const Market: React.FC = () => {
   };
 
   const onUntoggledHandler = (bookId: number) => {
-    const userId = sessionStorage.getItem("user_id");
+    const userId = localStorage.getItem("user_id");
     toast.error("Removed from favorites!", {
       icon: <FaTrash />,
     });
@@ -219,7 +216,7 @@ const Market: React.FC = () => {
     toast.success("Sucessfully added to cart!", {
       icon: <AiOutlineShoppingCart />,
     });
-    const userId = sessionStorage.getItem("user_id");
+    const userId = localStorage.getItem("user_id");
     axios.post("http://127.0.0.1:8000/carts/add", null, {
       params: {
         book_id: bookId,
@@ -230,10 +227,6 @@ const Market: React.FC = () => {
     setTimeout(() => {
       setCartAmount(cartAmount + quantity);
     }, 300);
-  };
-
-  const clearGenres = () => {
-    setSelectedGenres([]);
   };
 
   const indexOfLastBook = currentPage * booksPerPage;
@@ -389,7 +382,6 @@ const Market: React.FC = () => {
                   <option value="Drama">Drama</option>
                   <option value="School">School</option>
                   <option value="Vampires">Vampire</option>
-                  {/* add lagi aja ntar */}
                 </select>
 
                 {isLoggedIn && (
@@ -479,7 +471,7 @@ const Market: React.FC = () => {
                             className="text-neutral relative text-[10px] w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-neutral after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-right"
                             onClick={(e) => {
                               e.preventDefault();
-                              handleGenreClick(genre);
+                              handleGenreChange(genre);
                             }}
                           >
                             {genre}

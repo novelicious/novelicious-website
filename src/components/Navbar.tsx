@@ -19,8 +19,8 @@ const Navbar: React.FC = () => {
   // Auth
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  const userId = sessionStorage.getItem("user_id");
-  const token = sessionStorage.getItem("token");
+  const userId = localStorage.getItem("user_id");
+  const token = localStorage.getItem("token");
 
   // Menu
   const menuRef = useRef<HTMLDivElement>(null);
@@ -48,8 +48,8 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleSignOut = () => {
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user_id");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_id");
 
     setIsLoggedIn(false);
     navigate("/");
