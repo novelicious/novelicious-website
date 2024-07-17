@@ -47,9 +47,15 @@ interface User {
   role_id: number;
   age: number;
   gender: string;
+  address: string;
   birth_year: number;
   active_cart_id: number | null;
 }
+
+const shippingfee : Array<{provider: string, price: number}>= [
+  {provider: 'Gojek', price: 9000},
+  {provider: 'Grab', price: 9000}
+];
 
 const Checkout: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -58,12 +64,14 @@ const Checkout: React.FC = () => {
   const [checkout, setCheckout] = useState<CheckoutData | null>(null);
   const location = useLocation();
   const id = location.state?.id;
+  const cart_id = location.state?.cart_id;
+  const [shipping, setShipping] = useState(9000);
   const userId = localStorage.getItem("user_id");
 
   useEffect(() => {
     if (id) {
       axios
-        .get<Cart>(`http://127.0.0.1:8000/carts/16`)
+        .get<Cart>(`http://127.0.0.1:8000/carts/${cart_id}`)
         .then((res) => {
           console.log("Cart data:", res.data);
           setCart(res.data);
@@ -99,10 +107,15 @@ const Checkout: React.FC = () => {
   }, [id, userId]);
 
   useEffect(() => {
+    setLoading(true)
     if (cart && user && checkout) {
       setLoading(false);
     }
   }, [cart, user, checkout]);
+
+  useEffect(() => {
+    return setShipping(9000);
+  }, [])
 
   return (
     <section>
@@ -140,7 +153,7 @@ const Checkout: React.FC = () => {
                     </div>
                     <div className="flex items-center">
                       <PiHouseLine />
-                      <p className="mx-2">Jl.Tanjung Duren Selatan</p>
+                      <p className="mx-2">{user?.address}</p>
                     </div>
                     <div className="flex items-center">
                       <CiPhone />
@@ -167,7 +180,7 @@ const Checkout: React.FC = () => {
                               </h3>
                               <p className="text-gray-600">{book.authors}</p>
                               <p className="text-gray-800 font-semibold">
-                                Rp. {book.cost}
+                                Rp {book.cost.toLocaleString('id-ID')}
                               </p>
                             </div>
                           </div>
@@ -179,9 +192,14 @@ const Checkout: React.FC = () => {
                   </div>
                   <div className="mt-6">
                     <h3 className="text-lg font-semibold mb-2">Shipping</h3>
-                    <select className="w-full p-2 border rounded">
-                      <option>GOJEK (Rp.9000)</option>
-                      <option>Grab (Rp.9000)</option>
+                    <select className="w-full p-2 border rounded" 
+                      value={0}
+                      onChange={e => setShipping(shippingfee[parseInt(e.target.value)].price)}>
+                        {shippingfee.map((ship, index) => (
+                          <option value={index}>
+                            {ship.provider} (Rp {ship.price.toLocaleString('id-ID')})
+                          </option>
+                        ),)}
                     </select>
                   </div>
 
@@ -200,11 +218,17 @@ const Checkout: React.FC = () => {
                       <dl className="space-y-0.5 text-sm text-gray-700">
                         <div className="flex justify-between">
                           <dt>Subtotal</dt>
-                          <dd>IDR {checkout?.total_cost}</dd>
+                          <dd>IDR {
+                            checkout?.total_cost ? (checkout?.total_cost).toLocaleString('id-ID') : 0
+                            }</dd>
                         </div>
                         <div className="flex justify-between !text-base font-medium">
                           <dt>Total</dt>
-                          <dd>IDR {checkout?.total_cost}</dd>
+                          <dd>IDR {
+                          checkout?.total_cost ? 
+                            (checkout?.total_cost + shipping).toLocaleString('id-ID')
+                            : 0
+                          }</dd>
                         </div>
                       </dl>
                       <div className="flex justify-end">

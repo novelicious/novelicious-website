@@ -62,16 +62,16 @@ const CartItem: React.FC<CartItemProps> = ({
           <h3 className="text-sm text-gray-900">{title}</h3>
           <dl className="mt-0.5 space-y-px text-[10px] text-gray-600">
             <div>
-              <dt className="inline">Genre:</dt>
+              <dt className="inline">Genre: </dt>
               <dd className="inline">{genres}</dd>
             </div>
             <div>
-              <dt className="inline">Authors:</dt>
+              <dt className="inline">Authors: </dt>
               <dd className="inline">{authors}</dd>
             </div>
             <div>
-              <dt className="inline">Cost:</dt>
-              <dd className="inline">{cost}</dd>
+              <dt className="inline">Cost: </dt>
+              <dd className="inline">IDR {cost.toLocaleString('id-ID')}</dd>
             </div>
           </dl>
         </div>

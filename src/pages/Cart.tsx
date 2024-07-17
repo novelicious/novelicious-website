@@ -71,7 +71,7 @@ const Cart: React.FC = () => {
       })
       .then((res) => {
         const checkout_id = res.data.id;
-        navigate("/checkout", { state: { id: checkout_id }, replace: true });
+        navigate("/checkout", { state: { id: checkout_id, cart_id: res.data.cart_id }, replace: true });
       })
       .catch((err) => {
         console.log(err);
@@ -151,7 +151,7 @@ const Cart: React.FC = () => {
                         <dl className="space-y-0.5 text-sm text-gray-700">
                           <div className="flex justify-between !text-base font-medium">
                             <dt>Total</dt>
-                            <dd>IDR{cost}</dd>
+                            <dd>IDR {cost.toLocaleString('id-ID')}</dd>
                           </div>
                         </dl>
                         <div className="flex justify-end">
