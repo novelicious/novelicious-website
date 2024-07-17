@@ -9,6 +9,7 @@ import ProtectedPage from "./Protected.tsx";
 import Favorites from "./pages/Favorites.tsx";
 import Checkout from "./pages/Checkout.tsx";
 import UserProfile from "./pages/UserProfile.tsx";
+import Dashboard from "./pages/Admin/Dashboard.tsx";
 const App: React.FC = () => (
   <div className=" bg-neutral">
     <Router>
@@ -24,6 +25,7 @@ const App: React.FC = () => (
         <Route path="/checkout" element={<Checkout />}></Route>
         <Route path="/cart" element={<Cart />}></Route>
         <Route path="/protected" element={<ProtectedPage />} />
+        <Route path="/admin" element={<Dashboard />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>

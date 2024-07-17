@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaRegTrashAlt } from "react-icons/fa";
+
 interface CartItemProps {
   id: number;
   title: string;
@@ -9,23 +10,27 @@ interface CartItemProps {
   image: string;
   genres: string;
   amount: number;
+  cost: number;
   userId?: string;
   onRemoveItem?: (id: number) => void;
   onUpdateItem?: () => void;
 }
+
 const CartItem: React.FC<CartItemProps> = ({
   id,
   title,
   authors,
   image,
   genres,
+  cost,
   amount,
   userId,
   onRemoveItem,
   onUpdateItem,
 }) => {
   const changeItemHandler = (amount: number) => {
-    if (userId == null || userId == "") return;
+    if (!userId) return;
+
     axios
       .post("http://127.0.0.1:8000/carts/update", null, {
         params: {
@@ -35,21 +40,22 @@ const CartItem: React.FC<CartItemProps> = ({
         },
       })
       .then(() => {
-        if (onUpdateItem != null) onUpdateItem();
+        if (onUpdateItem) onUpdateItem();
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
   const removeHandler = () => {
-    if (onRemoveItem != null) onRemoveItem(id);
+    if (onRemoveItem) onRemoveItem(id);
   };
 
   return (
     <li className="flex items-center gap-4">
       <Link
         to={`/novel/${id}`}
-        className="flex items-center gap-4 w-full h-full origin-left transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"
+        className="flex items-center gap-4 w-full h-full origin-left transition-all duration-500 ease-in-out hover:scale-105 active:scale-95"
       >
         <img src={image} alt={title} className="size-16 rounded object-cover" />
         <div>
@@ -62,6 +68,10 @@ const CartItem: React.FC<CartItemProps> = ({
             <div>
               <dt className="inline">Authors:</dt>
               <dd className="inline">{authors}</dd>
+            </div>
+            <div>
+              <dt className="inline">Cost:</dt>
+              <dd className="inline">{cost}</dd>
             </div>
           </dl>
         </div>

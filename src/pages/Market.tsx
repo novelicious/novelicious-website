@@ -251,6 +251,7 @@ const Market: React.FC = () => {
   for (let i = startPage; i <= endPage; i++) {
     pageNumbers.push(i);
   }
+
   const Star: React.FC<StarProps> = ({
     toggled,
     bookId,

@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
 import { IoMdArrowRoundBack } from "react-icons/io";
+
 export interface CartItemProps {
   id: number;
   title: string;
@@ -24,43 +25,44 @@ export interface CartProps {
 
 const Cart: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  // const [cart, setCart] = useState<CartProps>();
   const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
   const [cost, setCost] = useState<number>(0);
   const navigate = useNavigate();
   const userId = localStorage.getItem("user_id");
+
+  useEffect(() => {
+    if (userId) {
+      getCartItems();
+      console.log(getCartItems);
+    }
+  }, [navigate, userId]);
+
+  useEffect(() => {
+    updateCost();
+  }, [cartItems]);
+
   const updateCost = () => {
-    var c = 0;
-    console.log("Updating Cost");
+    let c = 0;
     cartItems.forEach((item) => {
       c += item.cost * item.amount;
     });
-    console.log(c);
     setCost(c);
+    console.log(c);
   };
+
   const getCartItems = () => {
     axios
-      .get("http://127.0.0.1:8000/users/" + userId + "/cart")
+      .get(`http://127.0.0.1:8000/users/${userId}/cart`)
       .then((res) => {
         const cartData = res.data;
-        console.log(res);
-        console.log(res.data);
-        // console.log(cartData);
-        // setCart(cartData);
         setCartItems(cartData.books);
         setLoading(false);
-        updateCost();
       })
       .catch((err) => {
         console.log(err);
         navigate("/market");
       });
   };
-  useEffect(() => {
-    getCartItems();
-
-    return () => {};
-  }, [navigate, userId]);
 
   const checkoutHandler = () => {
     axios
@@ -68,8 +70,6 @@ const Cart: React.FC = () => {
         params: { user_id: userId },
       })
       .then((res) => {
-        // Navigate to the market page with a toast message parameter
-        //navigate("/market?toast=checkout_success");
         const checkout_id = res.data.id;
         navigate("/checkout", { state: { id: checkout_id }, replace: true });
       })
@@ -94,9 +94,9 @@ const Cart: React.FC = () => {
         console.log(err);
       });
   };
+
   const updateHandler = () => {
     getCartItems();
-    updateCost();
   };
 
   return (
@@ -138,9 +138,10 @@ const Cart: React.FC = () => {
                           image={item.image}
                           genres={item.genres}
                           amount={item.amount}
+                          cost={item.cost}
                           userId={userId ?? ""}
-                          onRemoveItem={() => deleteHandler(item.id)}
-                          onUpdateItem={() => updateHandler()}
+                          onRemoveItem={deleteHandler}
+                          onUpdateItem={updateHandler}
                         />
                       ))}
                     </ul>
