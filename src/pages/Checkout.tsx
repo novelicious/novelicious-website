@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { CiUser } from "react-icons/ci";
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -52,35 +52,29 @@ interface User {
   active_cart_id: number | null;
 }
 
-const shippingfee : Array<{provider: string, price: number}>= [
-  {provider: 'Gojek', price: 9000},
-  {provider: 'Grab', price: 9000}
-];
+interface ProviderCost {
+  provider: string;
+  cost: number;
+};
 
 const Checkout: React.FC = () => {
+  const shipMethod : Array<ProviderCost> = [
+    {provider: 'Gojek', cost: 9000},
+    {provider: 'Grab', cost: 10000}
+  ];
+
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<Cart | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [checkout, setCheckout] = useState<CheckoutData | null>(null);
-  const location = useLocation();
-  const id = location.state?.id;
-  const cart_id = location.state?.cart_id;
-  const [shipping, setShipping] = useState(9000);
+  const [shipping, setShipping] = useState<ProviderCost>(shipMethod[0]);
+  const [payment, setPayment] = useState<String>('PayPal');
+  const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>();
+  // const cart_id = location.state?.cart_id;
   const userId = localStorage.getItem("user_id");
 
   useEffect(() => {
-    if (id) {
-      axios
-        .get<Cart>(`http://127.0.0.1:8000/carts/${cart_id}`)
-        .then((res) => {
-          console.log("Cart data:", res.data);
-          setCart(res.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching cart data:", error);
-        });
-    }
-
     if (userId) {
       axios
         .get<User>(`http://127.0.0.1:8000/users/${userId}`)
@@ -107,15 +101,37 @@ const Checkout: React.FC = () => {
   }, [id, userId]);
 
   useEffect(() => {
-    setLoading(true)
+    if (checkout) {
+      axios
+        .get<Cart>(`http://127.0.0.1:8000/carts/${checkout.cart_id}`)
+        .then((res) => {
+          console.log("Cart data:", res.data);
+          setCart(res.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching cart data:", error);
+        });
+    }
+  }, [checkout])
+
+  useEffect(() => {
     if (cart && user && checkout) {
       setLoading(false);
     }
   }, [cart, user, checkout]);
 
-  useEffect(() => {
-    return setShipping(9000);
-  }, [])
+  const transactionHandler = () => {
+    axios
+      .post(`http://127.0.0.1:8000/checkouts/${id}/checkout`, null, {
+        params: {shipping_fee: shipping.cost, shipping: shipping.provider, payment: payment},
+      })
+      .then(() => {
+        navigate(`/transaction/${id}`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   return (
     <section>
@@ -180,7 +196,10 @@ const Checkout: React.FC = () => {
                               </h3>
                               <p className="text-gray-600">{book.authors}</p>
                               <p className="text-gray-800 font-semibold">
-                                Rp {book.cost.toLocaleString('id-ID')}
+                                IDR {book.cost.toLocaleString('id-ID')} x {book.amount}
+                              </p>
+                              <p className="text-gray-800 font-bold">
+                                Subtotal: IDR {(book.cost * book.amount).toLocaleString('id-ID')}
                               </p>
                             </div>
                           </div>
@@ -193,11 +212,11 @@ const Checkout: React.FC = () => {
                   <div className="mt-6">
                     <h3 className="text-lg font-semibold mb-2">Shipping</h3>
                     <select className="w-full p-2 border rounded" 
-                      value={0}
-                      onChange={e => setShipping(shippingfee[parseInt(e.target.value)].price)}>
-                        {shippingfee.map((ship, index) => (
-                          <option value={index}>
-                            {ship.provider} (Rp {ship.price.toLocaleString('id-ID')})
+                      defaultValue={0}
+                      onChange={e => setShipping(shipMethod[parseInt(e.target.value)])}>
+                        {shipMethod.map((ship, index) => (
+                          <option value={index} key={index}>
+                            {ship.provider} (IDR {ship.cost.toLocaleString('id-ID')})
                           </option>
                         ),)}
                     </select>
@@ -207,9 +226,11 @@ const Checkout: React.FC = () => {
                     <h3 className="text-lg font-semibold mb-2">
                       Payment Method
                     </h3>
-                    <select className="w-full p-2 border rounded">
-                      <option>PayPal</option>
-                      <option>BCA</option>
+                    <select className="w-full p-2 border rounded" 
+                      defaultValue={"PayPal"}
+                      onChange={e => {setPayment(e.target.value.toString())}}>
+                      <option value={"PayPal"}>PayPal</option>
+                      <option value={"BCA"}>BCA</option>
                     </select>
                   </div>
 
@@ -217,22 +238,27 @@ const Checkout: React.FC = () => {
                     <div className="w-screen max-w-lg space-y-4">
                       <dl className="space-y-0.5 text-sm text-gray-700">
                         <div className="flex justify-between">
-                          <dt>Subtotal</dt>
+                          <dt>Items Subtotal</dt>
                           <dd>IDR {
                             checkout?.total_cost ? (checkout?.total_cost).toLocaleString('id-ID') : 0
                             }</dd>
+                        </div>
+                        <div className="flex justify-between">
+                          <dt>Shippment Subtotal</dt>
+                          <dd>IDR {shipping.cost.toLocaleString('id-ID')}</dd>
                         </div>
                         <div className="flex justify-between !text-base font-medium">
                           <dt>Total</dt>
                           <dd>IDR {
                           checkout?.total_cost ? 
-                            (checkout?.total_cost + shipping).toLocaleString('id-ID')
+                            (checkout?.total_cost + shipping.cost).toLocaleString('id-ID')
                             : 0
                           }</dd>
                         </div>
                       </dl>
                       <div className="flex justify-end">
-                        <button className="ml-4 inline-flex text-neutral bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-900 rounded text-sm">
+                        <button className="ml-4 inline-flex text-neutral bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-900 rounded text-sm"
+                          onClick={transactionHandler}>
                           Next (Transactions)
                         </button>
                       </div>

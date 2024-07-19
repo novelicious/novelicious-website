@@ -57,10 +57,10 @@ const CartItem: React.FC<CartItemProps> = ({
         to={`/novel/${id}`}
         className="flex items-center gap-4 w-full h-full origin-left transition-all duration-500 ease-in-out hover:scale-105 active:scale-95"
       >
-        <img src={image} alt={title} className="size-16 rounded object-cover" />
+        <img src={image} alt={title} className="size-20 rounded object-cover" />
         <div>
-          <h3 className="text-sm text-gray-900">{title}</h3>
-          <dl className="mt-0.5 space-y-px text-[10px] text-gray-600">
+          <h3 className="text-md text-gray-900">{title}</h3>
+          <dl className="mt-0.5 space-y-px text-[12px] text-gray-600">
             <div>
               <dt className="inline">Genre: </dt>
               <dd className="inline">{genres}</dd>

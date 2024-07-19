@@ -10,6 +10,7 @@ import axios from "axios";
 import { FaUserEdit } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
 import { IoLogOutSharp } from "react-icons/io5";
+import { RiFilePaper2Fill } from "react-icons/ri";
 interface User {
   id: number;
   username: string;
@@ -82,6 +83,17 @@ const Navbar: React.FC = () => {
       ),
       link: "/favorites",
     },
+    {
+      label:(
+        <div className="flex">
+          <div className="my-1 mr-2">
+            <RiFilePaper2Fill />
+          </div>
+          Transactions
+        </div>
+      ),
+      link: '/transactions',
+    }
   ];
 
   return (
