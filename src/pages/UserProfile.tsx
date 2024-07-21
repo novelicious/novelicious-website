@@ -7,6 +7,7 @@ import axios from "axios";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import toast, { Toaster } from "react-hot-toast";
 import { FaRegSave } from "react-icons/fa";
+import { TailSpin } from "react-loader-spinner";
 
 interface UserProfileState {
   username: string;
@@ -120,7 +121,11 @@ const UserProfile: React.FC = () => {
   }
 
   if (!profile) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <TailSpin height={80} width={80} color="black" />
+      </div>
+    );
   }
 
   return (
