@@ -386,6 +386,7 @@ const Details: React.FC = () => {
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {recommendedBooks.map((book) => (
               <li
+                data-aos="fade-in"
                 key={book.id}
                 className="border-primary border-2 flex flex-col"
               >

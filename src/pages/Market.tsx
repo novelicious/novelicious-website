@@ -53,6 +53,8 @@ const Market: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const userId = localStorage.getItem("user_id");
+
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const toastMessage = queryParams.get("toast");
@@ -134,23 +136,37 @@ const Market: React.FC = () => {
     setSelectedGenres([]);
   };
 
-  useEffect(() => {
-    const userId = localStorage.getItem("user_id");
-    if (!userId) {
-      console.log("User is not logged in.");
-      return;
-    }
+  function getCartAmount(cart: CartProps) {
+    if (cart == null) return 0;
+    var amount = 0;
+    var books: CartItemProps[] = cart.books;
+    books.forEach((book) => {
+      amount += book.amount;
+    });
+    return amount;
+  }
 
+  useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/users/" + userId + "/cart")
       .then((res) => {
         const cartData = res.data;
-        setCartAmount(getCartAmount(cartData));
+        if (cartData === null || cartData === undefined) {
+          console.log("Cart data is null or undefined");
+        } else {
+          setCartAmount(getCartAmount(cartData));
+        }
       })
       .catch((err) => {
         console.log(err);
       });
+  }, []);
 
+  useEffect(() => {
+    if (!userId) {
+      console.log("User is not logged in.");
+      return;
+    }
     axios
       .get("http://127.0.0.1:8000/users/" + userId + "/favorites")
       .then((res) => {
@@ -166,21 +182,10 @@ const Market: React.FC = () => {
       });
   }, []);
 
-  function getCartAmount(cart: CartProps) {
-    if (cart == null) return 0;
-    var amount = 0;
-    var books: CartItemProps[] = cart.books;
-    books.forEach((book) => {
-      amount += book.amount;
-    });
-    return amount;
-  }
-
   const onStarToggledHandler = (bookId: number) => {
     toast.success("Sucessfully added to favorites!", {
       icon: <FaStar />,
     });
-    const userId = localStorage.getItem("user_id");
 
     if (!userId) {
       console.log("User is not logged in.");
@@ -196,7 +201,6 @@ const Market: React.FC = () => {
   };
 
   const onUntoggledHandler = (bookId: number) => {
-    const userId = localStorage.getItem("user_id");
     toast.error("Removed from favorites!", {
       icon: <FaTrash />,
     });
@@ -216,7 +220,7 @@ const Market: React.FC = () => {
     toast.success("Sucessfully added to cart!", {
       icon: <AiOutlineShoppingCart />,
     });
-    const userId = localStorage.getItem("user_id");
+
     axios.post("http://127.0.0.1:8000/carts/add", null, {
       params: {
         book_id: bookId,

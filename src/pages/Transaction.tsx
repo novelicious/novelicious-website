@@ -130,12 +130,12 @@ const Transaction: React.FC = () => {
       axios
         .delete(`http://127.0.0.1:8000/checkouts/${checkout.id}`)
         .then(() => {
-          toast.success("Transaction deleted successfully.");
+          toast.success("Transaction has been finished.");
           navigate("/transactions");
         })
         .catch((error) => {
           console.error("Error deleting transaction:", error);
-          toast.error("Failed to delete transaction.");
+          toast.error("Failed to finish transaction.");
         });
     }
   };
@@ -154,14 +154,14 @@ const Transaction: React.FC = () => {
         <Toaster />
       </div>
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
-        <header className="sticky top-0 bg-neutral z-50">
+        <header className="sticky top-0  z-50">
           <div className="flex items-center">
             <Link to="/transactions">
               <IoMdArrowRoundBack />
             </Link>
             <h1 className="ml-5 text-md font-semibold">Transaction Detail</h1>
           </div>
-          <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+          <div className="mx-auto bg-white max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
             <div className="mx-auto max-w-3xl">
               <div className="mt-2">
                 <div className="flex justify-between text-lg font-semibold">
@@ -211,20 +211,23 @@ const Transaction: React.FC = () => {
                 {checkout?.status === "done" && (
                   <div className="flex justify-end mt-5 mb-5 space-y-4">
                     <button
-                      className="ml-4 w-full font-semibold inline-flex justify-center text-neutral bg-red-600 border-0 py-2 px-6 focus:outline-none hover:bg-red-700 rounded"
+                      className="ml-4 w-full font-semibold inline-flex justify-center text-neutral bg-primary border-0 py-2 px-6 focus:outline-none  rounded"
                       onClick={deleteHandler}
                     >
-                      Delete Transaction
+                      Done
                     </button>
                   </div>
                 )}
+
                 <div className="flex justify-end mt-5 mb-5 space-y-4">
-                  <button
-                    className="ml-4 w-full text-gray-800 font-semibold inline-flex justify-center bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded"
-                    onClick={() => navigate(`/checkout/${id}`)}
-                  >
-                    Edit Shipping and Payment Provider
-                  </button>
+                  {checkout?.status === "pending" && (
+                    <button
+                      className="ml-4 w-full text-gray-800 font-semibold inline-flex justify-center bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded"
+                      onClick={() => navigate(`/checkout/${id}`)}
+                    >
+                      Edit Shipping and Payment Provider
+                    </button>
+                  )}
                 </div>
                 <hr />
                 <h3 className="text-lg font-semibold mb-2">Cost Detail</h3>
