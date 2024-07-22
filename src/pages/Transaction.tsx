@@ -23,7 +23,7 @@ interface Cart {
   books: Book[];
 }
 
-interface CheckoutData {
+interface TransactionData {
   cart_id: number;
   id: number;
   status: string;
@@ -39,17 +39,17 @@ interface CheckoutData {
 
 const Transaction: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [checkout, setCheckout] = useState<CheckoutData | null>(null);
+  const [transaction, setTransaction] = useState<TransactionData | null>(null);
   const [cart, setCart] = useState<Cart | null>(null);
-  const splitted = checkout?.updated_at.split("-");
+  const splitted = transaction?.updated_at.split("-");
   const vaNumber1 = splitted
     ? parseInt(splitted[0]) +
       parseInt(splitted[1]) +
       parseInt(splitted[2].substring(0, 2))
     : 0;
   const vaNumber2 =
-    vaNumber1 && checkout ? (vaNumber1 + checkout.shipping_fee).toString() : 0;
-  const vaNumber3 = checkout && vaNumber1 ? vaNumber1 + checkout.total_cost : 0;
+    vaNumber1 && transaction ? (vaNumber1 + transaction.shipping_fee).toString() : 0;
+  const vaNumber3 = transaction && vaNumber1 ? vaNumber1 + transaction.total_cost : 0;
   const vaNumberFinal =
     vaNumber1 && vaNumber2 && vaNumber3
       ? (vaNumber1 + vaNumber3).toString() + vaNumber2
@@ -61,25 +61,25 @@ const Transaction: React.FC = () => {
   useEffect(() => {
     if (id) {
       axios
-        .get<CheckoutData>(`http://127.0.0.1:8000/checkouts/${id}`)
+        .get<TransactionData>(`http://127.0.0.1:8000/transactions/${id}`)
         .then((res) => {
-          console.log("Checkout data:", res.data);
+          console.log("Transaction data:", res.data);
           if (userId && parseInt(userId) !== res.data.user_id) {
             navigate("/market");
           }
-          setCheckout(res.data);
+          setTransaction(res.data);
         })
         .catch((error) => {
-          console.error("Error fetching checkout data:", error);
+          console.error("Error fetching transaction data:", error);
           navigate("/transactions");
         });
     }
   }, [id]);
 
   useEffect(() => {
-    if (checkout) {
+    if (transaction) {
       axios
-        .get<Cart>(`http://127.0.0.1:8000/carts/${checkout.cart_id}`)
+        .get<Cart>(`http://127.0.0.1:8000/carts/${transaction.cart_id}`)
         .then((res) => {
           console.log("Cart data:", res.data);
           setCart(res.data);
@@ -88,32 +88,32 @@ const Transaction: React.FC = () => {
           console.error("Error fetching cart data:", error);
         });
     }
-  }, [checkout]);
+  }, [transaction]);
 
   useEffect(() => {
-    if (checkout) {
+    if (transaction) {
       setLoading(false);
     }
   });
 
   const payHandler = () => {
-    if (checkout) {
-      const updatedCheckout = {
-        total_amount: checkout.total_amount,
-        total_cost: checkout.total_cost,
-        status: checkout.status === "shipping" ? "done" : "shipping",
+    if (transaction) {
+      const updatedTransaction = {
+        total_amount: transaction.total_amount,
+        total_cost: transaction.total_cost,
+        status: transaction.status === "Shipping" ? "Done" : "Shipping",
       };
 
       axios
-        .put(`http://127.0.0.1:8000/checkouts/${checkout.id}`, updatedCheckout)
+        .put(`http://127.0.0.1:8000/transactions/${transaction.id}`, updatedTransaction)
         .then(() => {
-          setCheckout({
-            ...checkout,
-            status: updatedCheckout.status,
+          setTransaction({
+            ...transaction,
+            status: updatedTransaction.status,
           });
           toast.success(
             `Status updated to ${
-              updatedCheckout.status === "shipping" ? "shipping" : "done"
+              updatedTransaction.status === "Shipping" ? "Shipping" : "Done"
             }.`
           );
           navigate("/transactions");
@@ -126,9 +126,9 @@ const Transaction: React.FC = () => {
   };
 
   const deleteHandler = () => {
-    if (checkout) {
+    if (transaction) {
       axios
-        .delete(`http://127.0.0.1:8000/checkouts/${checkout.id}`)
+        .delete(`http://127.0.0.1:8000/transactions/${transaction.id}`)
         .then(() => {
           toast.success("Transaction has been finished.");
           navigate("/transactions");
@@ -168,59 +168,70 @@ const Transaction: React.FC = () => {
                   <dt>Total</dt>
                   <dd className="font-bold">
                     IDR{" "}
-                    {checkout
+                    {transaction
                       ? (
-                          checkout.total_cost + checkout.shipping_fee
+                          transaction.total_cost + transaction.shipping_fee
                         ).toLocaleString("id-ID")
                       : 0}
                   </dd>
                 </div>
                 <div className="mt-6 flex justify-between">
                   <h3 className="text-lg font-semibold mb-2">Payment Method</h3>
-                  <p>{checkout?.payment}</p>
+                  <p>{transaction?.payment}</p>
                 </div>
                 <div className="mt-2 font-semibold text-lg flex justify-between">
-                  <h2>Virtual Account Number</h2>
-                  <div className="mb-3 p-2 bg-white rounded-lg flex justify-between">
-                    <h2 className="text-4xl">
-                      NVLCS{" "}
-                      {vaNumberFinal ? vaNumberFinal.substring(0, 10) : ""}
-                    </h2>
-                    <button
-                      className="ml-4 inline-flex text-gray-800 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-sm"
-                      onClick={() =>
-                        navigator.clipboard.writeText(
-                          "NVLCS" + vaNumberFinal.substring(0, 10)
-                        )
-                      }
-                    >
-                      Copy
-                    </button>
-                  </div>
+                {transaction?.status == 'Pending' ? (
+                  <>
+                    <h2>Virtual Account Number</h2>
+                    <div className="mb-3 p-2 bg-white rounded-lg flex justify-between">
+                      <h2 className="text-4xl">
+                        NVLCS{" "}
+                        {vaNumberFinal ? vaNumberFinal.substring(0, 10) : ""}
+                      </h2>
+                      <button
+                        className="ml-4 inline-flex text-gray-800 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-sm"
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            "NVLCS" + vaNumberFinal.substring(0, 10)
+                          )
+                        }
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h2>Payment Date</h2>
+                    <p className="text-lg">
+                      {transaction && new Date(transaction?.updated_at).toLocaleString()}
+                    </p>
+                  </>
+                )}
                 </div>
-                {checkout?.status !== "done" && (
+                {transaction?.status !== "Done" && (
                   <div className="flex justify-end mt-5 mb-5 space-y-4">
                     <button
                       className="ml-4 w-full font-semibold inline-flex justify-center text-neutral bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-900 rounded"
                       onClick={payHandler}
                     >
-                      {checkout?.status === "shipping" ? "Done" : "Pay"}
+                      {transaction?.status === "Shipping" ? "Done" : "Pay"}
                     </button>
                   </div>
                 )}
-                {checkout?.status === "done" && (
+                {transaction?.status === "Done" && (
                   <div className="flex justify-end mt-5 mb-5 space-y-4">
                     <button
                       className="ml-4 w-full font-semibold inline-flex justify-center text-neutral bg-primary border-0 py-2 px-6 focus:outline-none  rounded"
                       onClick={deleteHandler}
                     >
-                      Done
+                      Delete Record
                     </button>
                   </div>
                 )}
 
                 <div className="flex justify-end mt-5 mb-5 space-y-4">
-                  {checkout?.status === "pending" && (
+                  {transaction?.status === "Pending" && (
                     <button
                       className="ml-4 w-full text-gray-800 font-semibold inline-flex justify-center bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded"
                       onClick={() => navigate(`/checkout/${id}`)}
@@ -237,12 +248,12 @@ const Transaction: React.FC = () => {
                     <div className="w-2/3 text-sm">
                       <div className="flex justify-between">
                         <p>Provider</p>
-                        <p>{checkout?.shipping}</p>
+                        <p>{transaction?.shipping}</p>
                       </div>
                       <div className="flex justify-between mt-2">
                         <p>Fee</p>
                         <p>
-                          IDR {checkout?.shipping_fee.toLocaleString("id-ID")}
+                          IDR {transaction?.shipping_fee.toLocaleString("id-ID")}
                         </p>
                       </div>
                     </div>
@@ -251,9 +262,9 @@ const Transaction: React.FC = () => {
                     <p className="font-semibold">Total Cost</p>
                     <p className="font-bold">
                       IDR{" "}
-                      {checkout
+                      {transaction
                         ? (
-                            checkout.total_cost + checkout.shipping_fee
+                            transaction.total_cost + transaction.shipping_fee
                           ).toLocaleString("id-ID")
                         : 0}
                     </p>
@@ -297,16 +308,16 @@ const Transaction: React.FC = () => {
                 <div className="ml-5">
                   <div className="mt-6 flex justify-between">
                     <p className="font-semibold">Amount</p>
-                    <p>{checkout?.total_amount}</p>
+                    <p>{transaction?.total_amount}</p>
                   </div>
                   <div className="mt-2 flex justify-between">
                     <p className="font-semibold">Order Date</p>
-                    <p>{checkout?.created_at}</p>
+                    <p>{transaction?.created_at}</p>
                   </div>
                   <div className="mt-2 flex justify-between">
                     <p className="font-semibold">Total Cost</p>
                     <p className="font-bold">
-                      IDR {checkout?.total_cost.toLocaleString("id-ID")}
+                      IDR {transaction?.total_cost.toLocaleString("id-ID")}
                     </p>
                   </div>
                 </div>

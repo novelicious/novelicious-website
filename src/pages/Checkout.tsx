@@ -54,22 +54,21 @@ interface User {
 }
 
 interface ProviderCost {
+  id: number;
   provider: string;
   cost: number;
 }
 
 const Checkout: React.FC = () => {
-  const shipMethod: Array<ProviderCost> = [
-    { provider: "Gojek", cost: 9000 },
-    { provider: "Grab", cost: 10000 },
-  ];
 
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<Cart | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [checkout, setCheckout] = useState<CheckoutData | null>(null);
-  const [shipping, setShipping] = useState<ProviderCost>(shipMethod[0]);
-  const [payment, setPayment] = useState<String>("PayPal");
+  const [transaction, setCheckout] = useState<CheckoutData | null>(null);
+  const [shipping, setShipping] = useState<number>(1)
+  const [payment, setPayment] = useState<number>(1)
+  const [allShipping, setAllShipping] = useState<ProviderCost[] | null>(null);
+  const [allPayment, setAllPayment] = useState<ProviderCost[] | null>(null);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   // const cart_id = location.state?.cart_id;
@@ -90,21 +89,39 @@ const Checkout: React.FC = () => {
 
     if (id) {
       axios
-        .get<CheckoutData>(`http://127.0.0.1:8000/checkouts/${id}`)
+        .get<CheckoutData>(`http://127.0.0.1:8000/transactions/${id}`)
         .then((res) => {
           console.log("Checkout data:", res.data);
           setCheckout(res.data);
         })
         .catch((error) => {
-          console.error("Error fetching checkout data:", error);
+          console.error("Error fetching transaction data:", error);
         });
     }
+
+    axios
+      .get<ProviderCost[]>(`http://127.0.0.1:8000/deliveries`)
+      .then((res) => {
+        setAllShipping(res.data)
+      })
+      .catch(error => {
+        console.error('Error fetching deliveries method data:', error);
+      })
+
+    axios
+      .get<ProviderCost[]>(`http://127.0.0.1:8000/payments`)
+      .then((res) => {
+        setAllPayment(res.data)
+      })
+      .catch(error => {
+        console.error('Error fetching payments method data:', error);
+      })
   }, [id, userId]);
 
   useEffect(() => {
-    if (checkout) {
+    if (transaction) {
       axios
-        .get<Cart>(`http://127.0.0.1:8000/carts/${checkout.cart_id}`)
+        .get<Cart>(`http://127.0.0.1:8000/carts/${transaction.cart_id}`)
         .then((res) => {
           console.log("Cart data:", res.data);
           setCart(res.data);
@@ -113,20 +130,19 @@ const Checkout: React.FC = () => {
           console.error("Error fetching cart data:", error);
         });
     }
-  }, [checkout]);
+  }, [transaction]);
 
   useEffect(() => {
-    if (cart && user && checkout) {
+    if (cart && user && transaction) {
       setLoading(false);
     }
-  }, [cart, user, checkout]);
+  }, [cart, user, transaction]);
 
   const transactionHandler = () => {
     axios
-      .post(`http://127.0.0.1:8000/checkouts/${id}/checkout`, null, {
+      .put(`http://127.0.0.1:8000/transactions/${id}/checkout`, null, {
         params: {
-          shipping_fee: shipping.cost,
-          shipping: shipping.provider,
+          shipping: shipping,
           payment: payment,
         },
       })
@@ -221,11 +237,11 @@ const Checkout: React.FC = () => {
                     className="w-full p-2 border rounded"
                     defaultValue={0}
                     onChange={(e) =>
-                      setShipping(shipMethod[parseInt(e.target.value)])
+                      setShipping(parseInt(e.target.value))
                     }
                   >
-                    {shipMethod.map((ship, index) => (
-                      <option value={index} key={index}>
+                    {allShipping?.map((ship) => (
+                      <option value={ship.id} key={ship.id}>
                         {ship.provider} (IDR {ship.cost.toLocaleString("id-ID")}
                         )
                       </option>
@@ -239,11 +255,15 @@ const Checkout: React.FC = () => {
                     className="w-full p-2 border rounded"
                     defaultValue={"PayPal"}
                     onChange={(e) => {
-                      setPayment(e.target.value.toString());
+                      setPayment(parseInt(e.target.value));
                     }}
                   >
-                    <option value={"PayPal"}>PayPal</option>
-                    <option value={"BCA"}>BCA</option>
+                    {allPayment?.map((payment) => (
+                      <option value={payment.id} key={payment.id}>
+                        {payment.provider} (IDR {payment.cost.toLocaleString("id-ID")}
+                        )
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -254,24 +274,25 @@ const Checkout: React.FC = () => {
                         <dt>Items Subtotal</dt>
                         <dd>
                           IDR{" "}
-                          {checkout?.total_cost
-                            ? (checkout?.total_cost).toLocaleString("id-ID")
+                          {transaction?.total_cost
+                            ? (transaction?.total_cost).toLocaleString("id-ID")
                             : 0}
                         </dd>
                       </div>
                       <div className="flex justify-between">
                         <dt>Shippment Subtotal</dt>
-                        <dd>IDR {shipping.cost.toLocaleString("id-ID")}</dd>
+                        <dd>
+                          IDR {allShipping && allShipping[shipping - 1].cost.toLocaleString("id-ID")}
+                          </dd>
                       </div>
                       <div className="flex justify-between !text-base font-medium">
                         <dt>Total</dt>
                         <dd>
                           IDR{" "}
-                          {checkout?.total_cost
-                            ? (
-                                checkout?.total_cost + shipping.cost
-                              ).toLocaleString("id-ID")
-                            : 0}
+                          {transaction && allShipping
+                            && (
+                                transaction?.total_cost + allShipping[shipping - 1].cost
+                              ).toLocaleString("id-ID")}
                         </dd>
                       </div>
                     </dl>

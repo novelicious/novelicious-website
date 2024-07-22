@@ -119,13 +119,13 @@ const Transactions: React.FC = () => {
   const [transactions, setTransactions] = useState<
     TransactionItemProps[] | null
   >(null);
-  const [activeTab, setActiveTab] = useState<string>("pending");
+  const [activeTab, setActiveTab] = useState<string>("Pending");
   const userId = localStorage.getItem("user_id");
   const navigate = useNavigate();
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/users/${userId}/checkouts`)
+      .get(`http://127.0.0.1:8000/users/${userId}/transactions`)
       .then((res) => {
         setTransactions(res.data);
         setLoading(false);
@@ -165,25 +165,25 @@ const Transactions: React.FC = () => {
         </header>
         <div className="flex justify-center mt-4">
           <button
-            onClick={() => setActiveTab("pending")}
+            onClick={() => setActiveTab("Pending")}
             className={`px-4 py-2 ${
-              activeTab === "pending" ? "border-b-2 border-primary" : ""
+              activeTab === "Pending" ? "border-b-2 border-primary" : ""
             }`}
           >
             Pending
           </button>
           <button
-            onClick={() => setActiveTab("shipping")}
+            onClick={() => setActiveTab("Shipping")}
             className={`px-4 py-2 ${
-              activeTab === "shipping" ? "border-b-2 border-primary" : ""
+              activeTab === "Shipping" ? "border-b-2 border-primary" : ""
             }`}
           >
             Shipping
           </button>
           <button
-            onClick={() => setActiveTab("done")}
+            onClick={() => setActiveTab("Done")}
             className={`px-4 py-2 ${
-              activeTab === "done" ? "border-b-2 border-primary" : ""
+              activeTab === "Done" ? "border-b-2 border-primary" : ""
             }`}
           >
             Done

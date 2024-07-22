@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { FaPaperPlane, FaComments } from "react-icons/fa";
+import { FaPaperPlane, FaComments, FaRegStar } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import { TailSpin } from "react-loader-spinner";
 import { FaStar } from "react-icons/fa6";
@@ -58,6 +58,7 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
 interface StarProps {
   toggled: boolean;
   bookId: number;
+  text: string;
   onToggled?: (bookId: number) => void;
   onUntoggled?: (bookId: number) => void;
 }
@@ -65,6 +66,7 @@ interface StarProps {
 const Star: React.FC<StarProps> = ({
   toggled,
   bookId,
+  text,
   onToggled,
   onUntoggled,
 }) => {
@@ -75,15 +77,17 @@ const Star: React.FC<StarProps> = ({
   }, [toggled]);
 
   return (
-    <div className="text-xl font-medium ml-2">
+    <div className="font-medium ml-2">
       {isToggled ? (
         <button
           onClick={() => {
             if (onUntoggled) onUntoggled(bookId);
             setToggled(false);
           }}
+          className="text-xl flex justify-between items-center"
         >
-          ★
+          <FaStar />
+          <p className="text-sm ml-2">{text}</p>
         </button>
       ) : (
         <button
@@ -91,8 +95,10 @@ const Star: React.FC<StarProps> = ({
             if (onToggled) onToggled(bookId);
             setToggled(true);
           }}
+          className="text-xl flex justify-between items-center"
         >
-          ☆
+          <FaRegStar />
+          <p className="text-sm ml-2">{text}</p>
         </button>
       )}
     </div>
@@ -115,11 +121,13 @@ const Details: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [averageRating, setAverageRating] = useState<number>(0);
   const [favs] = useState<number[]>([]);
+  const [favText, setFavText] = useState<string>('Add to Favorite')
 
   const onStarToggledHandler = (bookId: number) => {
     toast.success("Sucessfully added to favorites!", {
       icon: <FaStar />,
     });
+    setFavText("Remove from Favorite")
     const userId = localStorage.getItem("user_id");
 
     if (!userId) {
@@ -137,6 +145,7 @@ const Details: React.FC = () => {
 
   const onUntoggledHandler = (bookId: number) => {
     const userId = localStorage.getItem("user_id");
+    setFavText("Add to Favorite")
     toast.error("Removed from favorites!", {
       icon: <FaTrash />,
     });
@@ -228,7 +237,11 @@ const Details: React.FC = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    if (token){
+      setIsLoggedIn(true);
+    }
+    console.log(isLoggedIn);
+    
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -318,8 +331,19 @@ const Details: React.FC = () => {
                   <img
                     src={book.image}
                     alt={book.title}
-                    className="max-h-64 w-auto border-4 border-b-primary"
+                    className="max-h-64 w-auto border-4 border-b-primary mb-2"
                   />
+                  {isLoggedIn ? (
+                    <Star
+                      toggled={favs.includes(book.id)}
+                      bookId={book.id}
+                      onToggled={() => onStarToggledHandler(book.id)}
+                      onUntoggled={() => onUntoggledHandler(book.id)}
+                      text={favText}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </div>
               <div className="w-full md:w-2/3 p-6">
@@ -429,6 +453,7 @@ const Details: React.FC = () => {
                           bookId={book.id}
                           onToggled={() => onStarToggledHandler(book.id)}
                           onUntoggled={() => onUntoggledHandler(book.id)}
+                          text=""
                         />
                       ) : (
                         <></>
