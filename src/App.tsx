@@ -9,14 +9,17 @@ import ProtectedPage from "./Protected.tsx";
 import Favorites from "./pages/Favorites.tsx";
 import Checkout from "./pages/Checkout.tsx";
 import UserProfile from "./pages/UserProfile.tsx";
-import Dashboard from "./pages/Admin/Dashboard.tsx";
+import SidebarLayout from "./components/SidebarLayout.tsx";
 import Transaction from "./pages/Transaction.tsx";
 import Transactions from "./pages/Transactions.tsx";
-
+import BookList from "./pages/Admin/BookList.tsx";
+import UserList from "./pages/Admin/UserList.tsx";
+import Dashboard from "./pages/Admin/Dashboard.tsx";
 const App: React.FC = () => (
   <div className=" bg-neutral">
     <Router>
       <Routes>
+        {/* User routes */}
         <Route path="/" element={<Market />} />
         <Route path="/market" element={<Market />} />
         <Route path="/profile" element={<UserProfile />} />
@@ -30,7 +33,12 @@ const App: React.FC = () => (
         <Route path="/transaction/:id" element={<Transaction />}></Route>
         <Route path="/cart" element={<Cart />}></Route>
         <Route path="/protected" element={<ProtectedPage />} />
-        <Route path="/admin" element={<Dashboard />} />
+        {/* Admin routes */}
+        <Route path="/admin" element={<SidebarLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="books" element={<BookList />} />
+          <Route path="users" element={<UserList />} />
+        </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>

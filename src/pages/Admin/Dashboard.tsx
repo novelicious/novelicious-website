@@ -1,104 +1,55 @@
 import React, { useState, useEffect } from "react";
-import "react-responsive-modal/styles.css";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import BookList from "./BookList";
-import Sidebar from "../../components/Sidebar";
-import { FiMenu } from "react-icons/fi";
-
-export interface UserAdmin {
-  id: number;
-  username: string;
-  role_id: number;
-}
 
 const Dashboard: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [user, setUser] = useState<UserAdmin | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-
-  const userId = localStorage.getItem("user_id");
-  const token = localStorage.getItem("token");
-  const navigate = useNavigate();
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const [userCount, setUserCount] = useState<number>(0);
+  const [bookCount, setBookCount] = useState<number>(0);
 
   useEffect(() => {
-    const verifyToken = async () => {
-      const token = localStorage.getItem("token");
-      console.log(token);
-
-      try {
-        const response = await fetch(
-          `http://localhost:8000/verify-token/${token}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Token verification failed");
-        }
-      } catch (error) {
-        localStorage.removeItem("token");
-        navigate("/");
-      }
-    };
-
-    verifyToken();
-  }, [navigate]);
-
-  useEffect(() => {
-    if (!userId) {
-      console.log("User is not logged in.");
-      return;
-    }
+    // Fetch the user count
     axios
-      .get(`http://127.0.0.1:8000/users/${userId}`)
+      .get("http://127.0.0.1:8000/users")
       .then((res) => {
-        setUser(res.data);
+        setUserCount(res.data.length);
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((err) => {
+        console.error(err);
       });
 
-    setIsLoggedIn(!!token);
-  }, [userId, token]);
+    // Fetch the book count
+    axios
+      .get("http://127.0.0.1:8000/books")
+      .then((res) => {
+        setBookCount(res.data.length);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
 
   return (
-    <>
-      <div>
-        {isLoggedIn ? (
-          <>
-            {user && user.role_id === 1 ? (
-              <section className="flex">
-                <Sidebar isOpen={isSidebarOpen} />
-                <main
-                  className={`flex-1 transition-all duration-300 ${
-                    isSidebarOpen ? "ml-64" : "ml-0"
-                  }`}
-                >
-                  <div className="py-2 px-6 bg-white flex items-center shadow-md shadow-black/5 sticky top-0 left-0 z-30">
-                    <button
-                      type="button"
-                      className="text-lg text-gray-600"
-                      onClick={toggleSidebar}
-                    >
-                      <FiMenu />
-                    </button>
-                    <p className="ml-2">Book List</p>
-                  </div>
-                  <BookList />
-                </main>
-              </section>
-            ) : (
-              <h1>You have a non-Admin role ☠️☠️🙏🙏</h1>
-            )}
-          </>
-        ) : (
-          <h1>Please log in</h1>
-        )}
+    <div className="container mx-auto px-4 py-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white shadow-lg rounded-lg p-6 flex items-center">
+          <div className="text-primary mr-4">
+            <i className="ri-user-line text-4xl"></i>
+          </div>
+          <div>
+            <p className="text-lg font-semibold text-gray-700">Total Users</p>
+            <p className="text-2xl font-bold text-gray-900">{userCount}</p>
+          </div>
+        </div>
+        <div className="bg-white shadow-lg rounded-lg p-6 flex items-center">
+          <div className="text-primary mr-4">
+            <i className="ri-book-line text-4xl"></i>
+          </div>
+          <div>
+            <p className="text-lg font-semibold text-gray-700">Total Books</p>
+            <p className="text-2xl font-bold text-gray-900">{bookCount}</p>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

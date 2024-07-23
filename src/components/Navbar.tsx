@@ -11,6 +11,7 @@ import { RiFilePaper2Fill } from "react-icons/ri";
 interface User {
   id: number;
   username: string;
+  role_id: number;
 }
 
 const Navbar: React.FC = () => {
@@ -91,6 +92,20 @@ const Navbar: React.FC = () => {
       link: "/transactions",
     },
   ];
+
+  if (user?.role_id === 1) {
+    profileNavlinks.push({
+      label: (
+        <div className="flex">
+          <div className="my-1 mr-2">
+            <RiFilePaper2Fill />
+          </div>
+          Admin
+        </div>
+      ),
+      link: "/admin",
+    });
+  }
 
   return (
     <nav className="flex justify-between px-8 items-center py-6  bg-neutral ">
