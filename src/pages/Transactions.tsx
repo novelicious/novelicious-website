@@ -61,6 +61,19 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
 
   const totalPrice = total_cost + shipping_fee;
 
+  // const getStatusColor = (status: string) => {
+  //   switch (status.toLowerCase()) {
+  //     case "pending":
+  //       return "bg-blue-500";
+  //     case "shipping":
+  //       return "bg-yellow-500";
+  //     case "delivered":
+  //       return "bg-green-500";
+  //     default:
+  //       return "text-gray-500";
+  //   }
+  // };
+
   return (
     <div className="sm:flex sm:justify-center">
       <li className="flex sm:w-1/2 gap-4 mb-4 p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
@@ -77,6 +90,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               <h3 className="text-semibold">
                 {new Date(created_at).toLocaleString()}
               </h3>
+              <span className={`bg-primary p-2`}>
+                <h3 className="text-white">{status}</h3>
+              </span>
             </div>
             <hr />
             <div className="flex flex-wrap gap-4 mt-2">
@@ -96,7 +112,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                 </div>
               ))}
             </div>
-            <div className={`status-tag status-${status.toLowerCase()}`}>
+            <div className="mt-2">
               {cart && cart.books.length > 1 && (
                 <span className="text-md text-gray-500">
                   +{cart.books.length - 1} others
@@ -119,7 +135,7 @@ const Transactions: React.FC = () => {
   const [transactions, setTransactions] = useState<
     TransactionItemProps[] | null
   >(null);
-  const [activeTab, setActiveTab] = useState<string>("Pending");
+
   const userId = localStorage.getItem("user_id");
   const navigate = useNavigate();
 
@@ -132,10 +148,6 @@ const Transactions: React.FC = () => {
       })
       .catch();
   }, [navigate, userId]);
-
-  const filteredTransactions = transactions?.filter(
-    (transaction) => transaction.status === activeTab
-  );
 
   const deleteHandler = (id: number) => {
     console.log(id, "deleted");
@@ -155,7 +167,7 @@ const Transactions: React.FC = () => {
         <Toaster />
       </div>
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
-        <header className="sticky top-0  z-50">
+        <header className="sticky top-0 z-50">
           <div className="flex items-center">
             <Link to="/">
               <IoMdArrowRoundBack />
@@ -163,35 +175,9 @@ const Transactions: React.FC = () => {
             <h1 className="ml-5 text-md font-semibold">Transactions</h1>
           </div>
         </header>
-        <div className="flex justify-center mt-4">
-          <button
-            onClick={() => setActiveTab("Pending")}
-            className={`px-4 py-2 ${
-              activeTab === "Pending" ? "border-b-2 border-primary" : ""
-            }`}
-          >
-            Pending
-          </button>
-          <button
-            onClick={() => setActiveTab("Shipping")}
-            className={`px-4 py-2 ${
-              activeTab === "Shipping" ? "border-b-2 border-primary" : ""
-            }`}
-          >
-            Shipping
-          </button>
-          <button
-            onClick={() => setActiveTab("Done")}
-            className={`px-4 py-2 ${
-              activeTab === "Done" ? "border-b-2 border-primary" : ""
-            }`}
-          >
-            Done
-          </button>
-        </div>
         <div className="mt-8">
           <ul className="space-y-4">
-            {filteredTransactions?.map((item) => (
+            {transactions?.map((item) => (
               <TransactionItem
                 key={item.id}
                 id={item.id}

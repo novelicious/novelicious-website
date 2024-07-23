@@ -48,8 +48,11 @@ const Transaction: React.FC = () => {
       parseInt(splitted[2].substring(0, 2))
     : 0;
   const vaNumber2 =
-    vaNumber1 && transaction ? (vaNumber1 + transaction.shipping_fee).toString() : 0;
-  const vaNumber3 = transaction && vaNumber1 ? vaNumber1 + transaction.total_cost : 0;
+    vaNumber1 && transaction
+      ? (vaNumber1 + transaction.shipping_fee).toString()
+      : 0;
+  const vaNumber3 =
+    transaction && vaNumber1 ? vaNumber1 + transaction.total_cost : 0;
   const vaNumberFinal =
     vaNumber1 && vaNumber2 && vaNumber3
       ? (vaNumber1 + vaNumber3).toString() + vaNumber2
@@ -101,11 +104,14 @@ const Transaction: React.FC = () => {
       const updatedTransaction = {
         total_amount: transaction.total_amount,
         total_cost: transaction.total_cost,
-        status: transaction.status === "Shipping" ? "Done" : "Shipping",
+        status: transaction.status === "Shipping" ? "Delivered" : "Shipping",
       };
 
       axios
-        .put(`http://127.0.0.1:8000/transactions/${transaction.id}`, updatedTransaction)
+        .put(
+          `http://127.0.0.1:8000/transactions/${transaction.id}`,
+          updatedTransaction
+        )
         .then(() => {
           setTransaction({
             ...transaction,
@@ -113,7 +119,9 @@ const Transaction: React.FC = () => {
           });
           toast.success(
             `Status updated to ${
-              updatedTransaction.status === "Shipping" ? "Shipping" : "Done"
+              updatedTransaction.status === "Shipping"
+                ? "Shipping"
+                : "Delivered"
             }.`
           );
           navigate("/transactions");
@@ -180,36 +188,37 @@ const Transaction: React.FC = () => {
                   <p>{transaction?.payment}</p>
                 </div>
                 <div className="mt-2 font-semibold text-lg flex justify-between">
-                {transaction?.status == 'Pending' ? (
-                  <>
-                    <h2>Virtual Account Number</h2>
-                    <div className="mb-3 p-2 bg-white rounded-lg flex justify-between">
-                      <h2 className="text-4xl">
-                        NVLCS{" "}
-                        {vaNumberFinal ? vaNumberFinal.substring(0, 10) : ""}
-                      </h2>
-                      <button
-                        className="ml-4 inline-flex text-gray-800 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-sm"
-                        onClick={() =>
-                          navigator.clipboard.writeText(
-                            "NVLCS" + vaNumberFinal.substring(0, 10)
-                          )
-                        }
-                      >
-                        Copy
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <h2>Payment Date</h2>
-                    <p className="text-lg">
-                      {transaction && new Date(transaction?.updated_at).toLocaleString()}
-                    </p>
-                  </>
-                )}
+                  {transaction?.status == "Pending" ? (
+                    <>
+                      <h2>Virtual Account Number</h2>
+                      <div className="mb-3 p-2 bg-white rounded-lg flex justify-between">
+                        <h2 className="text-4xl">
+                          NVLCS{" "}
+                          {vaNumberFinal ? vaNumberFinal.substring(0, 10) : ""}
+                        </h2>
+                        <button
+                          className="ml-4 inline-flex text-gray-800 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-sm"
+                          onClick={() =>
+                            navigator.clipboard.writeText(
+                              "NVLCS" + vaNumberFinal.substring(0, 10)
+                            )
+                          }
+                        >
+                          Copy
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <h2>Payment Date</h2>
+                      <p className="text-lg">
+                        {transaction &&
+                          new Date(transaction?.updated_at).toLocaleString()}
+                      </p>
+                    </>
+                  )}
                 </div>
-                {transaction?.status !== "Done" && (
+                {transaction?.status !== "Delivered" && (
                   <div className="flex justify-end mt-5 mb-5 space-y-4">
                     <button
                       className="ml-4 w-full font-semibold inline-flex justify-center text-neutral bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-900 rounded"
@@ -219,7 +228,7 @@ const Transaction: React.FC = () => {
                     </button>
                   </div>
                 )}
-                {transaction?.status === "Done" && (
+                {transaction?.status === "Delivered" && (
                   <div className="flex justify-end mt-5 mb-5 space-y-4">
                     <button
                       className="ml-4 w-full font-semibold inline-flex justify-center text-neutral bg-primary border-0 py-2 px-6 focus:outline-none  rounded"
@@ -253,7 +262,8 @@ const Transaction: React.FC = () => {
                       <div className="flex justify-between mt-2">
                         <p>Fee</p>
                         <p>
-                          IDR {transaction?.shipping_fee.toLocaleString("id-ID")}
+                          IDR{" "}
+                          {transaction?.shipping_fee.toLocaleString("id-ID")}
                         </p>
                       </div>
                     </div>
