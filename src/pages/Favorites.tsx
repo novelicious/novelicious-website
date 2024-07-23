@@ -1,65 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
-import { Link } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import toast, { Toaster } from "react-hot-toast";
 import { FaStar } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
-interface Book {
-  id: number;
-  image: string;
-  title: string;
-  release_year: number;
-  authors: string;
-  genres: string[];
-}
-
-interface StarProps {
-  toggled: boolean;
-  bookId: number;
-  onToggled?: (bookId: number) => void;
-  onUntoggled?: (bookId: number) => void;
-}
-
-const Star: React.FC<StarProps> = ({
-  toggled,
-  bookId,
-  onToggled,
-  onUntoggled,
-}) => {
-  const [isToggled, setToggled] = useState<boolean>(toggled);
-
-  useEffect(() => {
-    setToggled(toggled);
-  }, [toggled]);
-
-  return (
-    <div className="text-xl font-medium ml-2">
-      {isToggled ? (
-        <button
-          onClick={() => {
-            if (onUntoggled) onUntoggled(bookId);
-            setToggled(false);
-          }}
-        >
-          ★
-        </button>
-      ) : (
-        <button
-          onClick={() => {
-            if (onToggled) onToggled(bookId);
-            setToggled(true);
-          }}
-        >
-          ☆
-        </button>
-      )}
-    </div>
-  );
-};
+import BookItem, { Book } from "../components/BookItem";
+import Recommendation from "../components/Recommendation";
 
 const Favorites: React.FC = () => {
   const [favoriteBooks, setFavoriteBooks] = useState<Book[]>([]);
@@ -70,29 +19,6 @@ const Favorites: React.FC = () => {
 
   // Isi favorite
   const [favs, setFavs] = useState<number[]>([]);
-
-  useEffect(() => {
-    const userId = localStorage.getItem("user_id");
-    if (!userId) {
-      console.log("User is not logged in.");
-      return;
-    }
-    setLoading(true);
-    axios
-      .get("http://127.0.0.1:8000/users/" + userId + "/favorites")
-      .then((res) => {
-        setLoading(false);
-        const response = res.data;
-        const ids: number[] = [];
-        response.forEach((element: { id: number }) => {
-          ids.push(element.id);
-        });
-        setFavs(ids);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("user_id");
@@ -110,18 +36,24 @@ const Favorites: React.FC = () => {
       axios
         .get(`http://127.0.0.1:8000/users/${userId}/favorites`)
         .then((res) => {
-          setLoading(false);
-
+          const ids: number[] = [];
+          res.data.forEach((element: { id: number }) => {
+            ids.push(element.id);
+          });
+          setFavs(ids);
+          
           const transformedBooks = res.data.map(
             (book: Omit<Book, "genres"> & { genres: string | null }) => ({
               ...book,
               genres: book.genres
-                ? book.genres.split(",").map((genre: string) => genre.trim())
-                : [],
+              ? book.genres.split(",").map((genre: string) => genre.trim())
+              : [],
             })
           );
-          console.log(transformedBooks);
+          setLoading(false);
+          getRecommendation();
           setFavoriteBooks(transformedBooks);
+          console.log(transformedBooks);
         })
         .catch(() => {
           setError("Failed to fetch books data from favorites");
@@ -132,10 +64,8 @@ const Favorites: React.FC = () => {
     }
   }, [userId]);
 
-  useEffect(() => {
+  const getRecommendation = () => {
     if (userId) {
-      setLoading(true);
-
       axios
         .get(`http://127.0.0.1:8000/recommend/${userId}?num_book=4`)
         // .then((res) => {
@@ -144,8 +74,6 @@ const Favorites: React.FC = () => {
         // })
 
         .then((res) => {
-          setLoading(false);
-
           const transformedBooks = res.data.recommendations.map(
             (book: Omit<Book, "genres"> & { genres: string | null }) => ({
               ...book,
@@ -161,10 +89,10 @@ const Favorites: React.FC = () => {
           console.log("error bro");
         })
         .finally(() => {
-          setLoading(false);
+          // setLoading(false);
         });
     }
-  }, [userId]);
+  }
 
   const onStarToggledHandler = (bookId: number) => {
     toast.success("Sucessfully added to favorites!", {
@@ -246,133 +174,29 @@ const Favorites: React.FC = () => {
                   className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
                 >
                   {favoriteBooks.map((book) => (
-                    <li
-                      key={book.id}
-                      className="border-primary border-2 flex flex-col"
-                      data-aos="zoom-in"
-                    >
-                      <Link
-                        to={`/novel/${book.id}`}
-                        className="h-[320px] group relative block overflow-hidden"
-                      >
-                        <img
-                          src={book.image}
-                          alt={book.title}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
-                        />
-                      </Link>
-
-                      <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
-                        <div>
-                          <div className="w-full flex justify-between">
-                            <div className="flex flex-wrap gap-1">
-                              {book.genres.map((genre, index) => (
-                                <span
-                                  key={index}
-                                  className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
-                                >
-                                  <a
-                                    href="#"
-                                    className="text-neutral relative text-[10px] w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-neutral after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-right"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                    }}
-                                  >
-                                    {genre}
-                                  </a>
-                                </span>
-                              ))}
-                            </div>
-
-                            <Star
-                              toggled={favs.includes(book.id)}
-                              bookId={book.id}
-                              onToggled={() => onStarToggledHandler(book.id)}
-                              onUntoggled={() => onUntoggledHandler(book.id)}
-                            />
-                          </div>
-
-                          <h3 className="mt-4 text-lg font-medium text-gray-900">
-                            {book.title} ({book.release_year})
-                          </h3>
-
-                          <p className="mt-1.5 text-sm text-gray-700">
-                            {book.authors}
-                          </p>
-                        </div>
-                      </div>
-                    </li>
+                    <BookItem 
+                      id={book.id} 
+                      image={book.image} 
+                      title={book.title} 
+                      release_year={book.release_year} 
+                      authors={book.authors} 
+                      genres={book.genres} 
+                      cost={book.cost}
+                      favs={favs} 
+                    />
                   ))}
                 </ul>
               </>
             )}
 
             <h1 className="text-lg font-semibold mt-8">Recommended for You</h1>
-            <ul
-              data-aos-anchor-placement="center-bottom"
-              className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-            >
-              {recommendedBooks.map((book) => (
-                <li
-                  key={book.id}
-                  className="border-primary border-2 flex flex-col"
-                  data-aos="zoom-in"
-                >
-                  <Link
-                    to={`/novel/${book.id}`}
-                    className="h-[320px] group relative block overflow-hidden"
-                  >
-                    <img
-                      src={book.image}
-                      alt={book.title}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
-                    />
-                  </Link>
-
-                  <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
-                    <div>
-                      <div className="w-full flex justify-between">
-                        <div className="flex flex-wrap gap-1">
-                          {book.genres.map((genre, index) => (
-                            <span
-                              key={index}
-                              className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
-                            >
-                              <a
-                                href="#"
-                                className="text-neutral relative text-[10px] w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-neutral after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-right"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                }}
-                              >
-                                {genre}
-                              </a>
-                            </span>
-                          ))}
-                        </div>
-
-                        <Star
-                          toggled={favs.includes(book.id)}
-                          bookId={book.id}
-                          onToggled={() => onStarToggledHandler(book.id)}
-                          onUntoggled={() => onUntoggledHandler(book.id)}
-                        />
-                      </div>
-
-                      <h3 className="mt-4 text-lg font-medium text-gray-900">
-                        {book.title} ({book.release_year})
-                      </h3>
-
-                      <p className="mt-1.5 text-sm text-gray-700">
-                        {book.authors}
-                      </p>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <Recommendation 
+              isLoggedIn={true} 
+              favs={favs} 
+              recommendedBooks={recommendedBooks} 
+              onStarToggle={onStarToggledHandler} 
+              onStarUnToggle={onUntoggledHandler} 
+            />
           </>
         )}
       </div>

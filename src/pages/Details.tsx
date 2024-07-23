@@ -5,11 +5,15 @@ import { Link } from "react-router-dom";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { FaPaperPlane, FaComments, FaRegStar } from "react-icons/fa";
+import { FaPaperPlane, FaComments } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import { TailSpin } from "react-loader-spinner";
 import { FaStar } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
+import Star from "../components/FavStar";
+import Recommendation from "../components/Recommendation";
+import Add2Cart from "../components/Add2Cart";
+import Navbar from "../components/Navbar";
 interface Book {
   id: number;
   image: string;
@@ -55,56 +59,6 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
   );
 };
 
-interface StarProps {
-  toggled: boolean;
-  bookId: number;
-  text: string;
-  onToggled?: (bookId: number) => void;
-  onUntoggled?: (bookId: number) => void;
-}
-
-const Star: React.FC<StarProps> = ({
-  toggled,
-  bookId,
-  text,
-  onToggled,
-  onUntoggled,
-}) => {
-  const [isToggled, setToggled] = useState<boolean>(toggled);
-
-  useEffect(() => {
-    setToggled(toggled);
-  }, [toggled]);
-
-  return (
-    <div className="font-medium ml-2">
-      {isToggled ? (
-        <button
-          onClick={() => {
-            if (onUntoggled) onUntoggled(bookId);
-            setToggled(false);
-          }}
-          className="text-xl flex justify-between items-center"
-        >
-          <FaStar />
-          <p className="text-sm ml-2">{text}</p>
-        </button>
-      ) : (
-        <button
-          onClick={() => {
-            if (onToggled) onToggled(bookId);
-            setToggled(true);
-          }}
-          className="text-xl flex justify-between items-center"
-        >
-          <FaRegStar />
-          <p className="text-sm ml-2">{text}</p>
-        </button>
-      )}
-    </div>
-  );
-};
-
 const Details: React.FC = () => {
   const [book, setBook] = useState<Book | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -120,14 +74,12 @@ const Details: React.FC = () => {
   const [reviewCount, setReviewCount] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [averageRating, setAverageRating] = useState<number>(0);
-  const [favs] = useState<number[]>([]);
-  const [favText, setFavText] = useState<string>('Add to Favorite')
+  const [favs, setFavs] = useState<number[]>([]);
 
   const onStarToggledHandler = (bookId: number) => {
     toast.success("Sucessfully added to favorites!", {
       icon: <FaStar />,
     });
-    setFavText("Remove from Favorite")
     const userId = localStorage.getItem("user_id");
 
     if (!userId) {
@@ -145,7 +97,6 @@ const Details: React.FC = () => {
 
   const onUntoggledHandler = (bookId: number) => {
     const userId = localStorage.getItem("user_id");
-    setFavText("Add to Favorite")
     toast.error("Removed from favorites!", {
       icon: <FaTrash />,
     });
@@ -193,49 +144,31 @@ const Details: React.FC = () => {
       once: false,
     });
 
+    const getRecommendation = () => {
+      axios
+        .get(`http://127.0.0.1:8000/books/${id}/simmilar?num_book=4`)
+        .then((res) => {
+  
+          const transformedBooks = res.data.recommendations.map(
+            (book: Omit<Book, "genres"> & { genres: string | null }) => ({
+              ...book,
+              genres: book.genres
+                ? book.genres.split(",").map((genre: string) => genre.trim())
+                : [],
+            })
+          );
+          console.log(transformedBooks);
+          setRecommendedBooks(transformedBooks);
+        })
+        .catch(() => {
+          console.log("error bro");
+        })
+        .finally(() => {
+        });
+    }
+
     setLoading(true);
 
-    axios
-      .get("http://127.0.0.1:8000/books/" + id)
-      .then((res) => {
-        setBook(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [id]);
-
-  useEffect(() => {
-    setLoading(true);
-
-    axios
-      .get(`http://127.0.0.1:8000/books/${id}/simmilar?num_book=4`)
-      .then((res) => {
-        setLoading(false);
-
-        const transformedBooks = res.data.recommendations.map(
-          (book: Omit<Book, "genres"> & { genres: string | null }) => ({
-            ...book,
-            genres: book.genres
-              ? book.genres.split(",").map((genre: string) => genre.trim())
-              : [],
-          })
-        );
-        console.log(transformedBooks);
-        setRecommendedBooks(transformedBooks);
-      })
-      .catch(() => {
-        console.log("error bro");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [id]);
-
-  useEffect(() => {
     const token = localStorage.getItem("token");
     if (token){
       setIsLoggedIn(true);
@@ -260,7 +193,46 @@ const Details: React.FC = () => {
       }
     };
     fetchData();
+
+    axios
+      .get("http://127.0.0.1:8000/books/" + id)
+      .then((res) => {
+        setRecommendedBooks([]);
+        setBook(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+        getRecommendation();
+      });
   }, [id]);
+
+
+  useEffect(() => {
+    if (!userId) {
+      console.log("User is not logged in.");
+      return;
+    }
+    axios
+      .get("http://127.0.0.1:8000/users/" + userId + "/favorites")
+      .then((res) => {
+        const response = res.data;
+        const ids: number[] = [];
+        response.forEach((element: { id: number }) => {
+          ids.push(element.id);
+        });
+        setFavs(ids);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [id]);
+
+  // useEffect(() => {
+    
+  // }, [id]);
 
   const handleSubmitReview = async () => {
     if (reviewText.trim() === "") {
@@ -318,6 +290,9 @@ const Details: React.FC = () => {
         <Toaster />
       </div>
       <div>
+        <header className="sticky top-0 bg-neutral z-50">
+          <Navbar />
+        </header>
         <div className="flex flex-wrap justify-center ">
           <div className="w-full  animate-fade">
             <section className=" bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto mt-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
@@ -333,16 +308,16 @@ const Details: React.FC = () => {
                     alt={book.title}
                     className="max-h-64 w-auto border-4 border-b-primary mb-2"
                   />
-                  {isLoggedIn ? (
+                  {isLoggedIn && (
+                  <div className="my-3 flex items-center">
                     <Star
                       toggled={favs.includes(book.id)}
                       bookId={book.id}
                       onToggled={() => onStarToggledHandler(book.id)}
                       onUntoggled={() => onUntoggledHandler(book.id)}
-                      text={favText}
+                      isShowText={true}
                     />
-                  ) : (
-                    <></>
+                  </div>
                   )}
                 </div>
               </div>
@@ -350,6 +325,13 @@ const Details: React.FC = () => {
                 <h2 className="text-xl font-bold uppercase">
                   {book.title} ({book.release_year})
                 </h2>
+                {isLoggedIn ? (
+                  <div className="my-3 w-1/3 box-content">
+                    <Add2Cart id={book.id} />
+                  </div>
+                ) : (
+                  <></>
+                )}
                 <div className="flex flex-col">
                   <StarRating rating={averageRating} />
                   {typeof averageRating === "number" && !isNaN(averageRating)
@@ -407,71 +389,13 @@ const Details: React.FC = () => {
             Readers <i>also</i> enjoyed
           </h1>
 
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {recommendedBooks.map((book) => (
-              <li
-                data-aos="fade-in"
-                key={book.id}
-                className="border-primary border-2 flex flex-col"
-              >
-                <Link
-                  to={`/novel/${book.id}`}
-                  className="h-[320px] group relative block overflow-hidden"
-                >
-                  <img
-                    src={book.image}
-                    alt={book.title}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
-                  />
-                </Link>
-
-                <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
-                  <div>
-                    <div className="w-full flex justify-between">
-                      <div className="flex flex-wrap gap-1">
-                        {book.genres.map((genre, index) => (
-                          <span
-                            key={index}
-                            className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
-                          >
-                            <a
-                              href="#"
-                              className="text-neutral relative text-[10px] w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-neutral after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-right"
-                              onClick={(e) => {
-                                e.preventDefault();
-                              }}
-                            >
-                              {genre}
-                            </a>
-                          </span>
-                        ))}
-                      </div>
-                      {isLoggedIn ? (
-                        <Star
-                          toggled={favs.includes(book.id)}
-                          bookId={book.id}
-                          onToggled={() => onStarToggledHandler(book.id)}
-                          onUntoggled={() => onUntoggledHandler(book.id)}
-                          text=""
-                        />
-                      ) : (
-                        <></>
-                      )}
-                    </div>
-
-                    <h3 className="mt-4 text-lg font-medium text-gray-900">
-                      {book.title} ({book.release_year})
-                    </h3>
-
-                    <p className="mt-1.5 text-sm text-gray-700">
-                      {book.authors}
-                    </p>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <Recommendation 
+            isLoggedIn={isLoggedIn} 
+            favs={favs} 
+            recommendedBooks={recommendedBooks} 
+            onStarToggle={onStarToggledHandler} 
+            onStarUnToggle={onUntoggledHandler} 
+          />
         </section>
       </div>
       <div

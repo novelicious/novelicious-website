@@ -7,11 +7,9 @@ import "aos/dist/aos.css";
 import { CartProps, CartItemProps } from "./Cart";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import { FaStar } from "react-icons/fa6";
-import { FaTrash } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
-import { FaCartShopping } from "react-icons/fa6";
 import { TailSpin } from "react-loader-spinner";
+import BookItem from "../components/BookItem";
 
 interface Book {
   id: number;
@@ -21,12 +19,6 @@ interface Book {
   authors: string;
   genres: string[];
   cost: number;
-}
-interface StarProps {
-  toggled: boolean;
-  bookId: number;
-  onToggled?: (bookId: number) => void;
-  onUntoggled?: (bookId: number) => void;
 }
 
 const Market: React.FC = () => {
@@ -182,57 +174,6 @@ const Market: React.FC = () => {
       });
   }, []);
 
-  const onStarToggledHandler = (bookId: number) => {
-    toast.success("Sucessfully added to favorites!", {
-      icon: <FaStar />,
-    });
-
-    if (!userId) {
-      console.log("User is not logged in.");
-      return;
-    }
-    axios
-      .post(`http://127.0.0.1:8000/users/${userId}/setfav`, null, {
-        params: {
-          book_id: bookId,
-        },
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const onUntoggledHandler = (bookId: number) => {
-    toast.error("Removed from favorites!", {
-      icon: <FaTrash />,
-    });
-    if (!userId) {
-      console.log("User is not logged in.");
-      return;
-    }
-    axios
-      .post("http://127.0.0.1:8000/users/" + userId + "/removefav", null, {
-        params: {
-          book_id: bookId,
-        },
-      })
-      .catch((err) => console.log(err));
-  };
-  const addToCartHandler = (bookId: number, quantity: number) => {
-    toast.success("Sucessfully added to cart!", {
-      icon: <AiOutlineShoppingCart />,
-    });
-
-    axios.post("http://127.0.0.1:8000/carts/add", null, {
-      params: {
-        book_id: bookId,
-        user_id: userId,
-        amount: quantity,
-      },
-    });
-    setTimeout(() => {
-      setCartAmount(cartAmount + quantity);
-    }, 300);
-  };
-
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
   const currentBooks = books.slice(indexOfFirstBook, indexOfLastBook);
@@ -255,89 +196,6 @@ const Market: React.FC = () => {
   for (let i = startPage; i <= endPage; i++) {
     pageNumbers.push(i);
   }
-
-  const Star: React.FC<StarProps> = ({
-    toggled,
-    bookId,
-    onToggled,
-    onUntoggled,
-  }) => {
-    const [isToggled, setToggled] = useState<boolean>(toggled);
-
-    useEffect(() => {
-      setToggled(toggled);
-    }, [toggled]);
-
-    return (
-      <div className="text-xl font-medium ml-2">
-        {isToggled ? (
-          <button
-            onClick={() => {
-              if (onUntoggled) onUntoggled(bookId);
-              setToggled(false);
-            }}
-          >
-            ★
-          </button>
-        ) : (
-          <button
-            onClick={() => {
-              if (onToggled) onToggled(bookId);
-              setToggled(true);
-            }}
-          >
-            ☆
-          </button>
-        )}
-      </div>
-    );
-  };
-  const Add2CartButton: React.FC<Book> = ({ id }) => {
-    const [clicked, setClicked] = useState<boolean>(false);
-    const [quantity, setQuantity] = useState<number>(1);
-
-    var size = clicked ? "w-full" : "w-0";
-    return (
-      <div className="flex">
-        <button
-          onClick={() => {
-            setClicked(!clicked);
-          }}
-          className="text-primary w-full p-4 text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"
-        >
-          {clicked ? "X" : <FaCartShopping />}
-        </button>
-        <div
-          className={size + " h-full transition-all duration:500 ease-in-out"}
-        >
-          <input
-            type="number"
-            min="1"
-            id={`qty-${id}`}
-            defaultValue={quantity}
-            onChange={(e) => {
-              setQuantity(parseInt(e.target.value));
-            }}
-            className="w-full h-full items-center justify-center rounded block border-gray-200 bg-gray-50 p-2 text-center text-large text-gray-600 [-moz-appearance:_textfield] focus:outline-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
-          />
-        </div>
-        <button
-          onClick={() => {
-            setClicked(false);
-            addToCartHandler(id, quantity);
-          }}
-          className={
-            size +
-            " text-neutral block rounded bg-primary" +
-            (clicked ? " p-4 " : " p-0 ") +
-            "text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"
-          }
-        >
-          {clicked ? "OK" : ""}
-        </button>
-      </div>
-    );
-  };
 
   if (loading) {
     return (
@@ -445,80 +303,17 @@ const Market: React.FC = () => {
           className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
         >
           {currentBooks.map((book) => (
-            <li
-              key={book.id}
-              className="border-primary border-2 flex flex-col"
-              data-aos="zoom-in"
-            >
-              <Link
-                to={`/novel/${book.id}`}
-                className="h-[320px] group relative block overflow-hidden"
-              >
-                <img
-                  src={book.image}
-                  alt={book.title}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[320px]"
-                />
-              </Link>
-
-              <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
-                <div>
-                  <div className="w-full flex justify-between">
-                    <div className="flex flex-wrap gap-1">
-                      {book.genres.map((genre, index) => (
-                        <span
-                          key={index}
-                          className="text-neutral space-nowrap bg-primary px-3 py-1.5 text-xs font-medium"
-                        >
-                          <a
-                            href="#"
-                            className="text-neutral relative text-[10px] w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-neutral after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-right"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleGenreChange(genre);
-                            }}
-                          >
-                            {genre}
-                          </a>
-                        </span>
-                      ))}
-                    </div>
-                    {isLoggedIn ? (
-                      <Star
-                        toggled={favs.includes(book.id)}
-                        bookId={book.id}
-                        onToggled={() => onStarToggledHandler(book.id)}
-                        onUntoggled={() => onUntoggledHandler(book.id)}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">
-                    {book.title} ({book.release_year})
-                  </h3>
-
-                  <p className="mt-1.5 text-sm text-gray-700">{book.authors}</p>
-                  <p className="mt-1.5 text-sm text-gray-700 font-semibold">
-                    IDR{book.cost}
-                  </p>
-                </div>
-
-                {isLoggedIn && (
-                  <Add2CartButton
-                    id={book.id}
-                    image={book.image}
-                    title={book.title}
-                    release_year={book.release_year}
-                    authors={book.authors}
-                    genres={book.genres}
-                    cost={book.cost}
-                  ></Add2CartButton>
-                )}
-              </div>
-            </li>
+            <BookItem 
+              favs={favs} 
+              id={book.id} 
+              image={book.image} 
+              title={book.title} 
+              release_year={book.release_year} 
+              authors={book.authors} 
+              genres={book.genres} 
+              cost={book.cost} 
+              onGenreClick={handleGenreChange}
+            />
           ))}
         </ul>
 
