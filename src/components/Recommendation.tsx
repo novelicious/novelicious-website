@@ -9,11 +9,15 @@ interface BookRecommend {
   favs: number[];
   recommendedBooks: Book[];
   onStarToggle: (id: number) => void;
-  onStarUnToggle: (id: number) => void
+  onStarUnToggle: (id: number) => void;
 }
 
 const Recommendation: React.FC<BookRecommend> = ({
-  isLoggedIn, favs, recommendedBooks, onStarToggle, onStarUnToggle
+  isLoggedIn,
+  favs,
+  recommendedBooks,
+  onStarToggle,
+  onStarUnToggle,
 }) => {
   return (
     <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 w-full h-100vh">
@@ -63,7 +67,9 @@ const Recommendation: React.FC<BookRecommend> = ({
                         toggled={favs.includes(recommendedBooks[num].id)}
                         bookId={recommendedBooks[num].id}
                         onToggled={() => onStarToggle(recommendedBooks[num].id)}
-                        onUntoggled={() => onStarUnToggle(recommendedBooks[num].id)}
+                        onUntoggled={() =>
+                          onStarUnToggle(recommendedBooks[num].id)
+                        }
                         isShowText={false}
                       />
                     ) : (
@@ -72,18 +78,24 @@ const Recommendation: React.FC<BookRecommend> = ({
                   </div>
 
                   <h3 className="mt-4 text-lg font-medium text-gray-900">
-                    {recommendedBooks[num].title} ({recommendedBooks[num].release_year})
+                    {recommendedBooks[num].title} (
+                    {recommendedBooks[num].release_year})
                   </h3>
 
                   <p className="mt-1.5 text-sm text-gray-700">
                     {recommendedBooks[num].authors}
                   </p>
+                  <p className=" text-sm text-gray-700 font-semibold">
+                    IDR{recommendedBooks[num].cost}
+                  </p>
                 </div>
-                {isLoggedIn && (
-                  <Add2CartButton
-                    id={recommendedBooks[num].id}
-                  ></Add2CartButton>
-                )}
+                <div className="flex items-center justify-evenly">
+                  {isLoggedIn && (
+                    <Add2CartButton
+                      id={recommendedBooks[num].id}
+                    ></Add2CartButton>
+                  )}
+                </div>
               </div>
             </>
           ) : (
@@ -94,8 +106,7 @@ const Recommendation: React.FC<BookRecommend> = ({
         </li>
       ))}
     </ul>
-  )
-
-}
+  );
+};
 
 export default Recommendation;

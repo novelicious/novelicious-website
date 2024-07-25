@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { IoMdArrowRoundBack } from "react-icons/io";
+// import { Link } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { FaPaperPlane, FaComments } from "react-icons/fa";
@@ -31,7 +30,7 @@ interface Question {
   answer: string;
 }
 
-interface Review {
+export interface Review {
   id: number;
   comment: string;
   ratings: number;
@@ -41,7 +40,7 @@ interface Review {
   created_at: string;
 }
 
-const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
+export const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
   return (
     <div className="flex gap-x-0.5">
       {Array.from({ length: 5 }).map((_, index) => (
@@ -75,6 +74,16 @@ const Details: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [averageRating, setAverageRating] = useState<number>(0);
   const [favs, setFavs] = useState<number[]>([]);
+
+  const [exampleQuestions] = useState([
+    "What is the genre of this book?",
+    "Who is the main character?",
+    "What is the story about?",
+  ]);
+
+  const handleExampleQuestionClick = (question: string) => {
+    setInputQuestion(question);
+  };
 
   const onStarToggledHandler = (bookId: number) => {
     toast.success("Sucessfully added to favorites!", {
@@ -148,7 +157,6 @@ const Details: React.FC = () => {
       axios
         .get(`http://127.0.0.1:8000/books/${id}/simmilar?num_book=4`)
         .then((res) => {
-  
           const transformedBooks = res.data.recommendations.map(
             (book: Omit<Book, "genres"> & { genres: string | null }) => ({
               ...book,
@@ -163,18 +171,17 @@ const Details: React.FC = () => {
         .catch(() => {
           console.log("error bro");
         })
-        .finally(() => {
-        });
-    }
+        .finally(() => {});
+    };
 
     setLoading(true);
 
     const token = localStorage.getItem("token");
-    if (token){
+    if (token) {
       setIsLoggedIn(true);
     }
     console.log(isLoggedIn);
-    
+
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -209,7 +216,6 @@ const Details: React.FC = () => {
       });
   }, [id]);
 
-
   useEffect(() => {
     if (!userId) {
       console.log("User is not logged in.");
@@ -231,7 +237,7 @@ const Details: React.FC = () => {
   }, [id]);
 
   // useEffect(() => {
-    
+
   // }, [id]);
 
   const handleSubmitReview = async () => {
@@ -289,62 +295,68 @@ const Details: React.FC = () => {
       <div>
         <Toaster />
       </div>
-      <div>
+      <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
         <header className="sticky top-0 bg-neutral z-50">
           <Navbar />
         </header>
         <div className="flex flex-wrap justify-center ">
-          <div className="w-full  animate-fade">
-            <section className=" bg-white relative min-h-[500px] h-auto w-full md:w-[85vw] mx-auto mt-12 p-6 rounded-md border-3 border-gray-300 flex flex-col md:flex-row">
-              <div className="absolute top-0 left-0 p-4">
-                <Link className="inline-flex py-2 px-6" to={`/market`}>
-                  <IoMdArrowRoundBack />
-                </Link>
-              </div>
-              <div className="w-full md:w-1/3 flex justify-center mb-4 md:mb-0">
-                <div className="p-4">
-                  <img
-                    src={book.image}
-                    alt={book.title}
-                    className="max-h-64 w-auto border-4 border-b-primary mb-2"
-                  />
-                  {isLoggedIn && (
-                  <div className="my-3 flex items-center">
-                    <Star
-                      toggled={favs.includes(book.id)}
-                      bookId={book.id}
-                      onToggled={() => onStarToggledHandler(book.id)}
-                      onUntoggled={() => onUntoggledHandler(book.id)}
-                      isShowText={true}
+          <div className="animate-fade">
+            <section className="animate-fade mx-auto max-w-screen-xl px-4  sm:px-6 sm:py-12 lg:px-8 ">
+              <div className="bg-white relative rounded-md shadow-md border-3 border-gray-300 flex flex-col md:flex-row">
+                {/* <div className="absolute top-0 left-0 p-4">
+                  <Link className="inline-flex py-2 px-6" to={`/market`}>
+                    <IoMdArrowRoundBack />
+                  </Link>
+                </div> */}
+                <div className="w-full md:w-1/3 flex justify-center mb-4 md:mb-0">
+                  <div className="p-4">
+                    <img
+                      src={book.image}
+                      alt={book.title}
+                      className="max-h-64 w-auto border-4 border-b-primary mb-2"
                     />
+                    {isLoggedIn && (
+                      <div className="my-3 flex items-center">
+                        <Star
+                          toggled={favs.includes(book.id)}
+                          bookId={book.id}
+                          onToggled={() => onStarToggledHandler(book.id)}
+                          onUntoggled={() => onUntoggledHandler(book.id)}
+                          isShowText={true}
+                        />
+                      </div>
+                    )}
                   </div>
+                </div>
+                <div className="w-full md:w-2/3 p-6">
+                  <h2 className="text-xl font-bold uppercase">
+                    {book.title} ({book.release_year})
+                  </h2>
+                  {isLoggedIn ? (
+                    <div className="my-3 w-1/3 box-content flex items-center">
+                      <p className=" text-sm text-gray-700 font-semibold">
+                        IDR{book.cost}
+                      </p>
+                      <Add2Cart id={book.id} />
+                    </div>
+                  ) : (
+                    <></>
                   )}
-                </div>
-              </div>
-              <div className="w-full md:w-2/3 p-6">
-                <h2 className="text-xl font-bold uppercase">
-                  {book.title} ({book.release_year})
-                </h2>
-                {isLoggedIn ? (
-                  <div className="my-3 w-1/3 box-content">
-                    <Add2Cart id={book.id} />
+                  <div className="flex flex-col">
+                    <StarRating rating={averageRating} />
+                    {typeof averageRating === "number" && !isNaN(averageRating)
+                      ? averageRating
+                      : 0}{" "}
+                    out of 5 ({reviewCount} Reviews)
                   </div>
-                ) : (
-                  <></>
-                )}
-                <div className="flex flex-col">
-                  <StarRating rating={averageRating} />
-                  {typeof averageRating === "number" && !isNaN(averageRating)
-                    ? averageRating
-                    : 0}{" "}
-                  out of 5 ({reviewCount} Reviews)
-                </div>
 
-                <p className="text-gray-600 mt-2">{book.synopsis}</p>
+                  <p className="text-gray-600 mt-2">{book.synopsis}</p>
+                </div>
               </div>
             </section>
 
-            <section className="w-full md:w-[85vw] mx-auto p-6 mt-6 bg-white rounded-md border-3 border-gray-300">
+            <section className="animate-fade mx-auto max-w-screen-xl px-4 sm:px-6 sm:py-12 lg:px-8 ">
+              {/* <div className=""> */}
               <h3 className="text-lg font-semibold mb-4">
                 {reviewCount} Reviews
               </h3>
@@ -352,7 +364,7 @@ const Details: React.FC = () => {
                 {reviews.map((review) => (
                   <li
                     key={review.id}
-                    className="p-4 border-2 border-gray-300 rounded-md"
+                    className="p-4 border-2 rounded-md bg-white shadow-sm hover:shadow-md hover:border-gray-300 transition-shadow duration-300"
                   >
                     <p className="font-semibold">{review.user.username}</p>
                     <p className="text-sm text-gray-500">
@@ -364,7 +376,7 @@ const Details: React.FC = () => {
                 ))}
               </ul>
               {isLoggedIn && (
-                <div className="mt-4">
+                <div className="mt-4 ">
                   <textarea
                     className="w-full p-2 border-2 border-gray-300 rounded-md resize-none"
                     rows={4}
@@ -380,6 +392,7 @@ const Details: React.FC = () => {
                   </button>
                 </div>
               )}
+              {/* </div> */}
             </section>
           </div>
         </div>
@@ -389,12 +402,12 @@ const Details: React.FC = () => {
             Readers <i>also</i> enjoyed
           </h1>
 
-          <Recommendation 
-            isLoggedIn={isLoggedIn} 
-            favs={favs} 
-            recommendedBooks={recommendedBooks} 
-            onStarToggle={onStarToggledHandler} 
-            onStarUnToggle={onUntoggledHandler} 
+          <Recommendation
+            isLoggedIn={isLoggedIn}
+            favs={favs}
+            recommendedBooks={recommendedBooks}
+            onStarToggle={onStarToggledHandler}
+            onStarUnToggle={onUntoggledHandler}
           />
         </section>
       </div>
@@ -422,9 +435,17 @@ const Details: React.FC = () => {
               <div className="mb-2">
                 <div className="bg-gray-200 p-2 rounded mt-1">
                   <p className="font-semibold">Novelicious:</p>
-                  <p>How to use it?</p>
+                  <p>Example Questions:</p>
                   <ul>
-                    <li>- You must ask questions related to this book.</li>
+                    {exampleQuestions.map((question, index) => (
+                      <li
+                        key={index}
+                        className="underline cursor-pointer text-primary "
+                        onClick={() => handleExampleQuestionClick(question)}
+                      >
+                        * {question}
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
@@ -436,7 +457,14 @@ const Details: React.FC = () => {
                   </div>
                   <div className="bg-gray-200 p-2 rounded mt-1 break-words">
                     <p className="font-semibold">Novelicious:</p>
-                    <p>{q.answer}</p>
+                    <a
+                      href={`https://www.google.co.uk/search?q=${book.title}+${q.answer}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      {q.answer}
+                    </a>
                   </div>
                 </div>
               ))}

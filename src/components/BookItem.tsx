@@ -5,7 +5,8 @@ import toast from "react-hot-toast";
 import { FaStar, FaTrash } from "react-icons/fa";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
+import { StarRating } from "../pages/Details";
+import { Review } from "../pages/Details";
 export interface Book {
   id: number;
   image: string;
@@ -30,18 +31,17 @@ const BookItem: React.FC<BookItem> = ({
   genres,
   cost,
   favs,
-  onGenreClick
+  onGenreClick,
 }) => {
-
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const userId = localStorage.getItem("user_id");
-
+  const [averageRating, setAverageRating] = useState<number>(0);
+  // const [reviewCount, setReviewCount] = useState(0);
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token){
+    if (token) {
       setIsLoggedIn(true);
     }
-    
   }, [userId]);
 
   const onStarToggledHandler = (bookId: number) => {
@@ -83,6 +83,26 @@ const BookItem: React.FC<BookItem> = ({
       // })
       .catch((err) => console.log(err));
   };
+  useEffect(() => {
+    const fetchBookReviews = async () => {
+      try {
+        const res = await axios.get(
+          `http://127.0.0.1:8000/books/${id}/reviews`
+        );
+
+        const totalRating = res.data.reduce(
+          (sum: number, review: Review) => sum + review.ratings,
+          0
+        );
+        const avgRating = totalRating / res.data.length;
+        setAverageRating(avgRating);
+      } catch (err) {
+        console.error("Error fetching book reviews:", err);
+      }
+    };
+
+    fetchBookReviews();
+  }, [id]);
 
   return (
     <li
@@ -116,7 +136,7 @@ const BookItem: React.FC<BookItem> = ({
                     className="text-neutral relative text-[10px] w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-neutral after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-right"
                     onClick={(e) => {
                       e.preventDefault();
-                      onGenreClick!(genre)
+                      onGenreClick!(genre);
                     }}
                   >
                     {genre}
@@ -142,19 +162,23 @@ const BookItem: React.FC<BookItem> = ({
           </h3>
 
           <p className="mt-1.5 text-sm text-gray-700">{authors}</p>
-          <p className="mt-1.5 text-sm text-gray-700 font-semibold">
-            IDR{cost}
-          </p>
-        </div>
+          <p className=" text-sm text-gray-700 font-semibold">IDR{cost}</p>
 
-        {isLoggedIn && (
-          <Add2CartButton
-            id={id}
-          ></Add2CartButton>
-        )}
+          <div className="flex flex-row items-center">
+            <StarRating rating={averageRating} />
+            <span className="px-2 font-semibold">
+              {typeof averageRating === "number" && !isNaN(averageRating)
+                ? averageRating
+                : ""}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center justify-evenly">
+          {isLoggedIn && <Add2CartButton id={id}></Add2CartButton>}
+        </div>
       </div>
     </li>
-  )
-}
+  );
+};
 
 export default BookItem;

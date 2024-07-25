@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 
-const Add2CartButton: React.FC<{id: number}> = ({ id }) => {
+const Add2CartButton: React.FC<{ id: number }> = ({ id }) => {
   const [clicked, setClicked] = useState<boolean>(false);
   const [quantity, setQuantity] = useState<number>(1);
   const [cartAmount, setCartAmount] = useState<number>(0);
@@ -34,20 +34,28 @@ const Add2CartButton: React.FC<{id: number}> = ({ id }) => {
         onClick={() => {
           setClicked(!clicked);
         }}
-        className={"text-primary p-2 font-medium hover:scale-105 " + (clicked? "w-full " : "w-fit ")}
+        className={
+          "text-primary p-2 font-medium hover:scale-105 " +
+          (clicked ? "w-full " : "w-fit ")
+        }
       >
-        {clicked ? "X" : (
-          <div className={"flex justify-start items-center " + (clicked ? "my-0 w-0" : " w-fit")}>
+        {clicked ? (
+          "X"
+        ) : (
+          <div
+            className={
+              "flex justify-start items-center " +
+              (clicked ? "my-0 w-0" : " w-fit")
+            }
+          >
             <FaCartShopping />
-            <p className={"font-semibold transition-all duration:3000 ease-in-out " + (clicked ? "text-[0px] " : " mx-3 text-md ")}>
+            {/* <p className={"font-semibold transition-all duration:3000 ease-in-out " + (clicked ? "text-[0px] " : " mx-3 text-md ")}>
               Add to Cart
-            </p>
+            </p> */}
           </div>
         )}
       </button>
-      <div
-        className={size + " h-full transition-all duration:500 ease-in-out"}
-      >
+      <div className={size + " h-full transition-all duration:500 ease-in-out"}>
         <input
           type="number"
           min="1"
@@ -57,7 +65,7 @@ const Add2CartButton: React.FC<{id: number}> = ({ id }) => {
             setQuantity(parseInt(e.target.value));
           }}
           className="w-full h-fit items-center justify-center rounded block border-gray-200 bg-gray-50 p-2 text-center text-large text-gray-600 [-moz-appearance:_textfield] focus:outline-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
-          style={{visibility: clicked ? 'visible': 'hidden'}}
+          style={{ visibility: clicked ? "visible" : "hidden" }}
         />
       </div>
       <button
@@ -72,7 +80,7 @@ const Add2CartButton: React.FC<{id: number}> = ({ id }) => {
           "text-sm font-medium transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"
         }
       >
-        {clicked && "OK" }
+        {clicked && "OK"}
       </button>
     </div>
   );

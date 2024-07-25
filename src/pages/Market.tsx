@@ -303,15 +303,15 @@ const Market: React.FC = () => {
           className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
         >
           {currentBooks.map((book) => (
-            <BookItem 
-              favs={favs} 
-              id={book.id} 
-              image={book.image} 
-              title={book.title} 
-              release_year={book.release_year} 
-              authors={book.authors} 
-              genres={book.genres} 
-              cost={book.cost} 
+            <BookItem
+              favs={favs}
+              id={book.id}
+              image={book.image}
+              title={book.title}
+              release_year={book.release_year}
+              authors={book.authors}
+              genres={book.genres}
+              cost={book.cost}
               onGenreClick={handleGenreChange}
             />
           ))}
