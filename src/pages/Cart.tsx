@@ -24,17 +24,26 @@ export interface CartProps {
   created_at: string;
 }
 
+interface UserProfileProps {
+  id: number;
+  username: string;
+  gender: string;
+  birth_year: number;
+  address?: string;
+}
+
 const Cart: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
   const [cost, setCost] = useState<number>(0);
+  const [userProfile, setUserProfile] = useState<UserProfileProps | null>(null);
   const navigate = useNavigate();
   const userId = localStorage.getItem("user_id");
 
   useEffect(() => {
     if (userId) {
       getCartItems();
-      console.log(getCartItems);
+      getUserProfile();
     }
   }, [navigate, userId]);
 
@@ -42,13 +51,34 @@ const Cart: React.FC = () => {
     updateCost();
   }, [cartItems]);
 
+  const getUserProfile = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/user/profile/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setUserProfile(response.data);
+      } else {
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Failed to fetch user profile.", error);
+      navigate("/login");
+    }
+  };
+
   const updateCost = () => {
     let c = 0;
     cartItems.forEach((item) => {
       c += item.cost * item.amount;
     });
     setCost(c);
-    console.log(c);
   };
 
   const getCartItems = () => {
@@ -108,6 +138,8 @@ const Cart: React.FC = () => {
     );
   }
 
+  const canCheckout = userProfile && userProfile.address;
+
   return (
     <>
       <section>
@@ -154,11 +186,23 @@ const Cart: React.FC = () => {
                       <div className="flex justify-end">
                         <button
                           onClick={checkoutHandler}
-                          className="ml-4 inline-flex text-neutral bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-900 rounded text-sm"
+                          className={`ml-4 inline-flex text-neutral bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-900 rounded text-sm ${
+                            !canCheckout ? "opacity-50 cursor-not-allowed" : ""
+                          }`}
+                          disabled={!canCheckout}
                         >
                           Checkout
                         </button>
                       </div>
+                      {!canCheckout && (
+                        <Link
+                          to="/profile"
+                          className="text-primary mt-4 underline"
+                        >
+                          Please update your profile with a valid address to
+                          proceed to checkout.
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>

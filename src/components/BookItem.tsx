@@ -7,6 +7,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { StarRating } from "../pages/Details";
 import { Review } from "../pages/Details";
+
 export interface Book {
   id: number;
   image: string;
@@ -78,9 +79,9 @@ const BookItem: React.FC<BookItem> = ({
           book_id: bookId,
         },
       })
-      // .then(() => {
-      //   window.location.reload();
-      // })
+      .then(() => {
+        window.location.reload();
+      })
       .catch((err) => console.log(err));
   };
   useEffect(() => {
@@ -124,6 +125,18 @@ const BookItem: React.FC<BookItem> = ({
 
       <div className="relative border bg-neutral p-6 flex-grow flex flex-col justify-between">
         <div>
+          <div className=" text-sm text-gray-700 font-semibold">
+            <p className="text-md font-bold">IDR{cost}</p>
+          </div>
+          <div className="flex flex-row items-center mb-4">
+            <StarRating rating={averageRating} />
+            <span className="px-2 font-semibold">
+              {typeof averageRating === "number" && !isNaN(averageRating)
+                ? averageRating
+                : ""}
+            </span>
+          </div>
+
           <div className="w-full flex justify-between">
             <div className="flex flex-wrap gap-1">
               {genres.map((genre, index) => (
@@ -162,16 +175,6 @@ const BookItem: React.FC<BookItem> = ({
           </h3>
 
           <p className="mt-1.5 text-sm text-gray-700">{authors}</p>
-          <p className=" text-sm text-gray-700 font-semibold">IDR{cost}</p>
-
-          <div className="flex flex-row items-center">
-            <StarRating rating={averageRating} />
-            <span className="px-2 font-semibold">
-              {typeof averageRating === "number" && !isNaN(averageRating)
-                ? averageRating
-                : ""}
-            </span>
-          </div>
         </div>
         <div className="flex items-center justify-evenly">
           {isLoggedIn && <Add2CartButton id={id}></Add2CartButton>}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { FaPaperPlane, FaComments } from "react-icons/fa";
@@ -46,7 +46,7 @@ export const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
       {Array.from({ length: 5 }).map((_, index) => (
         <svg
           key={index}
-          className={`h-8 w-8 shrink-0 ${
+          className={`h-4 w-4 shrink-0 ${
             index < Math.round(rating) ? "fill-primary" : "fill-gray-300"
           }`}
           viewBox="0 0 256 256"
@@ -62,7 +62,8 @@ const Details: React.FC = () => {
   const [book, setBook] = useState<Book | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([]);
-  // const [error, setError] = useState<string | null>(null);
+  const [similarBooks, setSimilarBooks] = useState<Book[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [reviewText, setReviewText] = useState("");
   const [loading, setLoading] = useState(false);
   const userId = localStorage.getItem("user_id");
@@ -119,9 +120,7 @@ const Details: React.FC = () => {
           book_id: bookId,
         },
       })
-      // .then(() => {
-      //   window.location.reload();
-      // })
+
       .catch((err) => console.log(err));
   };
 
@@ -153,7 +152,7 @@ const Details: React.FC = () => {
       once: false,
     });
 
-    const getRecommendation = () => {
+    const getSimilar = () => {
       axios
         .get(`http://127.0.0.1:8000/books/${id}/simmilar?num_book=4`)
         .then((res) => {
@@ -166,12 +165,43 @@ const Details: React.FC = () => {
             })
           );
           console.log(transformedBooks);
-          setRecommendedBooks(transformedBooks);
+          setSimilarBooks(transformedBooks);
         })
         .catch(() => {
           console.log("error bro");
         })
         .finally(() => {});
+    };
+
+    const getRecommendation = () => {
+      if (userId) {
+        axios
+          .get(`http://127.0.0.1:8000/recommend/${userId}?num_book=4`)
+          // .then((res) => {
+          //   setRecommendedBooks(res.data.recommendations);
+
+          // })
+
+          .then((res) => {
+            const transformedBooks = res.data.recommendations.map(
+              (book: Omit<Book, "genres"> & { genres: string | null }) => ({
+                ...book,
+                genres: book.genres
+                  ? book.genres.split(",").map((genre: string) => genre.trim())
+                  : [],
+              })
+            );
+            console.log(transformedBooks);
+            setRecommendedBooks(transformedBooks);
+          })
+          .catch((err) => {
+            // console.log("error bro");
+            setError(err);
+          })
+          .finally(() => {
+            // setLoading(false);
+          });
+      }
     };
 
     setLoading(true);
@@ -205,6 +235,7 @@ const Details: React.FC = () => {
       .get("http://127.0.0.1:8000/books/" + id)
       .then((res) => {
         setRecommendedBooks([]);
+        setSimilarBooks([]);
         setBook(res.data);
       })
       .catch((err) => {
@@ -213,6 +244,7 @@ const Details: React.FC = () => {
       .finally(() => {
         setLoading(false);
         getRecommendation();
+        getSimilar();
       });
   }, [id]);
 
@@ -235,10 +267,6 @@ const Details: React.FC = () => {
         console.log(err);
       });
   }, [id]);
-
-  // useEffect(() => {
-
-  // }, [id]);
 
   const handleSubmitReview = async () => {
     if (reviewText.trim() === "") {
@@ -392,24 +420,47 @@ const Details: React.FC = () => {
                   </button>
                 </div>
               )}
-              {/* </div> */}
             </section>
+
+            <div className="my-4">
+              <h1 className="text-lg font-semibold">
+                Readers <i>also</i> enjoyed
+              </h1>
+              <Recommendation
+                isLoggedIn={true}
+                favs={favs}
+                recommendedBooks={similarBooks}
+                onStarToggle={onStarToggledHandler}
+                onStarUnToggle={onUntoggledHandler}
+              />
+            </div>
+
+            <h1 className="text-lg font-semibold mt-8">Recommended for You</h1>
+            {error ? (
+              <>
+                <p className="text-sm">No recommendation for you.</p>
+                <Link
+                  to="/profile"
+                  className="text-primary mt-4 underline text-sm"
+                >
+                  Please fill gender and birth year in your profile
+                </Link>
+              </>
+            ) : (
+              <>
+                <div className="my-4">
+                  <Recommendation
+                    isLoggedIn={isLoggedIn}
+                    favs={favs}
+                    recommendedBooks={recommendedBooks}
+                    onStarToggle={onStarToggledHandler}
+                    onStarUnToggle={onUntoggledHandler}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
-
-        <section className="animate-fade mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
-          <h1 className="text-lg font-semibold">
-            Readers <i>also</i> enjoyed
-          </h1>
-
-          <Recommendation
-            isLoggedIn={isLoggedIn}
-            favs={favs}
-            recommendedBooks={recommendedBooks}
-            onStarToggle={onStarToggledHandler}
-            onStarUnToggle={onUntoggledHandler}
-          />
-        </section>
       </div>
       <div
         className={`sticky bottom-4 right-4 ml-auto ${
@@ -421,7 +472,6 @@ const Details: React.FC = () => {
           onClick={() => setIsChatOpen(!isChatOpen)}
         >
           {isChatOpen ? (
-            // <FaChevronDown className="px-5 text-xl" />
             <p className="px-5 text-xl">-</p>
           ) : (
             <div className="p-4">

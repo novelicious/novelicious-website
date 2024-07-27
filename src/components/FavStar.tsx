@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { FaRegStar, FaStar, FaTrash } from "react-icons/fa";
-
+import { FaTrash, FaHeart } from "react-icons/fa";
+import { FaRegHeart } from "react-icons/fa6";
 export interface StarProps {
   toggled: boolean;
   bookId: number;
@@ -13,7 +13,7 @@ export interface StarProps {
 
 export const onStarToggledHandler = (bookId: number) => {
   toast.success("Sucessfully added to favorites!", {
-    icon: <FaStar />,
+    icon: <FaHeart />,
   });
   const userId = localStorage.getItem("user_id");
 
@@ -74,10 +74,8 @@ const Star: React.FC<StarProps> = ({
           }}
           className="text-xl flex justify-between items-center"
         >
-          <FaStar />
-          {text ? (
-            <p className="text-sm ml-2">Remove from Favorites</p>
-          ) : (<></>)}
+          <FaHeart />
+          {text ? <p className="text-sm ml-2">Remove from Favorites</p> : <></>}
         </button>
       ) : (
         <button
@@ -87,10 +85,8 @@ const Star: React.FC<StarProps> = ({
           }}
           className="text-xl flex justify-between items-center"
         >
-          <FaRegStar />
-          {text ? (
-            <p className="text-sm ml-2">Add to Favorites</p>
-          ) : (<></>)}
+          <FaRegHeart />
+          {text ? <p className="text-sm ml-2">Add to Favorites</p> : <></>}
         </button>
       )}
     </div>

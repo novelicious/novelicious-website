@@ -5,7 +5,8 @@ import { Modal } from "react-responsive-modal";
 import novelicious from "/novelicious.png";
 import axios from "axios";
 import { FaUserEdit } from "react-icons/fa";
-import { FaStar } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
+
 import { IoLogOutSharp } from "react-icons/io5";
 import { RiFilePaper2Fill } from "react-icons/ri";
 interface User {
@@ -73,7 +74,7 @@ const Navbar: React.FC = () => {
       label: (
         <div className="flex">
           <span className="my-1 mr-2">
-            <FaStar />
+            <FaHeart />
           </span>
           Favorites
         </div>

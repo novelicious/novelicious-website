@@ -3,19 +3,15 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import toast, { Toaster } from "react-hot-toast";
-import { FaStar } from "react-icons/fa6";
-import { FaTrash } from "react-icons/fa";
+
 import { TailSpin } from "react-loader-spinner";
 import BookItem, { Book } from "../components/BookItem";
-import Recommendation from "../components/Recommendation";
 
 const Favorites: React.FC = () => {
   const [favoriteBooks, setFavoriteBooks] = useState<Book[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([]);
 
   // Isi favorite
   const [favs, setFavs] = useState<number[]>([]);
@@ -41,17 +37,17 @@ const Favorites: React.FC = () => {
             ids.push(element.id);
           });
           setFavs(ids);
-          
+
           const transformedBooks = res.data.map(
             (book: Omit<Book, "genres"> & { genres: string | null }) => ({
               ...book,
               genres: book.genres
-              ? book.genres.split(",").map((genre: string) => genre.trim())
-              : [],
+                ? book.genres.split(",").map((genre: string) => genre.trim())
+                : [],
             })
           );
           setLoading(false);
-          getRecommendation();
+          // getRecommendation();
           setFavoriteBooks(transformedBooks);
           console.log(transformedBooks);
         })
@@ -64,76 +60,6 @@ const Favorites: React.FC = () => {
     }
   }, [userId]);
 
-  const getRecommendation = () => {
-    if (userId) {
-      axios
-        .get(`http://127.0.0.1:8000/recommend/${userId}?num_book=4`)
-        // .then((res) => {
-        //   setRecommendedBooks(res.data.recommendations);
-
-        // })
-
-        .then((res) => {
-          const transformedBooks = res.data.recommendations.map(
-            (book: Omit<Book, "genres"> & { genres: string | null }) => ({
-              ...book,
-              genres: book.genres
-                ? book.genres.split(",").map((genre: string) => genre.trim())
-                : [],
-            })
-          );
-          console.log(transformedBooks);
-          setRecommendedBooks(transformedBooks);
-        })
-        .catch(() => {
-          console.log("error bro");
-        })
-        .finally(() => {
-          // setLoading(false);
-        });
-    }
-  }
-
-  const onStarToggledHandler = (bookId: number) => {
-    toast.success("Sucessfully added to favorites!", {
-      icon: <FaStar />,
-    });
-    const userId = localStorage.getItem("user_id");
-
-    if (!userId) {
-      console.log("User is not logged in.");
-      return;
-    }
-    axios
-      .post(`http://127.0.0.1:8000/users/${userId}/setfav`, null, {
-        params: {
-          book_id: bookId,
-        },
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const onUntoggledHandler = (bookId: number) => {
-    const userId = localStorage.getItem("user_id");
-    toast.error("Removed from favorites!", {
-      icon: <FaTrash />,
-    });
-    if (!userId) {
-      console.log("User is not logged in.");
-      return;
-    }
-    axios
-      .post("http://127.0.0.1:8000/users/" + userId + "/removefav", null, {
-        params: {
-          book_id: bookId,
-        },
-      })
-      .then(() => {
-        window.location.reload();
-      })
-      .catch((err) => console.log(err));
-  };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -144,9 +70,6 @@ const Favorites: React.FC = () => {
 
   return (
     <section>
-      <div>
-        <Toaster />
-      </div>
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
         <header className="sticky top-0 bg-neutral z-50">
           <Navbar />
@@ -163,7 +86,7 @@ const Favorites: React.FC = () => {
           <>
             {favoriteBooks.length == 0 ? (
               <>
-                <p>No favs.</p>
+                <p className="text-sm">no fav.</p>
               </>
             ) : (
               <>
@@ -174,29 +97,20 @@ const Favorites: React.FC = () => {
                   className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
                 >
                   {favoriteBooks.map((book) => (
-                    <BookItem 
-                      id={book.id} 
-                      image={book.image} 
-                      title={book.title} 
-                      release_year={book.release_year} 
-                      authors={book.authors} 
-                      genres={book.genres} 
+                    <BookItem
+                      id={book.id}
+                      image={book.image}
+                      title={book.title}
+                      release_year={book.release_year}
+                      authors={book.authors}
+                      genres={book.genres}
                       cost={book.cost}
-                      favs={favs} 
+                      favs={favs}
                     />
                   ))}
                 </ul>
               </>
             )}
-
-            <h1 className="text-lg font-semibold mt-8">Recommended for You</h1>
-            <Recommendation 
-              isLoggedIn={true} 
-              favs={favs} 
-              recommendedBooks={recommendedBooks} 
-              onStarToggle={onStarToggledHandler} 
-              onStarUnToggle={onUntoggledHandler} 
-            />
           </>
         )}
       </div>

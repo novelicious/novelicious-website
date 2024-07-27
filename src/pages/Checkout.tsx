@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { CiUser } from "react-icons/ci";
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -7,6 +7,8 @@ import { PiHouseLine } from "react-icons/pi";
 import { CiPhone } from "react-icons/ci";
 import axios from "axios";
 import { TailSpin } from "react-loader-spinner";
+import "react-responsive-modal/styles.css";
+import { Modal } from "react-responsive-modal";
 
 interface Book {
   id: number;
@@ -60,16 +62,16 @@ interface ProviderCost {
 }
 
 const Checkout: React.FC = () => {
-
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<Cart | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [transaction, setCheckout] = useState<CheckoutData | null>(null);
-  const [shipping, setShipping] = useState<number>(1)
-  const [payment, setPayment] = useState<number>(1)
+  const [shipping, setShipping] = useState<number>(1);
+  const [payment, setPayment] = useState<number>(1);
   const [allShipping, setAllShipping] = useState<ProviderCost[] | null>(null);
   const [allPayment, setAllPayment] = useState<ProviderCost[] | null>(null);
   const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState(false);
   const { id } = useParams<{ id: string }>();
   // const cart_id = location.state?.cart_id;
   const userId = localStorage.getItem("user_id");
@@ -102,20 +104,20 @@ const Checkout: React.FC = () => {
     axios
       .get<ProviderCost[]>(`http://127.0.0.1:8000/deliveries`)
       .then((res) => {
-        setAllShipping(res.data)
+        setAllShipping(res.data);
       })
-      .catch(error => {
-        console.error('Error fetching deliveries method data:', error);
-      })
+      .catch((error) => {
+        console.error("Error fetching deliveries method data:", error);
+      });
 
     axios
       .get<ProviderCost[]>(`http://127.0.0.1:8000/payments`)
       .then((res) => {
-        setAllPayment(res.data)
+        setAllPayment(res.data);
       })
-      .catch(error => {
-        console.error('Error fetching payments method data:', error);
-      })
+      .catch((error) => {
+        console.error("Error fetching payments method data:", error);
+      });
   }, [id, userId]);
 
   useEffect(() => {
@@ -131,6 +133,21 @@ const Checkout: React.FC = () => {
         });
     }
   }, [transaction]);
+
+  const deleteHandler = () => {
+    if (transaction) {
+      axios
+        .delete(`http://127.0.0.1:8000/transactions/${transaction.id}`)
+        .then(() => {
+          // toast.success("Transaction has been finished.");
+          navigate("/cart");
+        })
+        .catch((error) => {
+          console.error("Error deleting transaction:", error);
+          // toast.error("Failed to finish transaction.");
+        });
+    }
+  };
 
   useEffect(() => {
     if (cart && user && transaction) {
@@ -155,6 +172,10 @@ const Checkout: React.FC = () => {
       });
   };
 
+  const onCloseModal = () => {
+    setOpenModal(false);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -171,9 +192,30 @@ const Checkout: React.FC = () => {
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
         <header className="sticky top-0  z-50">
           <div className=" flex items-center">
-            <Link to="/cart">
+            <button
+              className=" flex items-center"
+              onClick={() => setOpenModal(true)}
+            >
               <IoMdArrowRoundBack />
-            </Link>
+            </button>
+            <Modal open={openModal} onClose={onCloseModal} center>
+              <h2 className="underline">Checkout</h2>
+              <p>Are you sure you want cancel?</p>
+              <div className="flex justify-center gap-4 mt-4">
+                <button
+                  onClick={deleteHandler}
+                  className="bg-primary text-neutral px-4 py-2 rounded"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={onCloseModal}
+                  className="bg-gray-300 text-primary px-4 py-2 rounded"
+                >
+                  No
+                </button>
+              </div>
+            </Modal>
             <h1 className="ml-5 text-md font-semibold">Checkout</h1>
           </div>
           <div className="mx-auto bg-white  max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
@@ -236,9 +278,7 @@ const Checkout: React.FC = () => {
                   <select
                     className="w-full p-2 border rounded"
                     defaultValue={0}
-                    onChange={(e) =>
-                      setShipping(parseInt(e.target.value))
-                    }
+                    onChange={(e) => setShipping(parseInt(e.target.value))}
                   >
                     {allShipping?.map((ship) => (
                       <option value={ship.id} key={ship.id}>
@@ -260,8 +300,8 @@ const Checkout: React.FC = () => {
                   >
                     {allPayment?.map((payment) => (
                       <option value={payment.id} key={payment.id}>
-                        {payment.provider} (IDR {payment.cost.toLocaleString("id-ID")}
-                        )
+                        {payment.provider} (IDR{" "}
+                        {payment.cost.toLocaleString("id-ID")})
                       </option>
                     ))}
                   </select>
@@ -282,17 +322,23 @@ const Checkout: React.FC = () => {
                       <div className="flex justify-between">
                         <dt>Shippment Subtotal</dt>
                         <dd>
-                          IDR {allShipping && allShipping[shipping - 1].cost.toLocaleString("id-ID")}
-                          </dd>
+                          IDR{" "}
+                          {allShipping &&
+                            allShipping[shipping - 1].cost.toLocaleString(
+                              "id-ID"
+                            )}
+                        </dd>
                       </div>
                       <div className="flex justify-between !text-base font-medium">
                         <dt>Total</dt>
                         <dd>
                           IDR{" "}
-                          {transaction && allShipping
-                            && (
-                                transaction?.total_cost + allShipping[shipping - 1].cost
-                              ).toLocaleString("id-ID")}
+                          {transaction &&
+                            allShipping &&
+                            (
+                              transaction?.total_cost +
+                              allShipping[shipping - 1].cost
+                            ).toLocaleString("id-ID")}
                         </dd>
                       </div>
                     </dl>

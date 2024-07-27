@@ -29,6 +29,7 @@ const UserProfile: React.FC = () => {
   const [profile, setProfile] = useState<UserProfileProps | null>(null);
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+  // const [selectedYear, setSelectedYear] = useState<Date | null>(null);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -73,13 +74,14 @@ const UserProfile: React.FC = () => {
       prevState ? { ...prevState, [name]: value } : null
     );
   };
-
   const handleDateChange = (date: Date | null) => {
-    if (date) {
-      setProfile((prevState) =>
-        prevState ? { ...prevState, birth_year: date.getFullYear() } : null
-      );
-    }
+    // setSelectedYear(date);
+    setProfile((prevState) => {
+      if (prevState && date) {
+        return { ...prevState, birth_year: date.getFullYear() };
+      }
+      return prevState;
+    });
   };
 
   const handleSave = async () => {
@@ -163,6 +165,9 @@ const UserProfile: React.FC = () => {
                       value={profile.gender}
                       onChange={handleChange}
                     >
+                      <option value="" selected disabled hidden>
+                        Choose here
+                      </option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                       <option value="Unspecified">Unspecified</option>
@@ -175,6 +180,7 @@ const UserProfile: React.FC = () => {
                       onChange={handleDateChange}
                       showYearPicker
                       dateFormat="yyyy"
+                      // placeholderText="Need to choose the date first"
                       className="w-full px-3 py-2 mt-1 rounded-sm border border-gray-300 focus:ring-0 focus:border-blue-500"
                     />
                   </div>
