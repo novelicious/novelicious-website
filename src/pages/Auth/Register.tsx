@@ -93,7 +93,7 @@ const Register: React.FC = () => {
               <h1 className="ml-5 text-md font-semibold">Sign Up</h1>
             </div>
 
-            <p className="mt-4 leading-relaxed text-gray-500">register.</p>
+            {/* <p className="mt-4 leading-relaxed text-gray-500">register.</p> */}
 
             <form
               onSubmit={handleSubmit}

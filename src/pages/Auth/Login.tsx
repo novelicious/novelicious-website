@@ -86,7 +86,7 @@ const Login: React.FC = () => {
               <h1 className="ml-5 text-md font-semibold">Sign In</h1>
             </div>
 
-            <p className="mt-4 leading-relaxed text-gray-500">login.</p>
+            {/* <p className="mt-4 leading-relaxed text-gray-500">login.</p> */}
 
             <form
               onSubmit={handleSubmit}
