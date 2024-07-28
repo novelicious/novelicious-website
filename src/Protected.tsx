@@ -6,7 +6,7 @@ const ProtectedPage: React.FC = () => {
 
   useEffect(() => {
     const verifyToken = async () => {
-      const token = sessionStorage.getItem("token");
+      const token = localStorage.getItem("token");
       console.log(token);
 
       try {

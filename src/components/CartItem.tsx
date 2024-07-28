@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaRegTrashAlt } from "react-icons/fa";
+
 interface CartItemProps {
   id: number;
   title: string;
@@ -9,21 +10,27 @@ interface CartItemProps {
   image: string;
   genres: string;
   amount: number;
+  cost: number;
   userId?: string;
   onRemoveItem?: (id: number) => void;
+  onUpdateItem?: () => void;
 }
+
 const CartItem: React.FC<CartItemProps> = ({
   id,
   title,
   authors,
   image,
   genres,
+  cost,
   amount,
   userId,
   onRemoveItem,
+  onUpdateItem,
 }) => {
   const changeItemHandler = (amount: number) => {
-    if (userId == null || userId == "") return;
+    if (!userId) return;
+
     axios
       .post("http://127.0.0.1:8000/carts/update", null, {
         params: {
@@ -32,31 +39,39 @@ const CartItem: React.FC<CartItemProps> = ({
           amount: amount,
         },
       })
+      .then(() => {
+        if (onUpdateItem) onUpdateItem();
+      })
       .catch((err) => {
         console.log(err);
       });
   };
+
   const removeHandler = () => {
-    if (onRemoveItem != null) onRemoveItem(id);
+    if (onRemoveItem) onRemoveItem(id);
   };
 
   return (
     <li className="flex items-center gap-4">
       <Link
         to={`/novel/${id}`}
-        className="flex items-center gap-4 w-full h-full origin-left transition-all duration:500 ease-in-out hover:scale-105 active:scale-95"
+        className="flex items-center gap-4 w-full h-full origin-left transition-all duration-500 ease-in-out hover:scale-105 active:scale-95"
       >
-        <img src={image} alt={title} className="size-16 rounded object-cover" />
+        <img src={image} alt={title} className="size-20 rounded object-cover" />
         <div>
-          <h3 className="text-sm text-gray-900">{title}</h3>
-          <dl className="mt-0.5 space-y-px text-[10px] text-gray-600">
+          <h3 className="text-md text-gray-900">{title}</h3>
+          <dl className="mt-0.5 space-y-px text-[12px] text-gray-600">
             <div>
-              <dt className="inline">Genre:</dt>
+              <dt className="inline">Genre: </dt>
               <dd className="inline">{genres}</dd>
             </div>
             <div>
-              <dt className="inline">Authors:</dt>
+              <dt className="inline">Authors: </dt>
               <dd className="inline">{authors}</dd>
+            </div>
+            <div>
+              <dt className="inline">Cost: </dt>
+              <dd className="inline">IDR {cost.toLocaleString('id-ID')}</dd>
             </div>
           </dl>
         </div>

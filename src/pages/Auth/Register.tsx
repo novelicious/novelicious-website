@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 interface RegisterState {
   username: string;
   password: string;
@@ -23,6 +26,9 @@ const Register: React.FC = () => {
     error: "",
     loading: false,
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -78,17 +84,16 @@ const Register: React.FC = () => {
   return (
     <section>
       <div className="flex justify-center items-center min-h-screen ">
-        <main className="bg-white border-2 border-black flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
+        <main className="animate-fade bg-white border-2 border-black flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
           <div className="max-w-xl lg:max-w-3xl">
-            <a className="block text-primary" href="/">
-              <span className="">Home</span>
-            </a>
+            <div className="flex items-center">
+              <Link to="/">
+                <IoMdArrowRoundBack />
+              </Link>
+              <h1 className="ml-5 text-md font-semibold">Sign Up</h1>
+            </div>
 
-            <h1 className="mt-6 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
-              novelicious.
-            </h1>
-
-            <p className="mt-4 leading-relaxed text-gray-500">Register Page.</p>
+            <p className="mt-4 leading-relaxed text-gray-500">register.</p>
 
             <form
               onSubmit={handleSubmit}
@@ -113,76 +118,7 @@ const Register: React.FC = () => {
                   }
                   className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary "
                 />
-              </div>
 
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="picture"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Picture
-                </label>
-
-                <input
-                  type="file"
-                  id="picture"
-                  name="picture"
-                  value={state.picture}
-                  onChange={(e) =>
-                    setState({ ...state, picture: e.target.value })
-                  }
-                  className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary "
-                />
-              </div>
-
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="birth_year"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Birth Year
-                </label>
-
-                <input
-                  type="number"
-                  id="birth_year"
-                  name="birth_year"
-                  value={state.birth_year}
-                  placeholder="Birth Year"
-                  onChange={(e) =>
-                    setState({ ...state, birth_year: parseInt(e.target.value) })
-                  }
-                  className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary"
-                />
-              </div>
-
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="gender"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Gender
-                </label>
-
-                <select
-                  id="gender"
-                  name="gender"
-                  value={state.gender}
-                  onChange={(e) =>
-                    setState({ ...state, gender: e.target.value })
-                  }
-                  className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary "
-                >
-                  <option value="" disabled>
-                    Select Gender
-                  </option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-
-              <div className="col-span-6 sm:col-span-3">
                 <label
                   htmlFor="password"
                   className="block text-sm font-medium text-gray-700"
@@ -190,20 +126,27 @@ const Register: React.FC = () => {
                   Password
                 </label>
 
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={state.password}
-                  placeholder="********"
-                  onChange={(e) =>
-                    setState({ ...state, password: e.target.value })
-                  }
-                  className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary"
-                />
-              </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    name="password"
+                    value={state.password}
+                    placeholder="********"
+                    onChange={(e) =>
+                      setState({ ...state, password: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 px-3 flex items-center text-sm leading-5"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
 
-              <div className="col-span-6 sm:col-span-3">
                 <label
                   htmlFor="confirmPassword"
                   className="block text-sm font-medium text-gray-700"
@@ -211,24 +154,40 @@ const Register: React.FC = () => {
                   Confirm Password
                 </label>
 
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  placeholder="********"
-                  value={state.confirmPassword}
-                  onChange={(e) =>
-                    setState({ ...state, confirmPassword: e.target.value })
-                  }
-                  className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary "
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="********"
+                    value={state.confirmPassword}
+                    onChange={(e) =>
+                      setState({ ...state, confirmPassword: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-sm  border-2 border-primary focus:ring-0 focus:border-primary "
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 px-3 flex items-center text-sm leading-5"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="col-span-6">
+                <p className="text-sm text-gray-500">
+                  By creating an account, you agree to our terms and conditions
+                  and privacy policy.
+                </p>
               </div>
               <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
                 <button
                   disabled={state.loading}
                   className="ml-4 inline-flex text-neutral bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-900 rounded text-sm"
                 >
-                  {state.loading ? "Registering..." : "Sign Up"}
+                  {state.loading ? "Signing Up..." : "Sign Up"}
                 </button>
 
                 <p className="mt-4 text-sm text-gray-500 sm:mt-0">

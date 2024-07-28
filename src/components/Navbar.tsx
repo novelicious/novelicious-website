@@ -3,30 +3,29 @@ import { Link, useNavigate } from "react-router-dom";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import novelicious from "/novelicious.png";
-import { FiMenu } from "react-icons/fi";
-import { IoCloseOutline } from "react-icons/io5";
-import clsx from "clsx";
 import axios from "axios";
 import { FaUserEdit } from "react-icons/fa";
-import { FaStar } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
+
 import { IoLogOutSharp } from "react-icons/io5";
+import { RiFilePaper2Fill } from "react-icons/ri";
 interface User {
   id: number;
   username: string;
+  role_id: number;
 }
 
 const Navbar: React.FC = () => {
   // Auth
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  const userId = sessionStorage.getItem("user_id");
-  const token = sessionStorage.getItem("token");
+  const userId = localStorage.getItem("user_id");
+  const token = localStorage.getItem("token");
 
   // Menu
   const menuRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const [isSideMenuOpen, setMenu] = useState(false);
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
 
@@ -48,8 +47,8 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleSignOut = () => {
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user_id");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_id");
 
     setIsLoggedIn(false);
     navigate("/");
@@ -59,16 +58,6 @@ const Navbar: React.FC = () => {
     setOpenModal(false);
   };
 
-  const navlinks = [
-    {
-      label: "Home",
-      link: "/",
-    },
-    {
-      label: "Market",
-      link: "/market",
-    },
-  ];
   const profileNavlinks = [
     {
       label: (
@@ -85,27 +74,44 @@ const Navbar: React.FC = () => {
       label: (
         <div className="flex">
           <span className="my-1 mr-2">
-            <FaStar />
+            <FaHeart />
           </span>
           Favorites
         </div>
       ),
       link: "/favorites",
     },
+    {
+      label: (
+        <div className="flex">
+          <div className="my-1 mr-2">
+            <RiFilePaper2Fill />
+          </div>
+          Transactions
+        </div>
+      ),
+      link: "/transactions",
+    },
   ];
+
+  if (user?.role_id === 1) {
+    profileNavlinks.push({
+      label: (
+        <div className="flex">
+          <div className="my-1 mr-2">
+            <RiFilePaper2Fill />
+          </div>
+          Admin
+        </div>
+      ),
+      link: "/admin",
+    });
+  }
 
   return (
     <nav className="flex justify-between px-8 items-center py-6  bg-neutral ">
       <div className="flex items-center gap-8">
         <section className="flex items-center gap-4">
-          {/* menu */}
-          <FiMenu
-            onClick={() => {
-              setMenu(true);
-              setOpen(false);
-            }}
-            className="text-3xl cursor-pointer lg:hidden"
-          />
           {/* logo */}
           <Link to={"/"} className="flex gap-x-2 text-4xl font-mono">
             <img
@@ -114,50 +120,21 @@ const Navbar: React.FC = () => {
               className="object-fit h-11"
             />
             <p className="text-[1.5rem]">
-              novel<span className="text-neutral bg-primary">icious</span>
+              <span className="text-neutral bg-primary">novel</span>icious
             </p>
           </Link>
         </section>
-
-        {navlinks.map((d, i) => (
-          <Link
-            key={i}
-            className="hidden lg:block text-primary relative text-md w-fit after:block after:content-[''] after:absolute after:h-[3px] after:bg-primary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-left"
-            to={d.link}
-          >
-            {d.label}
-          </Link>
-        ))}
       </div>
 
       {/* sidebar mobile menu */}
-      <div
-        className={clsx(
-          "fixed h-full w-screen lg:hidden top-0 right-0 -translate-x-full transition-all ",
-          isSideMenuOpen && "translate-x-0"
-        )}
-      >
-        <section className="text-black bg-white flex-col absolute left-0 top-0 h-screen p-8 gap-8 z-50 w-56 flex  ">
-          <IoCloseOutline
-            onClick={() => setMenu(false)}
-            className="mt-0 mb-8 text-3xl cursor-pointer"
-          />
-
-          {navlinks.map((d, i) => (
-            <Link key={i} className="font-bold" to={d.link}>
-              {d.label}
-            </Link>
-          ))}
-        </section>
-      </div>
 
       {/* last section */}
       <section className=" items-center gap-4">
         {isLoggedIn ? (
           <>
             <img
-              src="https://m.media-amazon.com/images/I/81iDNjn-r3L._AC_UF1000,1000_QL80_.jpg"
-              className="h-8 w-8 rounded-full cursor-pointer"
+              src={novelicious}
+              className="h-8 w-8 cursor-pointer border-2 border-primary rounded-full"
               width={40}
               height={40}
               onClick={() => setOpen(!open)}
@@ -166,7 +143,7 @@ const Navbar: React.FC = () => {
             {open && (
               <div
                 ref={menuRef}
-                className="p-4 w-52 bg-white shadow-lg absolute right-5 z-50 overflow-auto max-h-96"
+                className="p-4 w-52 bg-white border-2 shadow-lg absolute right-5 z-50 overflow-auto max-h-96"
               >
                 {user && <h1>Hi, {user.username}</h1>}
 
