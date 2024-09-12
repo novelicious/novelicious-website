@@ -191,7 +191,7 @@ const Checkout: React.FC = () => {
       </div>
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 min-h-[100vh]">
         <header className="sticky top-0  z-50">
-          <div className=" flex items-center">
+          <div className=" flex items-center ">
             <button
               className=" flex items-center"
               onClick={() => setOpenModal(true)}
@@ -216,9 +216,9 @@ const Checkout: React.FC = () => {
                 </button>
               </div>
             </Modal>
-            <h1 className="ml-5 text-md font-semibold">Checkout</h1>
+            <h1 className="ml-5 text-md font-bold  ">Checkout</h1>
           </div>
-          <div className="mx-auto bg-white  max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+          <div className="mx-auto bg-white shadow-lg max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
             <div className="mx-auto max-w-3xl">
               <div className="mt-8">
                 <div className="mt-6">

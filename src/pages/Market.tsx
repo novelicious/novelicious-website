@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { TailSpin } from "react-loader-spinner";
 import BookItem from "../components/BookItem";
+import { FaSearch } from "react-icons/fa";
 
 interface Book {
   id: number;
@@ -216,10 +217,13 @@ const Market: React.FC = () => {
           <Navbar />
           <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
             <div className=" sm:flex sm:items-center sm:justify-between">
-              <div className=" w-full">
+              <div className="relative w-full md:w-80">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaSearch />
+                </div>
                 <input
                   type="text"
-                  className="w-full md:w-80 px-10 h-10 rounded-l border-2 border-secondary  focus:ring-0 focus:border-primary"
+                  className="w-full pl-10 h-10 rounded-l border-2 border-secondary focus:ring-0 focus:border-primary"
                   placeholder="Search by title, authors..."
                   value={searchQuery}
                   onChange={handleSearchChange}
