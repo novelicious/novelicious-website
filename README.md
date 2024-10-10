@@ -2,6 +2,10 @@
 
 novelicious is a web application Point-of-Sale (POS) system with recommender functionalities for novels and a question-answering system for their synopses.
 
+## Demo Video
+
+(https://drive.google.com/file/d/1WonWZnQOWVe0nxv0PgVg9ueV3JqA0tfW/view?usp=sharing)
+
 ## Features
 
 - Point-of-sale
